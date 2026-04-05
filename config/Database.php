@@ -42,12 +42,4 @@ class Database
 
         return self::$instance;
     }
-
-    // Bloqueamos clonación e instanciación directa (por seguridad del Singleton)
-    private function __construct()
-    {
-    }
-    private function __clone()
-    {
-    }
 }

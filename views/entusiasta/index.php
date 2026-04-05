@@ -1,13 +1,13 @@
 <style>
   .hero-bg { 
-    background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), 
-    url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; 
+    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
+                url('https://images.unsplash.com/photo-1492144534652-916b3d5f0f1f?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; 
     min-height: 100vh;
   }
   .card-tuning { transition: all 0.3s ease; }
-  .card-tuning:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(255, 60, 0, 0.3); }
-  .accent-red { color: #ffffff; }
-  .badge-tuning { background: linear-gradient(45deg, #ff3c00, #ff8800); }
+  .card-tuning:hover { transform: translateY(-10px); box-shadow: 0 20px 35px rgba(255, 136, 0, 0.4); }
+  .accent-orange {color: #ffffff;}
+  .badge-entusiasta { background: linear-gradient(45deg, #ff8800, #ffc107); }
   .btn-all { transition: all 0.3s ease; }
   .btn-all:hover { transform: translateY(-3px); }
 </style>
@@ -18,8 +18,8 @@ style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1e
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div class="text-center mb-5">
-          <h1 class="display-3 fw-bold mb-3">Modo <span class="accent-red">Principiantes</span></h1>
-          <p class="lead text-white-50">Empieza tu aventura en el tuning de forma sencilla y segura</p>
+          <h1 class="display-3 fw-bold mb-3">Modo <span class="accent-orange">Entusiasta</span></h1>
+          <p class="lead text-white-50">Más profundidad, más piezas y tutoriales ampliados</p>
         </div>
 
         <!-- Selectores -->
@@ -51,21 +51,21 @@ style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1e
         <div id="resultados" class="d-none">
           <!-- Spinner -->
           <div class="spinner-wrap text-center mb-4" id="spinner" style="display: none;">
-            <div class="spinner-border text-light" role="status">
+            <div class="spinner-border text-warning" role="status">
               <span class="visually-hidden">Cargando...</span>
             </div>
           </div>
 
           <div class="d-flex align-items-center gap-3 mb-4">
-            <span class="badge badge-tuning fs-5 px-4 py-2" id="vehiculo-badge">─</span>
-            <span class="text-white-50">Resultados recomendados para tu vehículo</span>
+            <span class="badge badge-entusiasta fs-5 px-4 py-2" id="vehiculo-badge">─</span>
+            <span class="text-white-50">Contenido ampliado para entusiastas</span>
           </div>
 
           <div class="row">
             <!-- Tutoriales -->
             <div class="col-lg-6">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="accent-red"><i class="fas fa-play-circle me-2"></i> Tutoriales para ti</h3>
+                <h3 class="accent-orange"><i class="fas fa-play-circle me-2"></i> Tutoriales recomendados</h3>
                 <a href="todos-tutoriales.php" class="btn btn-outline-light btn-all">
                   <i class="fas fa-list me-1"></i> Ver todos los tutoriales
                 </a>
@@ -76,7 +76,7 @@ style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1e
             <!-- Piezas -->
             <div class="col-lg-6">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="accent-red"><i class="fas fa-cog me-2"></i> Piezas compatibles</h3>
+                <h3 class="accent-orange"><i class="fas fa-cog me-2"></i> Piezas compatibles</h3>
                 <a href="todas-piezas.php" class="btn btn-outline-light btn-all">
                   <i class="fas fa-list me-1"></i> Ver todas las piezas
                 </a>
@@ -95,7 +95,7 @@ style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1e
 </section>
 
 <script>
-// ==================== JAVASCRIPT CORREGIDO Y OPTIMIZADO ====================
+// ==================== JAVASCRIPT PARA ENTUSIASTA ====================
 
 const marcaSelect  = document.getElementById('marcaSelect');
 const modeloSelect = document.getElementById('modeloSelect');
@@ -132,21 +132,21 @@ function cardTutorial(t) {
 
 function cardPieza(p) {
   const img = p.imagen || 'https://via.placeholder.com/300x210?text=Sin+imagen';
-  const desc = (p.descripcion || '').substring(0, 85);
+  const desc = (p.descripcion || '').substring(0, 90);
   return `
     <div class="col-12 col-md-6 col-lg-4">
       <div class="card bg-dark text-white border-0 shadow card-tuning h-100">
         <img src="${esc(img)}" class="card-img-top" alt="${esc(p.nombre)}">
         <div class="card-body p-3">
-          <span class="badge bg-danger mb-2">${esc(p.referencia)}</span>
+          <span class="badge bg-warning mb-2">${esc(p.referencia)}</span>
           <h6 class="card-title">${esc(p.nombre)}</h6>
-          <p class="card-text small text-muted">${esc(desc)}${desc.length === 85 ? '…' : ''}</p>
+          <p class="card-text small text-muted">${esc(desc)}${desc.length === 90 ? '…' : ''}</p>
         </div>
       </div>
     </div>`;
 }
 
-// Marca → Modelos
+// Los mismos eventos que en principiantes (marca → modelo → motorización → resultados)
 marcaSelect.addEventListener('change', () => {
   const marcaId = marcaSelect.value;
   modeloSelect.innerHTML = '<option selected disabled>Cargando modelos...</option>';
@@ -166,11 +166,9 @@ marcaSelect.addEventListener('change', () => {
         modeloSelect.appendChild(opt);
       });
       modeloSelect.disabled = data.length === 0;
-    })
-    .catch(() => modeloSelect.innerHTML = '<option selected disabled>Error al cargar</option>');
+    });
 });
 
-// Modelo → Motorizaciones
 modeloSelect.addEventListener('change', () => {
   const modeloId = modeloSelect.value;
   motorSelect.innerHTML = '<option selected disabled>Cargando motorizaciones...</option>';
@@ -188,11 +186,9 @@ modeloSelect.addEventListener('change', () => {
         motorSelect.appendChild(opt);
       });
       motorSelect.disabled = data.length === 0;
-    })
-    .catch(() => motorSelect.innerHTML = '<option selected disabled>Error al cargar</option>');
+    });
 });
 
-// Motorización → Resultados
 motorSelect.addEventListener('change', () => {
   const motId = motorSelect.value;
   const marcaTxt = marcaSelect.options[marcaSelect.selectedIndex]?.text || '';

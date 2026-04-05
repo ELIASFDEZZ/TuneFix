@@ -24,7 +24,7 @@
           Persona a la cual le apasiona este mundo y quiere saber más.
         </p>
         <div class="text-center mt-3">
-          <a href="#" class="btn btn-light">Entusiasta</a>
+          <a href="entusiasta.php" class="btn btn-light">Entusiasta</a>
         </div>
       </div>
 
@@ -34,7 +34,7 @@
           Persona que trabaja en este sector.
         </p>
         <div class="text-center mt-3">
-          <a href="#" class="btn btn-light">Profesional</a>
+          <a href="profesional.php" class="btn btn-light">Profesional</a>
         </div>
       </div>
 
