@@ -10,10 +10,11 @@
   .badge-tuning { background: linear-gradient(45deg, #ff3c00, #ff8800); }
   .btn-all { transition: all 0.3s ease; }
   .btn-all:hover { transform: translateY(-3px); }
+  .clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 </style>
 
-<section class="hero-bg text-white d-flex align-items-center"
-style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; height:75vh;">
+<section class="hero-bg text-white"
+style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; min-height:100vh; padding-bottom: 60px;">
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-lg-10">
@@ -117,30 +118,30 @@ function esc(str) {
 }
 
 function cardTutorial(t) {
-  const img = t.imagen || 'https://via.placeholder.com/300x210?text=Sin+imagen';
+  const img = t.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
   return `
-    <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-sm-6">
       <div class="card bg-dark text-white border-0 shadow card-tuning h-100">
-        <img src="${esc(img)}" class="card-img-top" alt="${esc(t.titulo)}">
-        <div class="card-body">
-          <h6 class="card-title">${esc(t.titulo)}</h6>
-          <p class="card-text small text-muted">Pieza: ${esc(t.pieza_nombre || 'General')}</p>
+        <img src="${esc(img)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(t.titulo)}">
+        <div class="card-body d-flex flex-column p-3">
+          <h6 class="card-title clamp-2">${esc(t.titulo)}</h6>
+          <p class="card-text small text-muted mt-auto mb-0">Pieza: ${esc(t.pieza_nombre || 'General')}</p>
         </div>
       </div>
     </div>`;
 }
 
 function cardPieza(p) {
-  const img = p.imagen || 'https://via.placeholder.com/300x210?text=Sin+imagen';
-  const desc = (p.descripcion || '').substring(0, 85);
+  const img = p.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
+  const desc = (p.descripcion || '').substring(0, 80);
   return `
-    <div class="col-12 col-md-6 col-lg-4">
+    <div class="col-12 col-sm-6">
       <div class="card bg-dark text-white border-0 shadow card-tuning h-100">
-        <img src="${esc(img)}" class="card-img-top" alt="${esc(p.nombre)}">
-        <div class="card-body p-3">
-          <span class="badge bg-danger mb-2">${esc(p.referencia)}</span>
-          <h6 class="card-title">${esc(p.nombre)}</h6>
-          <p class="card-text small text-muted">${esc(desc)}${desc.length === 85 ? '…' : ''}</p>
+        <img src="${esc(img)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(p.nombre)}">
+        <div class="card-body d-flex flex-column p-3">
+          <span class="badge bg-danger mb-2 align-self-start">${esc(p.referencia)}</span>
+          <h6 class="card-title clamp-2">${esc(p.nombre)}</h6>
+          <p class="card-text small text-muted mt-auto mb-0">${esc(desc)}${p.descripcion && p.descripcion.length > 80 ? '…' : ''}</p>
         </div>
       </div>
     </div>`;
@@ -221,8 +222,8 @@ motorSelect.addEventListener('change', () => {
         return;
       }
 
-      document.getElementById('lista-tutoriales').innerHTML = tutoriales.map(cardTutorial).join('');
-      document.getElementById('lista-piezas').innerHTML     = piezas.map(cardPieza).join('');
+      document.getElementById('lista-tutoriales').innerHTML = tutoriales.slice(0, 2).map(cardTutorial).join('');
+      document.getElementById('lista-piezas').innerHTML     = piezas.slice(0, 2).map(cardPieza).join('');
     })
     .catch(() => {
       setLoading(false);

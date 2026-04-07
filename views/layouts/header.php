@@ -86,8 +86,17 @@
 
         <!-- Botones derecha -->
         <div class="d-flex align-items-center gap-2">
-          <a href="#" class="nav-link">Iniciar sesión</a>
-          <a href="#" class="btn btn-register">Registrarse</a>
+          <?php if (isset($_SESSION['usuario_id'])): ?>
+            <span class="text-white-50 small me-1">
+              <i class="fas fa-user-circle me-1"></i><?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+            </span>
+            <a href="logout.php" class="btn btn-register">
+              <i class="fas fa-sign-out-alt me-1"></i>Cerrar sesión
+            </a>
+          <?php else: ?>
+            <a href="login.php" class="nav-link">Iniciar sesión</a>
+            <a href="register.php" class="btn btn-register">Registrarse</a>
+          <?php endif; ?>
         </div>
       </div>
     </div>
