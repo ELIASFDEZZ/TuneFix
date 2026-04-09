@@ -57,4 +57,61 @@ class PiezaModel {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    /**
+     * Devuelve TODAS las piezas compatibles con una motorización, sin límite.
+     * Admite búsqueda opcional por nombre o referencia dentro de esas piezas.
+     */
+    public function getAllByMotorizacion(int $motorizacionId, string $busqueda = ''): array {
+        if ($busqueda !== '') {
+            $stmt = $this->pdo->prepare(
+                "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen
+                 FROM pieza p
+                 JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
+                 WHERE cp.motorizacion_id = ?
+                   AND (p.nombre LIKE ? OR p.referencia LIKE ?)
+                 ORDER BY p.nombre ASC"
+            );
+            $like = '%' . $busqueda . '%';
+            $stmt->bindValue(1, $motorizacionId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $like);
+            $stmt->bindValue(3, $like);
+        } else {
+            $stmt = $this->pdo->prepare(
+                "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen
+                 FROM pieza p
+                 JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
+                 WHERE cp.motorizacion_id = ?
+                 ORDER BY p.nombre ASC"
+            );
+            $stmt->bindValue(1, $motorizacionId, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Devuelve todas las piezas, con búsqueda opcional por nombre/referencia.
+     */
+    public function getAll(string $busqueda = ''): array {
+        if ($busqueda !== '') {
+            $stmt = $this->pdo->prepare(
+                "SELECT id, referencia, nombre, descripcion, imagen
+                 FROM pieza
+                 WHERE nombre LIKE ? OR referencia LIKE ?
+                 ORDER BY nombre ASC"
+            );
+            $like = '%' . $busqueda . '%';
+            $stmt->bindValue(1, $like);
+            $stmt->bindValue(2, $like);
+        } else {
+            $stmt = $this->pdo->prepare(
+                "SELECT id, referencia, nombre, descripcion, imagen
+                 FROM pieza
+                 ORDER BY nombre ASC"
+            );
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

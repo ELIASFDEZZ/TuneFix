@@ -55,6 +55,93 @@
     .logo-glow {
       text-shadow: 0 0 15px rgba(113, 113, 113, 0.6);
     }
+
+    /* ── DROPDOWN DE USUARIO ── */
+    .user-dropdown-toggle {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff !important;
+      font-weight: 600;
+      border-radius: 50px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .user-dropdown-toggle:hover,
+    .user-dropdown-toggle.show {
+      background: rgba(255,255,255,0.28);
+      border-color: rgba(255,255,255,0.5);
+    }
+    .user-dropdown-toggle::after { display: none; } /* quitar caret de Bootstrap */
+    .user-avatar {
+      width: 30px; height: 30px;
+      background: #fff;
+      color: rgb(164, 4, 46);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .user-dropdown-menu {
+      min-width: 220px;
+      background: #1e1e1e;
+      border: 1px solid rgba(255,60,0,0.2);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.45);
+      padding: 6px;
+      margin-top: 8px !important;
+    }
+    .user-dropdown-header {
+      padding: 10px 14px 12px;
+      border-bottom: 1px solid rgba(255,60,0,0.15);
+      margin-bottom: 4px;
+    }
+    .user-dropdown-header .u-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+    .user-dropdown-header .u-email {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .dropdown-item-tuning {
+      color: rgba(255,255,255,0.85) !important;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.2s ease, color 0.2s ease;
+      text-decoration: none;
+    }
+    .dropdown-item-tuning:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff !important;
+    }
+    .dropdown-item-tuning .item-icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+    .icon-perfil   { background: rgba(255,136,0,0.15); color: #ff8800; }
+    .icon-favs     { background: rgba(255,60,0,0.15);  color: #ff3c00; }
+    .icon-logout   { background: rgba(220,53,69,0.15); color: #dc3545; }
+    .dropdown-divider-tuning {
+      border-color: rgba(255,255,255,0.08);
+      margin: 4px 0;
+    }
+    .item-logout { color: #dc3545 !important; }
+    .item-logout:hover { background: rgba(220,53,69,0.1) !important; color: #ff6b6b !important; }
   </style>
 </head>
 
@@ -87,12 +174,50 @@
         <!-- Botones derecha -->
         <div class="d-flex align-items-center gap-2">
           <?php if (isset($_SESSION['usuario_id'])): ?>
-            <span class="text-white-50 small me-1">
-              <i class="fas fa-user-circle me-1"></i><?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
-            </span>
-            <a href="logout.php" class="btn btn-register">
-              <i class="fas fa-sign-out-alt me-1"></i>Cerrar sesión
-            </a>
+            <?php
+              $nombreNav  = htmlspecialchars($_SESSION['usuario_nombre']);
+              $emailNav   = htmlspecialchars($_SESSION['usuario_email'] ?? '');
+              $inicialNav = strtoupper(mb_substr($_SESSION['usuario_nombre'], 0, 1));
+            ?>
+            <div class="dropdown">
+              <button class="user-dropdown-toggle dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="user-avatar"><?= $inicialNav ?></div>
+                <?= $nombreNav ?>
+                <i class="fas fa-chevron-down" style="font-size:0.7rem; opacity:0.7;"></i>
+              </button>
+              <ul class="dropdown-menu user-dropdown-menu">
+                <!-- Cabecera con nombre y email -->
+                <li>
+                  <div class="user-dropdown-header">
+                    <div class="u-name"><?= $nombreNav ?></div>
+                    <div class="u-email"><?= $emailNav ?></div>
+                  </div>
+                </li>
+                <!-- Perfil -->
+                <li>
+                  <a class="dropdown-item-tuning" href="perfil.php">
+                    <span class="item-icon icon-perfil"><i class="fas fa-user"></i></span>
+                    Perfil
+                  </a>
+                </li>
+                <!-- Favoritos -->
+                <li>
+                  <a class="dropdown-item-tuning" href="favoritos.php">
+                    <span class="item-icon icon-favs"><i class="fas fa-heart"></i></span>
+                    Favoritos
+                  </a>
+                </li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider dropdown-divider-tuning"></li>
+                <!-- Cerrar sesión -->
+                <li>
+                  <a class="dropdown-item-tuning item-logout" href="logout.php">
+                    <span class="item-icon icon-logout"><i class="fas fa-sign-out-alt"></i></span>
+                    Cerrar sesión
+                  </a>
+                </li>
+              </ul>
+            </div>
           <?php else: ?>
             <a href="login.php" class="nav-link">Iniciar sesión</a>
             <a href="register.php" class="btn btn-register">Registrarse</a>

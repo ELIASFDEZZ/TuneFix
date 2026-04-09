@@ -58,4 +58,31 @@ class TutorialModel {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    /**
+     * Devuelve todos los tutoriales, con búsqueda opcional por título.
+     */
+    public function getAll(string $busqueda = ''): array {
+        if ($busqueda !== '') {
+            $stmt = $this->pdo->prepare(
+                "SELECT t.id, t.titulo, t.imagen, p.nombre AS pieza_nombre
+                 FROM tutorial t
+                 LEFT JOIN pieza p ON t.pieza_id = p.id
+                 WHERE t.titulo LIKE ? OR p.nombre LIKE ?
+                 ORDER BY t.titulo ASC"
+            );
+            $like = '%' . $busqueda . '%';
+            $stmt->bindValue(1, $like);
+            $stmt->bindValue(2, $like);
+        } else {
+            $stmt = $this->pdo->prepare(
+                "SELECT t.id, t.titulo, t.imagen, p.nombre AS pieza_nombre
+                 FROM tutorial t
+                 LEFT JOIN pieza p ON t.pieza_id = p.id
+                 ORDER BY t.titulo ASC"
+            );
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
