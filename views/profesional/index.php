@@ -1,9 +1,4 @@
 <style>
-  .hero-bg { 
-    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)), 
-                url('https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; 
-    min-height: 100vh;
-  }
   .card-tuning { 
     transition: all 0.4s ease; 
   }
@@ -22,92 +17,151 @@
     transform: translateY(-3px);
   }
   .clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* Tarjeta distribuidor */
+  .card-dist {
+    background: #1a1a2e;
+    border: 1px solid rgba(255,60,0,0.2);
+    border-radius: 12px;
+    transition: all .3s;
+  }
+  .card-dist:hover {
+    border-color: #ff3c00;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(255,60,0,0.25);
+  }
+  .dist-logo {
+    width: 42px; height: 42px;
+    background: rgba(255,60,0,0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: #ff3c00; flex-shrink: 0;
+  }
+
+  /* Tarjeta manual */
+  .card-manual {
+    background: #12121f;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    transition: all .3s;
+  }
+  .card-manual:hover {
+    border-color: rgba(255,60,0,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  }
+  .manual-icon {
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: #aaa; flex-shrink: 0;
+  }
+
+  .tag-fuente {
+    font-size: .7rem;
+    background: rgba(255,255,255,0.08);
+    color: #aaa;
+    border-radius: 50px;
+    padding: 2px 10px;
+  }
 </style>
 
-<section class="hero-bg text-white"
-style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; min-height:100vh; padding-bottom: 60px;">
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-11">
-        <div class="text-center mb-5">
-          <h1 class="display-3 fw-bold mb-3">Modo <span class="accent-red">Profesional</span></h1>
-          <p class="lead text-white-50">Acceso total • Todas las piezas • Sin límites • Enlaces directos a distribuidores</p>
-        </div>
+<section style="background: linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)), url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; min-height:100vh; padding-bottom: 60px;">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-11">
 
-        <!-- Selectores en cascada -->
-        <div class="row g-4 mb-5">
-          <div class="col-md-4">
-            <label class="form-label fw-bold text-white-50">MARCA</label>
-            <select class="form-select form-select-lg" id="marcaSelect">
-              <option selected disabled>Selecciona marca</option>
-              <?php foreach ($marcas as $marca): ?>
-                <option value="<?= $marca['id'] ?>"><?= htmlspecialchars($marca['nombre']) ?></option>
-              <?php endforeach; ?>
-            </select>
+          <!-- Cabecera -->
+          <div class="text-center mb-5 text-white">
+            <h1 class="display-3 fw-bold mb-3">Modo <span class="accent-red">Profesional</span></h1>
+            <p class="lead text-white-50">Acceso total · Distribuidores reales · Manuales técnicos · Sin límites</p>
           </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold text-white-50">MODELO</label>
-            <select class="form-select form-select-lg" id="modeloSelect" disabled>
-              <option selected disabled>Primero selecciona marca</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold text-white-50">MOTORIZACIÓN</label>
-            <select class="form-select form-select-lg" id="motorSelect" disabled>
-              <option selected disabled>Primero selecciona modelo</option>
-            </select>
-          </div>
-        </div>
 
-        <!-- Resultados -->
-        <div id="resultados" class="d-none">
-          <!-- Spinner -->
-          <div class="spinner-wrap text-center mb-4" id="spinner" style="display: none;">
-            <div class="spinner-border text-danger" role="status">
-              <span class="visually-hidden">Cargando...</span>
+          <!-- Selectores en cascada -->
+          <div class="row g-4 mb-5">
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-white-50">MARCA</label>
+              <select class="form-select form-select-lg" id="marcaSelect">
+                <option selected disabled>Selecciona marca</option>
+                <?php foreach ($marcas as $marca): ?>
+                  <option value="<?= $marca['id'] ?>"><?= htmlspecialchars($marca['nombre']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-white-50">MODELO</label>
+              <select class="form-select form-select-lg" id="modeloSelect" disabled>
+                <option selected disabled>Primero selecciona marca</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-white-50">MOTORIZACIÓN</label>
+              <select class="form-select form-select-lg" id="motorSelect" disabled>
+                <option selected disabled>Primero selecciona modelo</option>
+              </select>
             </div>
           </div>
 
-          <div class="d-flex align-items-center gap-3 mb-4">
-            <span class="badge badge-pro fs-5 px-4 py-2" id="vehiculo-badge">─</span>
-            <span class="text-white-50">Resultados profesionales completos</span>
-          </div>
+          <!-- Resultados -->
+          <div id="resultados" class="d-none text-white">
 
-          <div class="row">
-            <!-- Tutoriales -->
-            <div class="col-lg-6">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="accent-red"><i class="fas fa-video me-2"></i> Tutoriales avanzados</h3>
-                <a href="todos-tutoriales.php" class="btn btn-outline-light btn-all">
-                  <i class="fas fa-list me-1"></i> Ver todos los tutoriales
-                </a>
+            <!-- Spinner -->
+            <div class="text-center mb-4" id="spinner" style="display:none!important;">
+              <div class="spinner-border text-danger" role="status">
+                <span class="visually-hidden">Cargando...</span>
               </div>
-              <div class="row g-4" id="lista-tutoriales"></div>
             </div>
 
-            <!-- Piezas -->
-            <div class="col-lg-6">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="accent-red"><i class="fas fa-cogs me-2"></i> Piezas de alto rendimiento</h3>
-                <a href="todas-piezas.php" class="btn btn-outline-light btn-all">
-                  <i class="fas fa-list me-1"></i> Ver todas las piezas
-                </a>
+            <!-- Badge vehículo -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+              <span class="badge badge-pro fs-5 px-4 py-2" id="vehiculo-badge">─</span>
+              <span class="text-white-50">Información profesional completa</span>
+            </div>
+
+            <div class="row g-4">
+
+              <!-- ── Distribuidores de piezas ── -->
+              <div class="col-lg-6">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3 class="accent-red mb-0">
+                    <i class="fas fa-store me-2"></i> Distribuidores de piezas
+                  </h3>
+                </div>
+                <div id="lista-distribuidores">
+                  <!-- Cards inyectadas por JS -->
+                </div>
               </div>
-              <div class="row g-4" id="lista-piezas"></div>
-            </div>
-          </div>
 
-          <div id="sin-resultados" class="d-none text-center py-5">
-            <p class="text-white-50 fs-4">No hay resultados para esta motorización.</p>
-          </div>
+              <!-- ── Manuales técnicos ── -->
+              <div class="col-lg-6">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3 class="accent-red mb-0">
+                    <i class="fas fa-file-pdf me-2"></i> Manuales técnicos
+                  </h3>
+                </div>
+                <div id="lista-manuales">
+                  <!-- Cards inyectadas por JS -->
+                </div>
+              </div>
+
+            </div><!-- /row -->
+
+            <!-- Sin resultados -->
+            <div id="sin-resultados" class="d-none text-center py-5">
+              <i class="fas fa-search fa-3x text-white-50 mb-3"></i>
+              <p class="text-white-50 fs-4">No hay resultados para esta motorización.</p>
+            </div>
+
+          </div><!-- /resultados -->
+
         </div>
       </div>
     </div>
-  </div>
 </section>
 
 <script>
-// ==================== JAVASCRIPT COMPLETO PARA PROFESIONAL ====================
+// ==================== JS PROFESIONAL ====================
 
 const marcaSelect  = document.getElementById('marcaSelect');
 const modeloSelect = document.getElementById('modeloSelect');
@@ -116,44 +170,52 @@ const resultados   = document.getElementById('resultados');
 const spinner      = document.getElementById('spinner');
 
 function setLoading(on) {
-  spinner.style.display = on ? 'block' : 'none';
-  resultados.classList.toggle('cargando', on);
+  spinner.style.setProperty('display', on ? 'block' : 'none', 'important');
 }
 
 function esc(str) {
   return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function cardTutorial(t) {
-  const img = t.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
+// ── Card distribuidor ─────────────────────────────────────────────────────────
+function cardDistribuidor(d) {
+  const url = d.url_directa || d.url_base || '#';
   return `
-    <div class="col-12 col-sm-6">
-      <div class="card bg-dark text-white border-0 shadow card-tuning h-100">
-        <img src="${esc(img)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(t.titulo)}">
-        <div class="card-body d-flex flex-column p-3">
-          <h6 class="card-title clamp-2">${esc(t.titulo)}</h6>
-          <p class="card-text small text-muted mt-auto mb-0">Pieza: ${esc(t.pieza_nombre || 'General')}</p>
+    <div class="card-dist p-3 mb-3 d-flex gap-3 align-items-start">
+      <div class="dist-logo"><i class="fas fa-store"></i></div>
+      <div class="flex-grow-1 overflow-hidden">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="fw-bold text-white">${esc(d.distribuidor_nombre)}</span>
+          <a href="${esc(url)}" target="_blank" rel="noopener"
+             class="btn btn-sm btn-outline-danger" style="border-radius:50px;font-size:.75rem;">
+            <i class="fas fa-external-link-alt me-1"></i>Ver
+          </a>
         </div>
+        <p class="mb-1 small text-white-50 clamp-2">${esc(d.nombre_pieza_dist || d.pieza_nombre)}</p>
+        <span class="badge bg-danger" style="font-size:.7rem;">${esc(d.referencia)}</span>
       </div>
     </div>`;
 }
 
-function cardPieza(p) {
-  const img = p.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
-  const desc = (p.descripcion || '').substring(0, 80);
+// ── Card manual ───────────────────────────────────────────────────────────────
+function cardManual(m) {
+  const url   = m.archivo_url || '#';
+  const pieza = m.pieza_nombre ? `<span class="text-white-50 small">Pieza: ${esc(m.pieza_nombre)}</span>` : '';
   return `
-    <div class="col-12 col-sm-6">
-      <div class="card bg-dark text-white border-0 shadow card-tuning h-100">
-        <img src="${esc(img)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(p.nombre)}">
-        <div class="card-body d-flex flex-column p-3">
-          <span class="badge bg-danger mb-2 align-self-start">${esc(p.referencia)}</span>
-          <h6 class="card-title clamp-2">${esc(p.nombre)}</h6>
-          <p class="card-text small text-muted mt-auto mb-0">${esc(desc)}${p.descripcion && p.descripcion.length > 80 ? '…' : ''}</p>
+    <div class="card-manual p-3 mb-3 d-flex gap-3 align-items-start">
+      <div class="manual-icon"><i class="fas fa-file-pdf"></i></div>
+      <div class="flex-grow-1 overflow-hidden">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="fw-bold text-white clamp-2">${esc(m.titulo)}</span>
+          <a href="${esc(url)}" target="_blank" rel="noopener"
+             class="btn btn-sm btn-outline-light ms-2" style="border-radius:50px;font-size:.75rem;flex-shrink:0;">
+            <i class="fas fa-download me-1"></i>PDF
+          </a>
         </div>
+        ${pieza}
+        ${m.fuente ? `<span class="tag-fuente mt-1 d-inline-block">${esc(m.fuente)}</span>` : ''}
       </div>
     </div>`;
 }
@@ -204,7 +266,7 @@ modeloSelect.addEventListener('change', () => {
     .catch(() => motorSelect.innerHTML = '<option selected disabled>Error al cargar</option>');
 });
 
-// ── Motorización → Resultados ─────────────────────────────────────────────────
+// ── Motorización → Distribuidores + Manuales ─────────────────────────────────
 motorSelect.addEventListener('change', () => {
   const motId    = motorSelect.value;
   const marcaTxt = marcaSelect.options[marcaSelect.selectedIndex]?.text || '';
@@ -215,30 +277,37 @@ motorSelect.addEventListener('change', () => {
   setLoading(true);
 
   document.getElementById('vehiculo-badge').textContent = `${marcaTxt} ${modelTxt} · ${motorTxt}`;
-
-  document.getElementById('lista-tutoriales').innerHTML = '';
-  document.getElementById('lista-piezas').innerHTML = '';
+  document.getElementById('lista-distribuidores').innerHTML = '';
+  document.getElementById('lista-manuales').innerHTML = '';
   document.getElementById('sin-resultados').classList.add('d-none');
 
-  fetch(`public/ajax/get_resultados.php?motorizacion_id=${motId}`)
+  fetch(`public/ajax/get_resultados_pro.php?motorizacion_id=${motId}`)
     .then(r => r.json())
     .then(data => {
       setLoading(false);
 
-      const tutoriales = data.tutoriales || [];
-      const piezas     = data.piezas     || [];
+      const distribuidores = data.distribuidores || [];
+      const manuales       = data.manuales       || [];
 
-      if (tutoriales.length === 0 && piezas.length === 0) {
+      if (distribuidores.length === 0 && manuales.length === 0) {
         document.getElementById('sin-resultados').classList.remove('d-none');
         return;
       }
 
-      document.getElementById('lista-tutoriales').innerHTML = tutoriales.slice(0, 2).map(cardTutorial).join('');
-      document.getElementById('lista-piezas').innerHTML     = piezas.slice(0, 2).map(cardPieza).join('');
+      document.getElementById('lista-distribuidores').innerHTML =
+        distribuidores.length
+          ? distribuidores.map(cardDistribuidor).join('')
+          : '<p class="text-white-50 small">No hay distribuidores para esta motorización.</p>';
+
+      document.getElementById('lista-manuales').innerHTML =
+        manuales.length
+          ? manuales.map(cardManual).join('')
+          : '<p class="text-white-50 small">No hay manuales para esta motorización.</p>';
     })
     .catch(() => {
       setLoading(false);
-      document.getElementById('lista-tutoriales').innerHTML = '<p class="text-danger">Error al cargar los resultados.</p>';
+      document.getElementById('lista-distribuidores').innerHTML =
+        '<p class="text-danger">Error al cargar los resultados.</p>';
     });
 });
-</script>
+</script> 

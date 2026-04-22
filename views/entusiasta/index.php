@@ -1,6 +1,6 @@
 <style>
   .hero-bg { 
-    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)), 
+    background: linear-gradient(rgba(0,0,0,0.60), rgba(0,0,0,0.60)), 
                 url('https://images.unsplash.com/photo-1492144534652-916b3d5f0f1f?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; 
     min-height: 100vh;
   }
@@ -14,8 +14,9 @@
 </style>
 
 <section class="hero-bg text-white"
-style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; min-height:100vh; padding-bottom: 60px;">
-  <div class="container py-5">
+style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; min-height:100vh; padding-bottom: 60px; position: relative;">
+  <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50" style="z-index:0;"></div>
+<div class="container py-5 position-relative" style="z-index:1;">
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div class="text-center mb-5">
