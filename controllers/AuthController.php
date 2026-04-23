@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/UsuarioModel.php';
+require_once __DIR__ . '/../config/mailer.php';
 
 class AuthController
 {
@@ -23,6 +24,7 @@ class AuthController
             'titulo'   => 'Iniciar Sesión - TuneFix',
             'redirect' => htmlspecialchars($redirect),
             'error'    => $error,
+            'info'     => $_GET['info'] ?? null,
         ];
 
         extract($data);
@@ -55,6 +57,12 @@ class AuthController
 
         if ($usuario === false) {
             header('Location: login.php?redirect=' . urlencode($redirect) . '&error=1');
+            exit;
+        }
+
+        // Profesionales deben verificar su email antes de entrar
+        if ($usuario['rol'] === 'profesional' && !$this->usuarioModel->estaVerificado($email)) {
+            header('Location: login.php?redirect=' . urlencode($redirect) . '&error=noverificado');
             exit;
         }
 
@@ -130,7 +138,14 @@ class AuthController
 
         $usuario = $this->usuarioModel->registrar($nombre, $email, $password, $rol);
 
-        // Auto-login tras registro
+        // Si es profesional, enviar email de verificación y NO iniciar sesión aún
+        if ($rol === 'profesional') {
+            enviarEmailVerificacion($email, $nombre, $usuario['token']);
+            header('Location: login.php?info=verificacion');
+            exit;
+        }
+
+        // Auto-login para principiante y entusiasta
         $_SESSION['usuario_id']     = $usuario['id'];
         $_SESSION['usuario_nombre'] = $usuario['nombre'];
         $_SESSION['usuario_email']  = $usuario['email'];

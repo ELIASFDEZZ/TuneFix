@@ -39,17 +39,47 @@ class UsuarioModel
     public function registrar(string $nombre, string $email, string $password, string $rol = 'principiante'): array
     {
         $hash = password_hash($password, PASSWORD_BCRYPT);
+
+        // Los profesionales empiezan sin verificar; el resto se verifican automáticamente
+        $verificado = ($rol === 'profesional') ? 0 : 1;
+        $token      = ($rol === 'profesional') ? bin2hex(random_bytes(32)) : null;
+
         $stmt = $this->pdo->prepare(
-            "INSERT INTO usuario (nombre, email, contrasenia, rol) VALUES (?, ?, ?, ?)"
+            "INSERT INTO usuario (nombre, email, contrasenia, rol, token_verificacion, email_verificado)
+             VALUES (?, ?, ?, ?, ?, ?)"
         );
-        $stmt->execute([$nombre, $email, $hash, $rol]);
+        $stmt->execute([$nombre, $email, $hash, $rol, $token, $verificado]);
 
         return [
             'id'     => (int) $this->pdo->lastInsertId(),
             'nombre' => $nombre,
             'email'  => $email,
             'rol'    => $rol,
+            'token'  => $token,
+            'email_verificado' => $verificado,
         ];
+    }
+
+    /** Verifica un token de verificación y activa la cuenta. Devuelve true si fue válido. */
+    public function verificarToken(string $token): bool
+    {
+        $stmt = $this->pdo->prepare(
+            "UPDATE usuario SET email_verificado = 1, token_verificacion = NULL
+             WHERE token_verificacion = ? AND email_verificado = 0 LIMIT 1"
+        );
+        $stmt->execute([$token]);
+        return $stmt->rowCount() > 0;
+    }
+
+    /** Devuelve si el email del usuario está verificado */
+    public function estaVerificado(string $email): bool
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT email_verificado FROM usuario WHERE email = ? LIMIT 1"
+        );
+        $stmt->execute([$email]);
+        $row = $stmt->fetch();
+        return $row && (bool) $row['email_verificado'];
     }
 
     /** Actualiza el nombre de un usuario */

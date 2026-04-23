@@ -11,7 +11,17 @@
               <p class="text-white-50 small">Inicia sesión para continuar</p>
             </div>
 
-            <?php if ($error): ?>
+            <?php if (($_GET['info'] ?? '') === 'verificacion'): ?>
+              <div class="alert alert-info py-2 small text-center" role="alert">
+                <i class="fas fa-envelope me-1"></i>
+                Te hemos enviado un email de verificación. Revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta profesional.
+              </div>
+            <?php elseif ($error === 'noverificado'): ?>
+              <div class="alert alert-warning py-2 small text-center" role="alert">
+                <i class="fas fa-clock me-1"></i>
+                Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.
+              </div>
+            <?php elseif ($error): ?>
               <div class="alert alert-danger py-2 small text-center" role="alert">
                 <i class="fas fa-exclamation-circle me-1"></i>
                 Email o contraseña incorrectos.
