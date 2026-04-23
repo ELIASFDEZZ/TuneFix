@@ -14,7 +14,7 @@ class TutorialModel {
      */
     public function getRecientes(int $limite = 4): array {
         $stmt = $this->pdo->prepare(
-            "SELECT t.id, t.titulo, t.pieza_id, p.nombre AS pieza_nombre, t.imagen
+            "SELECT t.id, t.titulo, t.pieza_id, p.nombre AS pieza_nombre, t.imagen, t.youtube_id
              FROM tutorial t
              LEFT JOIN pieza p ON t.pieza_id = p.id
              ORDER BY t.id DESC
@@ -26,35 +26,36 @@ class TutorialModel {
     }
 
     /**
-     * Devuelve los tutoriales de una motorización concreta.
+     * Tutoriales para una motorización: primero los específicos, luego genéricos (sin vehículo).
      */
     public function getByMotorizacion(int $motorizacionId, int $limite = 3): array {
         $stmt = $this->pdo->prepare(
-            "SELECT t.id, t.titulo, t.imagen, p.nombre AS pieza_nombre
+            "SELECT t.id, t.titulo, t.youtube_id, t.imagen, p.nombre AS pieza_nombre,
+                    IF(t.motorizacion_id = ?, 0, 1) AS es_generico
              FROM tutorial t
              LEFT JOIN pieza p ON t.pieza_id = p.id
-             WHERE t.motorizacion_id = ?
-             ORDER BY t.id DESC
-             LIMIT ?"
+             WHERE t.motorizacion_id = ? OR t.motorizacion_id IS NULL
+             ORDER BY es_generico ASC, t.id DESC
+             LIMIT {$limite}"
         );
         $stmt->bindValue(1, $motorizacionId, PDO::PARAM_INT);
-        $stmt->bindValue(2, $limite, PDO::PARAM_INT);
+        $stmt->bindValue(2, $motorizacionId, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
     public function getByModelo(int $modeloId, int $limite = 3): array {
         $stmt = $this->pdo->prepare(
-            "SELECT t.id, t.titulo, t.imagen, p.nombre AS pieza_nombre
+            "SELECT t.id, t.titulo, t.youtube_id, t.imagen, p.nombre AS pieza_nombre,
+                    IF(t.motorizacion_id IS NULL, 1, 0) AS es_generico
              FROM tutorial t
              LEFT JOIN pieza p ON t.pieza_id = p.id
-             JOIN motorizacion m ON t.motorizacion_id = m.id
-             WHERE m.modelo_id = ?
-             ORDER BY t.id DESC
-             LIMIT ?"
+             LEFT JOIN motorizacion m ON t.motorizacion_id = m.id
+             WHERE m.modelo_id = ? OR t.motorizacion_id IS NULL
+             ORDER BY es_generico ASC, t.id DESC
+             LIMIT {$limite}"
         );
         $stmt->bindValue(1, $modeloId, PDO::PARAM_INT);
-        $stmt->bindValue(2, $limite, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
     }
@@ -65,7 +66,7 @@ class TutorialModel {
     public function getAll(string $busqueda = ''): array {
         if ($busqueda !== '') {
             $stmt = $this->pdo->prepare(
-                "SELECT t.id, t.titulo, t.imagen, p.nombre AS pieza_nombre
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre
                  FROM tutorial t
                  LEFT JOIN pieza p ON t.pieza_id = p.id
                  WHERE t.titulo LIKE ? OR p.nombre LIKE ?
@@ -76,7 +77,7 @@ class TutorialModel {
             $stmt->bindValue(2, $like);
         } else {
             $stmt = $this->pdo->prepare(
-                "SELECT t.id, t.titulo, t.imagen, p.nombre AS pieza_nombre
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre
                  FROM tutorial t
                  LEFT JOIN pieza p ON t.pieza_id = p.id
                  ORDER BY t.titulo ASC"

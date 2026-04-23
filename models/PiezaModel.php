@@ -91,6 +91,21 @@ class PiezaModel {
     }
 
     /**
+     * Devuelve una pieza por su ID.
+     */
+    public function getById(int $id): ?array {
+        $stmt = $this->pdo->prepare(
+            "SELECT id, referencia, nombre, descripcion, imagen
+             FROM pieza
+             WHERE id = ?"
+        );
+        $stmt->bindValue(1, $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    /**
      * Devuelve todas las piezas, con búsqueda opcional por nombre/referencia.
      */
     public function getAll(string $busqueda = ''): array {

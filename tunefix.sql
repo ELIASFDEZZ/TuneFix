@@ -285,7 +285,7 @@ CREATE TABLE `usuario` (
   `nombre` varchar(100) NOT NULL,
   `email` varchar(150) NOT NULL,
   `contrasenia` varchar(255) NOT NULL,
-  `rol` varchar(50) DEFAULT NULL
+  `rol` enum('principiante','entusiasta','profesional') NOT NULL DEFAULT 'principiante'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -293,9 +293,9 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `nombre`, `email`, `contrasenia`, `rol`) VALUES
-(1, 'Juan Pérez', 'juan.mecanico@gmail.com', '$2y$10$ejemploHasheado1234567890', 'usuario'),
-(2, 'Ana López', 'ana.tunefix@hotmail.com', '$2y$10$otroHashSeguroAqui..', 'admin'),
-(3, 'Carlos Gómez', 'carlos88@yahoo.es', '$2y$10$hashDePruebaParaInsert', 'usuario');
+(1, 'Juan Pérez', 'juan.mecanico@gmail.com', '$2y$10$ejemploHasheado1234567890', 'principiante'),
+(2, 'Ana López', 'ana.tunefix@hotmail.com', '$2y$10$otroHashSeguroAqui..', 'profesional'),
+(3, 'Carlos Gómez', 'carlos88@yahoo.es', '$2y$10$hashDePruebaParaInsert', 'entusiasta');
 
 -- --------------------------------------------------------
 

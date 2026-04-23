@@ -79,6 +79,33 @@
   .divider-o::before, .divider-o::after {
     content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.12);
   }
+
+  /* ── YouTube tutorial card ── */
+  .yt-img-wrap { position: relative; overflow: hidden; }
+  .yt-play-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0);
+    transition: background .3s ease;
+  }
+  .card-tuning:hover .yt-play-overlay { background: rgba(0,0,0,0.35); }
+  .yt-play-btn {
+    width: 48px; height: 48px;
+    background: #ff0000; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0.7);
+    transition: opacity .25s ease, transform .25s ease;
+    box-shadow: 0 4px 16px rgba(255,0,0,.5);
+  }
+  .yt-play-btn i { color: #fff; font-size: 1.1rem; margin-left: 3px; }
+  .card-tuning:hover .yt-play-btn { opacity: 1; transform: scale(1); }
+  .yt-badge-overlay {
+    position: absolute; bottom: 6px; right: 6px;
+    background: rgba(0,0,0,.75); color: #fff;
+    font-size: .62rem; font-weight: 700; letter-spacing: .4px;
+    padding: 2px 6px; border-radius: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
 </style>
 
 <section class="hero-bg text-white"
@@ -219,14 +246,35 @@ function esc(str) {
 }
 
 function cardTutorial(t) {
-  const img = t.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
+  const ytId  = t.youtube_id || '';
+  const thumb = ytId
+    ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
+    : (t.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen');
+  const ytBadge = ytId
+    ? `<span style="background:#ff0000;color:#fff;font-size:.65rem;padding:2px 7px;border-radius:4px;font-weight:700;">
+         <i class="fab fa-youtube me-1"></i>YouTube
+       </span>`
+    : '';
+  const clickAttr = ytId
+    ? `onclick="verVideo('${ytId}','${esc(t.titulo).replace(/'/g,"\\'")}')" style="cursor:pointer;"`
+    : `style="cursor:default;"`;
   return `
     <div class="col-12 col-sm-6">
-      <div class="card bg-dark text-white border-0 shadow card-tuning h-100">
-        <img src="${esc(img)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(t.titulo)}">
-        <div class="card-body d-flex flex-column p-3">
-          <h6 class="card-title clamp-2">${esc(t.titulo)}</h6>
-          <p class="card-text small text-muted mt-auto mb-0">Pieza: ${esc(t.pieza_nombre || 'General')}</p>
+      <div ${clickAttr}>
+        <div class="card bg-dark text-white border-0 shadow card-tuning h-100" style="transition:transform .25s,box-shadow .25s;">
+          <div style="position:relative;overflow:hidden;">
+            <img src="${esc(thumb)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(t.titulo)}"
+                 onerror="this.src='https://via.placeholder.com/300x180?text=Sin+imagen'">
+            <div class="yt-play-overlay">
+              <div class="yt-play-btn"><i class="fas fa-play"></i></div>
+            </div>
+            ${ytId ? `<div style="position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,.75);padding:2px 6px;border-radius:3px;font-size:.65rem;display:flex;align-items:center;gap:3px;"><i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube</div>` : ''}
+          </div>
+          <div class="card-body d-flex flex-column p-3">
+            ${ytBadge}
+            <h6 class="card-title clamp-2 mt-1">${esc(t.titulo)}</h6>
+            <p class="card-text small text-muted mt-auto mb-0">Pieza: ${esc(t.pieza_nombre || 'General')}</p>
+          </div>
         </div>
       </div>
     </div>`;
@@ -358,4 +406,36 @@ motorSelect.addEventListener('change', () => {
 
   cargarResultados(motId, vehiculo);
 });
+
+// ── Reproductor de video en modal ──
+function verVideo(ytId, titulo) {
+  if (!ytId) return;
+  document.getElementById('videoModalTitle').textContent = titulo;
+  document.getElementById('videoIframe').src = 'https://www.youtube.com/embed/' + ytId + '?autoplay=1';
+  new bootstrap.Modal(document.getElementById('videoModal')).show();
+}
+document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+  document.getElementById('videoIframe').src = '';
+});
 </script>
+
+<!-- ══ MODAL REPRODUCTOR ══════════════════════════════════════════ -->
+<div class="modal fade" id="videoModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="background:#0d0d0d;border:1px solid rgba(255,60,0,.25);border-radius:14px;overflow:hidden;">
+      <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,.08);padding:12px 18px;">
+        <h6 class="modal-title text-white fw-semibold mb-0" id="videoModalTitle" style="max-width:90%;"></h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="ratio ratio-16x9">
+          <iframe id="videoIframe" src="" title=""
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

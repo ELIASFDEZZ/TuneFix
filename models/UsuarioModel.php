@@ -36,19 +36,19 @@ class UsuarioModel
     }
 
     /** Registra un nuevo usuario */
-    public function registrar(string $nombre, string $email, string $password): array
+    public function registrar(string $nombre, string $email, string $password, string $rol = 'principiante'): array
     {
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $stmt = $this->pdo->prepare(
-            "INSERT INTO usuario (nombre, email, contrasenia, rol) VALUES (?, ?, ?, 'usuario')"
+            "INSERT INTO usuario (nombre, email, contrasenia, rol) VALUES (?, ?, ?, ?)"
         );
-        $stmt->execute([$nombre, $email, $hash]);
+        $stmt->execute([$nombre, $email, $hash, $rol]);
 
         return [
             'id'     => (int) $this->pdo->lastInsertId(),
             'nombre' => $nombre,
             'email'  => $email,
-            'rol'    => 'usuario',
+            'rol'    => $rol,
         ];
     }
 

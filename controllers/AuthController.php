@@ -98,10 +98,18 @@ class AuthController
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         $confirm  = $_POST['confirm'] ?? '';
+        $rol      = trim($_POST['rol'] ?? '');
+
+        $rolesValidos = ['principiante', 'entusiasta', 'profesional'];
 
         // Validaciones básicas
         if ($nombre === '' || $email === '' || $password === '') {
             header('Location: register.php?error=campos');
+            exit;
+        }
+
+        if (!in_array($rol, $rolesValidos, true)) {
+            header('Location: register.php?error=rol');
             exit;
         }
 
@@ -120,7 +128,7 @@ class AuthController
             exit;
         }
 
-        $usuario = $this->usuarioModel->registrar($nombre, $email, $password);
+        $usuario = $this->usuarioModel->registrar($nombre, $email, $password, $rol);
 
         // Auto-login tras registro
         $_SESSION['usuario_id']     = $usuario['id'];

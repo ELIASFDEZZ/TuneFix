@@ -4,6 +4,7 @@ require_once __DIR__ . '/../models/ModeloModel.php';
 require_once __DIR__ . '/../models/MotorizacionModel.php';
 require_once __DIR__ . '/../models/PiezaModel.php';
 require_once __DIR__ . '/../models/TutorialModel.php';
+require_once __DIR__ . '/../models/ManualModel.php';
 
 /**
  * Controlador que responde a las peticiones AJAX (devuelve JSON)
@@ -15,13 +16,15 @@ class AjaxController
     private MotorizacionModel $motorizacionModel;
     private PiezaModel $piezaModel;
     private TutorialModel $tutorialModel;
+    private ManualModel $manualModel;
 
     public function __construct()
     {
-        $this->modeloModel = new ModeloModel();
+        $this->modeloModel       = new ModeloModel();
         $this->motorizacionModel = new MotorizacionModel();
-        $this->piezaModel = new PiezaModel();
-        $this->tutorialModel = new TutorialModel();
+        $this->piezaModel        = new PiezaModel();
+        $this->tutorialModel     = new TutorialModel();
+        $this->manualModel       = new ManualModel();
     }
 
     /**
@@ -102,6 +105,29 @@ class AjaxController
                 'tutoriales' => $this->tutorialModel->getByModelo($modelId, 3),
             ]);
         }
+        exit;
+    }
+
+    /**
+     * Devuelve piezas y manuales para el modo Entusiasta
+     */
+    public function getResultadosEntusiasta(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $motId = isset($_GET['motorizacion_id']) && is_numeric($_GET['motorizacion_id'])
+            ? (int) $_GET['motorizacion_id']
+            : null;
+
+        if (!$motId) {
+            echo json_encode(['piezas' => [], 'manuales' => []]);
+            exit;
+        }
+
+        echo json_encode([
+            'piezas'   => $this->piezaModel->getByMotorizacion($motId, 2),
+            'manuales' => $this->manualModel->getByMotorizacion($motId),
+        ]);
         exit;
     }
 }

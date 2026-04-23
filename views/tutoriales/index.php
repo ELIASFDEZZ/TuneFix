@@ -30,12 +30,34 @@
   .play-overlay {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    background: rgba(164, 4, 46, 0);
+    background: rgba(0,0,0,0);
     transition: background 0.3s ease;
   }
-  .card-tutorial:hover .play-overlay { background: rgba(164, 4, 46, 0.22); }
-  .play-icon { font-size: 2.8rem; color: #fff; opacity: 0; transition: opacity 0.3s ease; }
-  .card-tutorial:hover .play-icon { opacity: 1; }
+  .card-tutorial:hover .play-overlay { background: rgba(0,0,0,0.35); }
+  .play-btn {
+    width: 56px; height: 56px;
+    background: #ff0000;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0.7);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 4px 20px rgba(255,0,0,0.5);
+  }
+  .play-btn i { color: #fff; font-size: 1.3rem; margin-left: 4px; }
+  .card-tutorial:hover .play-btn { opacity: 1; transform: scale(1); }
+  /* Badge YouTube */
+  .yt-badge {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.75); color: #fff;
+    font-size: .65rem; font-weight: 700; letter-spacing: .5px;
+    padding: 3px 7px; border-radius: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .yt-duration {
+    position: absolute; bottom: 8px; left: 8px;
+    background: rgba(0,0,0,0.75); color: #fff;
+    font-size: .7rem; padding: 2px 6px; border-radius: 3px;
+  }
 
   /* ── BADGE PRINCIPIANTE: rojo del navbar ── */
   .badge-nivel {
@@ -211,36 +233,51 @@
             $img   = !empty($tutorial['imagen'])       ? $tutorial['imagen']       : 'https://via.placeholder.com/400x220?text=Sin+imagen';
             $pieza = !empty($tutorial['pieza_nombre']) ? $tutorial['pieza_nombre'] : 'General';
           ?>
+          <?php
+            $ytId     = $tutorial['youtube_id'] ?? '';
+            $thumb    = $ytId
+              ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg"
+              : (!empty($tutorial['imagen']) ? $tutorial['imagen'] : 'https://via.placeholder.com/400x220?text=Sin+imagen');
+            $ytUrl    = $ytId ? "https://www.youtube.com/watch?v={$ytId}" : '#';
+            $target   = $ytId ? '_blank' : '_self';
+          ?>
           <div class="col-sm-6 col-md-4 col-xl-3">
-            <div class="card border-0 shadow-sm card-tutorial h-100">
-              <!-- Imagen con overlay de play -->
-              <div class="img-wrap">
-                <img
-                  src="<?= htmlspecialchars($img) ?>"
-                  class="card-img-top"
-                  style="height: 175px; object-fit: cover; display: block;"
-                  alt="<?= htmlspecialchars($tutorial['titulo']) ?>"
-                  onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
-                >
-                <div class="play-overlay">
-                  <i class="fas fa-play-circle play-icon"></i>
+            <div class="text-decoration-none d-block h-100"
+                 style="cursor:pointer;"
+                 onclick="verVideo('<?= htmlspecialchars($ytId, ENT_QUOTES) ?>', '<?= htmlspecialchars($tutorial['titulo'], ENT_QUOTES) ?>')">
+              <div class="card border-0 shadow-sm card-tutorial h-100">
+                <div class="img-wrap">
+                  <img
+                    src="<?= htmlspecialchars($thumb) ?>"
+                    class="card-img-top"
+                    style="height: 175px; object-fit: cover; display: block;"
+                    alt="<?= htmlspecialchars($tutorial['titulo']) ?>"
+                    onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
+                  >
+                  <div class="play-overlay">
+                    <div class="play-btn"><i class="fas fa-play"></i></div>
+                  </div>
+                  <?php if ($ytId): ?>
+                    <div class="yt-badge"><i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube</div>
+                  <?php endif; ?>
                 </div>
-              </div>
-              <div class="card-body d-flex flex-column p-3">
-                <div class="d-flex gap-2 flex-wrap mb-2">
-                  <span class="badge badge-nivel">
-                    <i class="fas fa-graduation-cap me-1"></i>Principiante
-                  </span>
-                  <span class="badge badge-pieza">
-                    <i class="fas fa-cog me-1"></i><?= htmlspecialchars($pieza) ?>
-                  </span>
+                <div class="card-body d-flex flex-column p-3">
+                  <div class="d-flex gap-2 flex-wrap mb-2">
+                    <?php if ($ytId): ?>
+                      <span class="badge" style="background:#ff0000;color:#fff;font-size:.68rem;">
+                        <i class="fab fa-youtube me-1"></i>autodoces
+                      </span>
+                    <?php endif; ?>
+                    <span class="badge badge-pieza">
+                      <i class="fas fa-cog me-1"></i><?= htmlspecialchars($pieza) ?>
+                    </span>
+                  </div>
+                  <h6 class="card-title fw-semibold text-black clamp-2 mt-auto mb-0" style="line-height: 1.4;">
+                    <?= htmlspecialchars($tutorial['titulo']) ?>
+                  </h6>
                 </div>
-                <h6 class="card-title fw-semibold text-black clamp-2 mt-auto mb-0" style="line-height: 1.4;">
-                  <?= htmlspecialchars($tutorial['titulo']) ?>
-                </h6>
+                <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
               </div>
-              <!-- Línea inferior roja-naranja (guiño al footer) -->
-              <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
             </div>
           </div>
         <?php endforeach; ?>
@@ -249,3 +286,36 @@
 
   </div>
 </section>
+
+<!-- ══ MODAL REPRODUCTOR ══════════════════════════════════════════ -->
+<div class="modal fade" id="videoModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="background:#0d0d0d;border:1px solid rgba(255,60,0,.25);border-radius:14px;overflow:hidden;">
+      <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,.08);padding:12px 18px;">
+        <h6 class="modal-title text-white fw-semibold mb-0" id="videoModalTitle" style="max-width:90%;"></h6>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="ratio ratio-16x9">
+          <iframe id="videoIframe" src="" title=""
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function verVideo(ytId, titulo) {
+  if (!ytId) return;
+  document.getElementById('videoModalTitle').textContent = titulo;
+  document.getElementById('videoIframe').src = 'https://www.youtube.com/embed/' + ytId + '?autoplay=1';
+  new bootstrap.Modal(document.getElementById('videoModal')).show();
+}
+document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
+  document.getElementById('videoIframe').src = '';
+});
+</script>

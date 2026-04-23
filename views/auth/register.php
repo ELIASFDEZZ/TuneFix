@@ -17,6 +17,7 @@
                 'password' => 'Las contraseñas no coinciden.',
                 'corta'    => 'La contraseña debe tener al menos 6 caracteres.',
                 'email'    => 'Ese email ya está registrado.',
+                'rol'      => 'Debes elegir un tipo de usuario.',
               ];
               if ($error && isset($mensajes[$error])):
             ?>
@@ -90,11 +91,70 @@
                 </div>
               </div>
 
+              <!-- Selector de tipo de usuario -->
+              <div class="mb-4">
+                <label class="form-label text-white-50 small">¿Cuál es tu nivel?</label>
+                <input type="hidden" name="rol" id="rolInput" value="">
+                <div class="row g-2">
+
+                  <div class="col-4">
+                    <div class="rol-card" data-rol="principiante" onclick="seleccionarRol(this)">
+                      <i class="fas fa-graduation-cap fa-lg mb-2"></i>
+                      <div class="rol-label">Principiante</div>
+                    </div>
+                  </div>
+
+                  <div class="col-4">
+                    <div class="rol-card" data-rol="entusiasta" onclick="seleccionarRol(this)">
+                      <i class="fas fa-tools fa-lg mb-2"></i>
+                      <div class="rol-label">Entusiasta</div>
+                    </div>
+                  </div>
+
+                  <div class="col-4">
+                    <div class="rol-card" data-rol="profesional" onclick="seleccionarRol(this)">
+                      <i class="fas fa-user-tie fa-lg mb-2"></i>
+                      <div class="rol-label">Profesional</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
               <button type="submit" class="btn w-100 fw-bold py-2"
                 style="background: rgb(164,4,46); color: white; border: none;">
                 <i class="fas fa-user-plus me-2"></i>Crear cuenta
               </button>
             </form>
+
+            <style>
+              .rol-card {
+                cursor: pointer;
+                border: 2px solid rgba(255,255,255,0.15);
+                border-radius: 10px;
+                padding: 14px 6px 10px;
+                text-align: center;
+                color: rgba(255,255,255,0.55);
+                transition: all 0.2s ease;
+                background: rgba(255,255,255,0.04);
+                user-select: none;
+              }
+              .rol-card:hover {
+                border-color: rgba(255,60,0,0.5);
+                color: rgba(255,255,255,0.85);
+                background: rgba(255,60,0,0.08);
+              }
+              .rol-card.selected {
+                border-color: rgb(164,4,46);
+                background: rgba(164,4,46,0.2);
+                color: #fff;
+              }
+              .rol-label {
+                font-size: 0.75rem;
+                font-weight: 600;
+                margin-top: 4px;
+              }
+            </style>
 
             <div class="text-center mt-4">
               <span class="text-white-50 small">¿Ya tienes cuenta?</span>
@@ -120,5 +180,11 @@ function togglePass(inputId, iconId) {
     input.type = 'password';
     icon.classList.replace('fa-eye-slash', 'fa-eye');
   }
+}
+
+function seleccionarRol(card) {
+  document.querySelectorAll('.rol-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('rolInput').value = card.dataset.rol;
 }
 </script>

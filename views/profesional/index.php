@@ -65,6 +65,33 @@
     border-radius: 50px;
     padding: 2px 10px;
   }
+
+  .mis-coches-section {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 28px;
+  }
+  .mis-coches-title {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(255,255,255,0.5);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .mis-coches-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+  .coche-btn {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 12px 16px; color: #fff;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: all 0.25s ease; text-align: left; width: 100%;
+  }
+  .coche-btn:hover { background: rgba(255,60,0,0.2); border-color: rgba(255,60,0,0.5); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,60,0,0.2); }
+  .coche-btn.activo { background: linear-gradient(135deg, rgba(164,4,46,0.6), rgba(255,60,0,0.4)); border-color: rgba(255,60,0,0.7); box-shadow: 0 4px 16px rgba(255,60,0,0.3); }
+  .coche-btn-icon { width: 38px; height: 38px; flex-shrink: 0; background: linear-gradient(135deg, #ff3c00, #ff0000); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+  .coche-btn-marca { font-weight: 700; font-size: 0.9rem; line-height: 1.2; }
+  .coche-btn-motor { font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 1px; }
+  .divider-o { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.35); font-size: 0.8rem; font-weight: 600; margin-bottom: 20px; }
+  .divider-o::before, .divider-o::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
 </style>
 
 <section style="background: linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)), url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; min-height:100vh; padding-bottom: 60px;">
@@ -77,6 +104,35 @@
             <h1 class="display-3 fw-bold mb-3">Modo <span class="accent-red">Profesional</span></h1>
             <p class="lead text-white-50">Acceso total · Distribuidores reales · Manuales técnicos · Sin límites</p>
           </div>
+
+          <?php if (!empty($cochesUsuario)): ?>
+          <!-- ── MIS COCHES GUARDADOS ── -->
+          <div class="mis-coches-section">
+            <div class="mis-coches-title">
+              <i class="fas fa-car"></i> Elige tu coche
+            </div>
+            <div class="row g-2">
+              <?php foreach ($cochesUsuario as $c): ?>
+                <?php
+                  $motId    = (int) $c['motorizacion_id'];
+                  $label    = htmlspecialchars($c['marca_nombre'] . ' ' . $c['modelo_nombre']);
+                  $sublabel = htmlspecialchars($c['motor_nombre'] . ($c['tipo_combustible'] ? ' · ' . $c['tipo_combustible'] : '') . ($c['potencia'] ? ' · ' . $c['potencia'] : ''));
+                  $vehiculoJS = htmlspecialchars($c['marca_nombre'] . ' ' . $c['modelo_nombre'] . ' · ' . $c['motor_nombre'], ENT_QUOTES);
+                ?>
+                <div class="col-sm-6 col-lg-4">
+                  <button class="coche-btn" id="coche-<?= $motId ?>" onclick="elegirCoche(<?= $motId ?>, '<?= $vehiculoJS ?>')">
+                    <div class="coche-btn-icon"><i class="fas fa-car"></i></div>
+                    <div>
+                      <div class="coche-btn-marca"><?= $label ?></div>
+                      <div class="coche-btn-motor"><?= $sublabel ?></div>
+                    </div>
+                  </button>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
+          <div class="divider-o">o busca manualmente</div>
+          <?php endif; ?>
 
           <!-- Selectores en cascada -->
           <div class="row g-4 mb-5">
@@ -221,6 +277,19 @@ function cardManual(m) {
 }
 
 // ── Marca → Modelos ───────────────────────────────────────────────────────────
+// ── Clic en coche guardado ──
+function elegirCoche(motId, vehiculo) {
+  document.querySelectorAll('.coche-btn').forEach(b => b.classList.remove('activo'));
+  const btn = document.getElementById('coche-' + motId);
+  if (btn) btn.classList.add('activo');
+  marcaSelect.selectedIndex = 0;
+  modeloSelect.innerHTML = '<option selected disabled>Primero selecciona marca</option>';
+  modeloSelect.disabled  = true;
+  motorSelect.innerHTML  = '<option selected disabled>Primero selecciona modelo</option>';
+  motorSelect.disabled   = true;
+  cargarResultados(motId, vehiculo);
+}
+
 marcaSelect.addEventListener('change', () => {
   const marcaId = marcaSelect.value;
   modeloSelect.innerHTML = '<option selected disabled>Cargando modelos...</option>';
@@ -272,14 +341,19 @@ motorSelect.addEventListener('change', () => {
   const marcaTxt = marcaSelect.options[marcaSelect.selectedIndex]?.text || '';
   const modelTxt = modeloSelect.options[modeloSelect.selectedIndex]?.text || '';
   const motorTxt = motorSelect.options[motorSelect.selectedIndex]?.text || '';
+  cargarResultados(motId, `${marcaTxt} ${modelTxt} · ${motorTxt}`);
+});
 
+function cargarResultados(motId, vehiculo) {
   resultados.classList.remove('d-none');
   setLoading(true);
 
-  document.getElementById('vehiculo-badge').textContent = `${marcaTxt} ${modelTxt} · ${motorTxt}`;
+  document.getElementById('vehiculo-badge').textContent = vehiculo;
   document.getElementById('lista-distribuidores').innerHTML = '';
   document.getElementById('lista-manuales').innerHTML = '';
   document.getElementById('sin-resultados').classList.add('d-none');
+
+  resultados.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   fetch(`public/ajax/get_resultados_pro.php?motorizacion_id=${motId}`)
     .then(r => r.json())
@@ -309,5 +383,5 @@ motorSelect.addEventListener('change', () => {
       document.getElementById('lista-distribuidores').innerHTML =
         '<p class="text-danger">Error al cargar los resultados.</p>';
     });
-});
+}
 </script> 

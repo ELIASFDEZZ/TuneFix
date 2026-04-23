@@ -231,28 +231,30 @@
             $desc = !empty($pieza['descripcion']) ? $pieza['descripcion'] : 'Sin descripción disponible.';
           ?>
           <div class="col-sm-6 col-md-4 col-xl-3">
-            <div class="card border-0 shadow-sm card-pieza h-100">
-              <img
-                src="<?= htmlspecialchars($img) ?>"
-                class="card-img-top"
-                style="height: 175px; object-fit: cover;"
-                alt="<?= htmlspecialchars($pieza['nombre']) ?>"
-                onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
-              >
-              <div class="card-body d-flex flex-column p-3">
-                <span class="badge badge-ref align-self-start mb-2">
-                  <i class="fas fa-barcode me-1"></i><?= htmlspecialchars($pieza['referencia']) ?>
-                </span>
-                <h6 class="card-title fw-semibold text-black mb-2" style="line-height: 1.4;">
-                  <?= htmlspecialchars($pieza['nombre']) ?>
-                </h6>
-                <p class="card-text small text-black-50 clamp-3 mt-auto mb-0">
-                  <?= htmlspecialchars($desc) ?>
-                </p>
+            <a href="pieza-detalle.php?id=<?= $pieza['id'] ?><?= $motorizacionId > 0 ? '&motorizacion_id=' . $motorizacionId . '&vehiculo=' . urlencode($vehiculo) : '' ?>" class="text-decoration-none d-block h-100">
+              <div class="card border-0 shadow-sm card-pieza h-100">
+                <img
+                  src="<?= htmlspecialchars($img) ?>"
+                  class="card-img-top"
+                  style="height: 175px; object-fit: cover;"
+                  alt="<?= htmlspecialchars($pieza['nombre']) ?>"
+                  onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
+                >
+                <div class="card-body d-flex flex-column p-3">
+                  <span class="badge badge-ref align-self-start mb-2">
+                    <i class="fas fa-barcode me-1"></i><?= htmlspecialchars($pieza['referencia']) ?>
+                  </span>
+                  <h6 class="card-title fw-semibold text-black mb-2" style="line-height: 1.4;">
+                    <?= htmlspecialchars($pieza['nombre']) ?>
+                  </h6>
+                  <p class="card-text small text-black-50 clamp-3 mt-auto mb-0">
+                    <?= htmlspecialchars($desc) ?>
+                  </p>
+                </div>
+                <!-- Línea inferior roja-naranja (guiño al footer) -->
+                <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
               </div>
-              <!-- Línea inferior roja-naranja (guiño al footer) -->
-              <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
-            </div>
+            </a>
           </div>
         <?php endforeach; ?>
       </div>
