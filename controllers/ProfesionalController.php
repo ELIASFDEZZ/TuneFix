@@ -1,18 +1,18 @@
 <?php
 
 require_once __DIR__ . '/../models/MarcaModel.php';
-require_once __DIR__ . '/../models/TutorialModel.php';
+require_once __DIR__ . '/../models/DistribuidorModel.php';
 require_once __DIR__ . '/../models/PiezaModel.php';
 
 class ProfesionalController {
 
     private MarcaModel    $marcaModel;
-    private TutorialModel $tutorialModel;
+    private DistribuidorModel $distribuidorModel;
     private PiezaModel    $piezaModel;
 
     public function __construct() {
         $this->marcaModel    = new MarcaModel();
-        $this->tutorialModel = new TutorialModel();
+        $this->distribuidorModel = new DistribuidorModel();
         $this->piezaModel    = new PiezaModel();
     }
 
@@ -20,8 +20,6 @@ class ProfesionalController {
         $data = [
             'titulo'     => 'Modo Profesional - TuneFix',
             'marcas'     => $this->marcaModel->getAll(),
-            'tutoriales' => $this->tutorialModel->getRecientes(15),   // Sin límite práctico
-            'piezas'     => $this->piezaModel->getRecientes(20),
         ];
 
         $this->render('profesional/index', $data);
