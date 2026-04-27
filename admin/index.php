@@ -40,11 +40,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── Piezas ──
     if ($action === 'save_pieza') {
-        $id   = (int)($_POST['id'] ?? 0);
-        $ref  = trim($_POST['referencia'] ?? '');
-        $nom  = trim($_POST['nombre'] ?? '');
-        $desc = trim($_POST['descripcion'] ?? '');
-        $img  = trim($_POST['imagen'] ?? '');
+        $id    = (int)($_POST['id'] ?? 0);
+        $ref   = trim($_POST['referencia'] ?? '');
+        $nom   = trim($_POST['nombre'] ?? '');
+        $desc  = trim($_POST['descripcion'] ?? '');
+        $img   = trim($_POST['imagen'] ?? '');
+        $motId = (int)($_POST['motorizacion_id'] ?? 0) ?: null;
         if ($nom !== '' && $ref !== '') {
             if ($id > 0) {
                 $pdo->prepare("UPDATE pieza SET referencia=?,nombre=?,descripcion=?,imagen=? WHERE id=?")
@@ -52,6 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $pdo->prepare("INSERT INTO pieza (referencia,nombre,descripcion,imagen) VALUES (?,?,?,?)")
                     ->execute([$ref,$nom,$desc,$img]);
+                $id = (int)$pdo->lastInsertId();
+            }
+            // Actualizar compatibilidad con vehículo
+            $pdo->prepare("DELETE FROM compatibilidad_pieza WHERE pieza_id=?")->execute([$id]);
+            if ($motId) {
+                $pdo->prepare("INSERT INTO compatibilidad_pieza (pieza_id, motorizacion_id) VALUES (?,?)")
+                    ->execute([$id, $motId]);
             }
         }
         header("Location: index.php?page=piezas&ok=saved"); exit;

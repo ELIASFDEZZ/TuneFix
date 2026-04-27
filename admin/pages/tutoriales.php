@@ -196,10 +196,13 @@ $ok = $_GET['ok'] ?? '';
 </div>
 
 <script>
-const modalEl  = document.getElementById('modalTutorial');
-const bsModal  = new bootstrap.Modal(modalEl);
+let bsModal = null;
 
 function abrirModal(data) {
+  if (!bsModal) {
+    bsModal = new bootstrap.Modal(document.getElementById('modalTutorial'));
+  }
+
   const editar = data && data.id;
   document.getElementById('modalTitulo').textContent = editar ? 'Editar tutorial' : 'Añadir tutorial';
   document.getElementById('fId').value      = editar ? data.id      : '';
@@ -211,11 +214,8 @@ function abrirModal(data) {
   document.getElementById('fYtUrl').value = ytId ? `https://www.youtube.com/watch?v=${ytId}` : '';
   mostrarPreview(ytId);
 
-  const selPieza = document.getElementById('fPieza');
-  selPieza.value = editar ? (data.pieza_id || '') : '';
-
-  const selMot = document.getElementById('fMot');
-  selMot.value = editar ? (data.motorizacion_id || '') : '';
+  document.getElementById('fPieza').value = editar ? (data.pieza_id || '') : '';
+  document.getElementById('fMot').value   = editar ? (data.motorizacion_id || '') : '';
 
   bsModal.show();
 }

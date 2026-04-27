@@ -1,3 +1,9 @@
+<?php
+$rol = $_SESSION['usuario_rol'] ?? null;
+$esPrincipiante = $rol === 'principiante';
+$esEntusiasta   = $rol === 'entusiasta';
+$esProfesional  = $rol === 'profesional';
+?>
 <section class="position-relative text-white text-center d-flex align-items-center justify-content-center"
          style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; height:75vh;">
 
@@ -6,8 +12,9 @@
   <div class="container position-relative">
     <h2 class="mb-5">¿Que tipo de usuario eres?</h2>
 
-    <div class="row text-start">
+    <div class="row text-start justify-content-center">
 
+      <?php if ($esPrincipiante || $esEntusiasta || $esProfesional || !$rol): ?>
       <div class="col-md-4 mb-4">
         <h5>Principiante</h5>
         <p class="small">
@@ -17,7 +24,9 @@
           <a href="principiante.php" class="btn btn-light">Principiante</a>
         </div>
       </div>
+      <?php endif; ?>
 
+      <?php if ($esEntusiasta || $esProfesional): ?>
       <div class="col-md-4 mb-4">
         <h5>Entusiasta</h5>
         <p class="small">
@@ -27,7 +36,9 @@
           <a href="entusiasta.php" class="btn btn-light">Entusiasta</a>
         </div>
       </div>
+      <?php endif; ?>
 
+      <?php if ($esProfesional): ?>
       <div class="col-md-4 mb-4">
         <h5>Profesional</h5>
         <p class="small">
@@ -37,6 +48,7 @@
           <a href="profesional.php" class="btn btn-light">Profesional</a>
         </div>
       </div>
+      <?php endif; ?>
 
     </div>
   </div>

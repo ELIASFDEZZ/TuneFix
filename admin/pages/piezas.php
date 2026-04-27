@@ -16,9 +16,18 @@ $stmtC = $pdo->prepare($countSql); $stmtC->execute($countParams);
 $total = (int) $stmtC->fetchColumn();
 $totalPages = (int) ceil($total / $perPage);
 
-// List
+// List (incluye vehículo asociado si lo hay)
 $sql = "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen,
-               (SELECT COUNT(*) FROM compatibilidad_pieza cp WHERE cp.pieza_id = p.id) AS compat
+               (SELECT COUNT(*) FROM compatibilidad_pieza cp WHERE cp.pieza_id = p.id) AS compat,
+               (SELECT mz.id FROM compatibilidad_pieza cp
+                JOIN motorizacion mz ON mz.id = cp.motorizacion_id
+                WHERE cp.pieza_id = p.id LIMIT 1) AS mot_id,
+               (SELECT CONCAT(ma.nombre,' ',mo.nombre,' · ',mz.nombre)
+                FROM compatibilidad_pieza cp
+                JOIN motorizacion mz ON mz.id = cp.motorizacion_id
+                JOIN modelo mo ON mo.id = mz.modelo_id
+                JOIN marca ma ON ma.id = mo.marca_id
+                WHERE cp.pieza_id = p.id LIMIT 1) AS vehiculo
         FROM pieza p";
 $params = [];
 if ($search !== '') {
@@ -30,13 +39,14 @@ $sql .= " ORDER BY p.nombre ASC LIMIT {$perPage} OFFSET {$offset}";
 $stmt = $pdo->prepare($sql); $stmt->execute($params);
 $piezas = $stmt->fetchAll();
 
-// Pieza para editar
-$editPieza = null;
-if (isset($_GET['edit'])) {
-    $eStmt = $pdo->prepare("SELECT * FROM pieza WHERE id=?");
-    $eStmt->execute([(int)$_GET['edit']]);
-    $editPieza = $eStmt->fetch();
-}
+// Motorizaciones para el selector
+$motorizaciones = $pdo->query(
+    "SELECT mz.id, CONCAT(ma.nombre, ' ', mo.nombre, ' · ', mz.nombre) AS label
+     FROM motorizacion mz
+     JOIN modelo mo ON mo.id = mz.modelo_id
+     JOIN marca ma  ON ma.id = mo.marca_id
+     ORDER BY ma.nombre, mo.nombre, mz.nombre"
+)->fetchAll();
 
 $ok = $_GET['ok'] ?? '';
 ?>
@@ -68,11 +78,11 @@ $ok = $_GET['ok'] ?? '';
   <div class="table-responsive">
     <table class="table table-admin">
       <thead>
-        <tr><th>Imagen</th><th>Referencia</th><th>Nombre</th><th>Descripción</th><th>Compat.</th><th>Acciones</th></tr>
+        <tr><th>Imagen</th><th>Referencia</th><th>Nombre</th><th>Vehículo</th><th>Compat.</th><th>Acciones</th></tr>
       </thead>
       <tbody>
         <?php if (empty($piezas)): ?>
-          <tr><td colspan="6" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay piezas.</td></tr>
+          <tr><td colspan="7" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay piezas.</td></tr>
         <?php endif; ?>
         <?php foreach ($piezas as $p): ?>
         <tr>
@@ -83,14 +93,21 @@ $ok = $_GET['ok'] ?? '';
           </td>
           <td><span style="background:rgba(164,4,46,.15);color:rgb(164,4,46);padding:3px 8px;border-radius:6px;font-size:.75rem;font-family:monospace;"><?= htmlspecialchars($p['referencia']) ?></span></td>
           <td style="color:#fff;font-weight:500;max-width:200px;"><?= htmlspecialchars($p['nombre']) ?></td>
-          <td style="color:rgba(255,255,255,.4);font-size:.8rem;max-width:220px;">
-            <?= htmlspecialchars(mb_substr($p['descripcion'] ?? '', 0, 70)) ?><?= strlen($p['descripcion']??'') > 70 ? '…' : '' ?>
+          <td style="color:rgba(255,255,255,.55);font-size:.78rem;max-width:180px;">
+            <?= $p['vehiculo'] ? htmlspecialchars($p['vehiculo']) : '<span style="color:rgba(255,255,255,.2);">—</span>' ?>
           </td>
           <td><span style="background:rgba(255,255,255,.07);padding:3px 8px;border-radius:20px;font-size:.78rem;"><?= $p['compat'] ?></span></td>
           <td>
             <div class="d-flex gap-2">
               <button class="btn-edit-sm"
-                      onclick="editPieza(<?= $p['id'] ?>, <?= htmlspecialchars(json_encode($p['referencia'])) ?>, <?= htmlspecialchars(json_encode($p['nombre'])) ?>, <?= htmlspecialchars(json_encode($p['descripcion'] ?? '')) ?>, <?= htmlspecialchars(json_encode($p['imagen'] ?? '')) ?>)">
+                      onclick='editPieza(<?= htmlspecialchars(json_encode([
+                        "id"          => $p["id"],
+                        "referencia"  => $p["referencia"],
+                        "nombre"      => $p["nombre"],
+                        "descripcion" => $p["descripcion"] ?? "",
+                        "imagen"      => $p["imagen"] ?? "",
+                        "mot_id"      => $p["mot_id"] ?? "",
+                      ])) ?>)'>
                 <i class="fas fa-pen"></i> Editar
               </button>
               <form method="POST" action="index.php?page=piezas" style="display:inline;"
@@ -150,6 +167,15 @@ $ok = $_GET['ok'] ?? '';
               <label class="form-label-admin">URL de imagen</label>
               <input type="url" name="imagen" id="p_img" class="form-control-admin form-control" placeholder="https://...">
             </div>
+            <div class="col-12">
+              <label class="form-label-admin">Vehículo / Motorización <span style="color:rgba(255,255,255,.3);font-weight:400;">(opcional)</span></label>
+              <select name="motorizacion_id" id="p_mot" class="form-select form-select-admin">
+                <option value="">— Sin vehículo —</option>
+                <?php foreach ($motorizaciones as $m): ?>
+                  <option value="<?= $m['id'] ?>"><?= htmlspecialchars($m['label']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -168,14 +194,16 @@ function resetForm() {
   document.getElementById('p_nom').value    = '';
   document.getElementById('p_desc').value   = '';
   document.getElementById('p_img').value    = '';
+  document.getElementById('p_mot').value    = '';
   document.getElementById('modalTitle').innerHTML = '<i class="fas fa-cog me-2" style="color:rgb(164,4,46);"></i>Nueva pieza';
 }
-function editPieza(id, ref, nom, desc, img) {
-  document.getElementById('pieza_id').value = id;
-  document.getElementById('p_ref').value    = ref;
-  document.getElementById('p_nom').value    = nom;
-  document.getElementById('p_desc').value   = desc;
-  document.getElementById('p_img').value    = img;
+function editPieza(data) {
+  document.getElementById('pieza_id').value = data.id;
+  document.getElementById('p_ref').value    = data.referencia;
+  document.getElementById('p_nom').value    = data.nombre;
+  document.getElementById('p_desc').value   = data.descripcion;
+  document.getElementById('p_img').value    = data.imagen;
+  document.getElementById('p_mot').value    = data.mot_id || '';
   document.getElementById('modalTitle').innerHTML = '<i class="fas fa-pen me-2" style="color:#ffc107;"></i>Editar pieza';
   new bootstrap.Modal(document.getElementById('modalPieza')).show();
 }

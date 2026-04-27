@@ -207,6 +207,15 @@
                     Favoritos
                   </a>
                 </li>
+                <!-- Subir vídeo (solo profesional) -->
+                <?php if (($_SESSION['usuario_rol'] ?? '') === 'profesional'): ?>
+                <li>
+                  <a class="dropdown-item-tuning" href="subir-video.php">
+                    <span class="item-icon" style="background:rgba(0,180,100,0.15);color:#00b464;"><i class="fas fa-video"></i></span>
+                    Subir vídeo
+                  </a>
+                </li>
+                <?php endif; ?>
                 <!-- Separador -->
                 <li><hr class="dropdown-divider dropdown-divider-tuning"></li>
                 <!-- Cerrar sesión -->
