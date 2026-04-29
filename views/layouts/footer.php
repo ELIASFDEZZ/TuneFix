@@ -78,7 +78,7 @@
     transition: color 0.3s ease;
   }
 </style>
-
+<?php require_once __DIR__ . '/chatbot.php'; ?>
 </body>
 
 </html>
