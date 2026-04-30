@@ -61,14 +61,36 @@ class TutorialModel {
     }
 
     /**
+     * Inserta un nuevo tutorial y devuelve su ID.
+     */
+    public function crear(array $data): int
+    {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO tutorial (usuario_id, titulo, youtube_id, imagen, pieza_id, motorizacion_id)
+             VALUES (:usuario_id, :titulo, :youtube_id, :imagen, :pieza_id, :motorizacion_id)"
+        );
+        $stmt->execute([
+            ':usuario_id'      => $data['usuario_id']      ?? null,
+            ':titulo'          => $data['titulo'],
+            ':youtube_id'      => $data['youtube_id'],
+            ':imagen'          => $data['imagen']          ?? null,
+            ':pieza_id'        => $data['pieza_id']        ?? null,
+            ':motorizacion_id' => $data['motorizacion_id'] ?? null,
+        ]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    /**
      * Devuelve todos los tutoriales, con búsqueda opcional por título.
      */
     public function getAll(string $busqueda = ''): array {
         if ($busqueda !== '') {
             $stmt = $this->pdo->prepare(
-                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre,
+                        t.usuario_id, u.nombre AS nombre_usuario
                  FROM tutorial t
                  LEFT JOIN pieza p ON t.pieza_id = p.id
+                 LEFT JOIN usuario u ON t.usuario_id = u.id
                  WHERE t.titulo LIKE ? OR p.nombre LIKE ?
                  ORDER BY t.titulo ASC"
             );
@@ -77,9 +99,11 @@ class TutorialModel {
             $stmt->bindValue(2, $like);
         } else {
             $stmt = $this->pdo->prepare(
-                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre,
+                        t.usuario_id, u.nombre AS nombre_usuario
                  FROM tutorial t
                  LEFT JOIN pieza p ON t.pieza_id = p.id
+                 LEFT JOIN usuario u ON t.usuario_id = u.id
                  ORDER BY t.titulo ASC"
             );
         }

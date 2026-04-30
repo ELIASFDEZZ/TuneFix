@@ -105,6 +105,41 @@
             <p class="lead text-white-50">Acceso total · Distribuidores reales · Manuales técnicos · Sin límites</p>
           </div>
 
+          <!-- ── Bloque de seguidores ── -->
+          <?php
+            $esPropietario = isset($profesionalId) && isset($_SESSION['usuario_id'])
+                             && (int)$_SESSION['usuario_id'] === (int)$profesionalId;
+            $yaSigue       = isset($estaSiguiendo) && $estaSiguiendo;
+          ?>
+          <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <span id="contador-seguidores"
+                    style="background:rgba(255,60,0,0.12);border:1px solid rgba(255,60,0,0.3);
+                           border-radius:50px;color:#ff6b35;font-weight:700;font-size:0.9rem;padding:6px 18px;">
+                <i class="fas fa-users me-1"></i>
+                <?= (int)($numSeguidores ?? 0) ?> <?= ((int)($numSeguidores ?? 0)) === 1 ? 'seguidor' : 'seguidores' ?>
+              </span>
+              <?php if ($esPropietario): ?>
+              <a href="mis-seguidores.php"
+                 style="color:rgba(255,255,255,0.4);font-size:0.8rem;text-decoration:none;">
+                <i class="fas fa-arrow-right me-1"></i>Ver quién me sigue
+              </a>
+              <?php endif; ?>
+            </div>
+
+            <?php if (!$esPropietario && isset($_SESSION['usuario_id'])): ?>
+            <button id="btn-seguir"
+                    onclick="toggleSeguir(<?= (int)($profesionalId ?? 0) ?>)"
+                    style="background:<?= $yaSigue ? 'rgba(255,255,255,0.1)' : 'linear-gradient(45deg,#a4042e,#ff3c00)' ?>;
+                           border:none;border-radius:50px;color:#fff;font-weight:700;
+                           padding:8px 24px;font-size:0.88rem;cursor:pointer;transition:opacity .2s;"
+                    data-siguiendo="<?= $yaSigue ? '1' : '0' ?>">
+              <i class="fas <?= $yaSigue ? 'fa-user-minus' : 'fa-user-plus' ?> me-1"></i>
+              <span id="btn-seguir-txt"><?= $yaSigue ? 'Dejar de seguir' : 'Seguir' ?></span>
+            </button>
+            <?php endif; ?>
+          </div>
+
           <?php if (!empty($cochesUsuario)): ?>
           <!-- ── MIS COCHES GUARDADOS ── -->
           <div class="mis-coches-section">
@@ -343,6 +378,36 @@ motorSelect.addEventListener('change', () => {
   const motorTxt = motorSelect.options[motorSelect.selectedIndex]?.text || '';
   cargarResultados(motId, `${marcaTxt} ${modelTxt} · ${motorTxt}`);
 });
+
+// ── Seguir / Dejar de seguir ─────────────────────────────────────────────────
+function toggleSeguir(profesionalId) {
+  const btn        = document.getElementById('btn-seguir');
+  const txt        = document.getElementById('btn-seguir-txt');
+  const contador   = document.getElementById('contador-seguidores');
+  const siguiendo  = btn.dataset.siguiendo === '1';
+  const accion     = siguiendo ? 'dejar' : 'seguir';
+
+  btn.disabled = true;
+
+  const fd = new FormData();
+  fd.append('profesional_id', profesionalId);
+
+  fetch(`seguir.php?accion=${accion}`, { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const nuevoEstado = !siguiendo;
+        btn.dataset.siguiendo = nuevoEstado ? '1' : '0';
+        btn.style.background  = nuevoEstado ? 'rgba(255,255,255,0.1)' : 'linear-gradient(45deg,#a4042e,#ff3c00)';
+        txt.textContent       = nuevoEstado ? 'Dejar de seguir' : 'Seguir';
+        btn.querySelector('i').className = `fas ${nuevoEstado ? 'fa-user-minus' : 'fa-user-plus'} me-1`;
+        const n = data.seguidores ?? 0;
+        contador.innerHTML = `<i class="fas fa-users me-1"></i>${n} ${n === 1 ? 'seguidor' : 'seguidores'}`;
+      }
+    })
+    .catch(() => {})
+    .finally(() => { btn.disabled = false; });
+}
 
 function cargarResultados(motId, vehiculo) {
   resultados.classList.remove('d-none');

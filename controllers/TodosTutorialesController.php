@@ -1,17 +1,20 @@
 <?php
 
 require_once __DIR__ . '/../models/TutorialModel.php';
+require_once __DIR__ . '/../models/SeguimientoModel.php';
 
 /**
  * Controlador que gestiona la página de tutoriales para principiantes
  */
 class TodosTutorialesController
 {
-    private TutorialModel $tutorialModel;
+    private TutorialModel      $tutorialModel;
+    private SeguimientoModel   $seguimientoModel;
 
     public function __construct()
     {
-        $this->tutorialModel = new TutorialModel();
+        $this->tutorialModel    = new TutorialModel();
+        $this->seguimientoModel = new SeguimientoModel();
     }
 
     /**
@@ -19,12 +22,19 @@ class TodosTutorialesController
      */
     public function index(): void
     {
-        $busqueda = trim($_GET['busqueda'] ?? '');
+        $busqueda  = trim($_GET['busqueda'] ?? '');
+        $usuarioId = isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : null;
+
+        $seguidos = $usuarioId
+            ? array_column($this->seguimientoModel->getProfesionalesSeguidos($usuarioId), 'id')
+            : [];
 
         $data = [
             'titulo'     => 'Tutoriales para Principiantes - TuneFix',
             'tutoriales' => $this->tutorialModel->getAll($busqueda),
             'busqueda'   => $busqueda,
+            'seguidos'   => $seguidos,
+            'usuarioId'  => $usuarioId,
         ];
 
         $this->render('tutoriales/index', $data);

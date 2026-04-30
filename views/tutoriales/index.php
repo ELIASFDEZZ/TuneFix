@@ -272,9 +272,33 @@
                       <i class="fas fa-cog me-1"></i><?= htmlspecialchars($pieza) ?>
                     </span>
                   </div>
-                  <h6 class="card-title fw-semibold text-black clamp-2 mt-auto mb-0" style="line-height: 1.4;">
+                  <h6 class="card-title fw-semibold text-black clamp-2 mt-auto mb-2" style="line-height: 1.4;">
                     <?= htmlspecialchars($tutorial['titulo']) ?>
                   </h6>
+                  <?php
+                    $subidorId   = (int) ($tutorial['usuario_id'] ?? 0);
+                    $subidorNom  = $tutorial['nombre_usuario'] ?? '';
+                    $esMio       = ($usuarioId && $subidorId && $subidorId === $usuarioId);
+                    $yaSigue     = in_array($subidorId, $seguidos ?? [], true);
+                  ?>
+                  <?php if ($subidorId && !$esMio): ?>
+                  <div class="d-flex align-items-center justify-content-between mt-1" onclick="event.stopPropagation()">
+                    <span class="text-muted" style="font-size:.72rem;">
+                      <i class="fas fa-user me-1"></i><?= htmlspecialchars($subidorNom) ?>
+                    </span>
+                    <button
+                      class="btn-seguir-tutorial"
+                      data-id="<?= $subidorId ?>"
+                      data-siguiendo="<?= $yaSigue ? '1' : '0' ?>"
+                      onclick="toggleSeguirTutorial(this)"
+                      style="background:<?= $yaSigue ? 'rgba(0,0,0,0.08)' : 'linear-gradient(45deg,#a4042e,#ff3c00)' ?>;
+                             border:none;border-radius:50px;color:<?= $yaSigue ? '#555' : '#fff' ?>;
+                             font-size:.7rem;font-weight:700;padding:3px 12px;cursor:pointer;transition:all .2s;white-space:nowrap;">
+                      <i class="fas <?= $yaSigue ? 'fa-user-minus' : 'fa-user-plus' ?> me-1"></i>
+                      <span><?= $yaSigue ? 'Siguiendo' : 'Seguir' ?></span>
+                    </button>
+                  </div>
+                  <?php endif; ?>
                 </div>
                 <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
               </div>
@@ -318,4 +342,29 @@ function verVideo(ytId, titulo) {
 document.getElementById('videoModal').addEventListener('hidden.bs.modal', function () {
   document.getElementById('videoIframe').src = '';
 });
+
+function toggleSeguirTutorial(btn) {
+  const profesionalId = btn.dataset.id;
+  const siguiendo     = btn.dataset.siguiendo === '1';
+  const accion        = siguiendo ? 'dejar' : 'seguir';
+  btn.disabled = true;
+
+  const fd = new FormData();
+  fd.append('profesional_id', profesionalId);
+
+  fetch('seguir.php?accion=' + accion, { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const nuevoEstado = !siguiendo;
+        btn.dataset.siguiendo = nuevoEstado ? '1' : '0';
+        btn.style.background  = nuevoEstado ? 'rgba(0,0,0,0.08)' : 'linear-gradient(45deg,#a4042e,#ff3c00)';
+        btn.style.color       = nuevoEstado ? '#555' : '#fff';
+        btn.querySelector('i').className = 'fas ' + (nuevoEstado ? 'fa-user-minus' : 'fa-user-plus') + ' me-1';
+        btn.querySelector('span').textContent = nuevoEstado ? 'Siguiendo' : 'Seguir';
+      }
+    })
+    .catch(() => {})
+    .finally(() => { btn.disabled = false; });
+}
 </script>
