@@ -230,8 +230,9 @@
       <div class="row g-4">
         <?php foreach ($tutoriales as $tutorial): ?>
           <?php
-            $img   = !empty($tutorial['imagen'])       ? $tutorial['imagen']       : 'https://via.placeholder.com/400x220?text=Sin+imagen';
-            $pieza = !empty($tutorial['pieza_nombre']) ? $tutorial['pieza_nombre'] : 'General';
+            $img      = !empty($tutorial['imagen'])       ? $tutorial['imagen']       : 'https://via.placeholder.com/400x220?text=Sin+imagen';
+            $pieza    = !empty($tutorial['pieza_nombre']) ? $tutorial['pieza_nombre'] : 'General';
+            $piezaId  = $tutorial['pieza_id'] ?? null;
           ?>
           <?php
             $ytId     = $tutorial['youtube_id'] ?? '';
@@ -268,9 +269,17 @@
                         <i class="fab fa-youtube me-1"></i>autodoces
                       </span>
                     <?php endif; ?>
-                    <span class="badge badge-pieza">
-                      <i class="fas fa-cog me-1"></i><?= htmlspecialchars($pieza) ?>
-                    </span>
+                    <?php if ($piezaId): ?>
+                      <a href="pieza-detalle.php?id=<?= (int)$piezaId ?>"
+                         class="badge badge-pieza text-decoration-none"
+                         onclick="event.stopPropagation()">
+                        <i class="fas fa-cog me-1"></i><?= htmlspecialchars($pieza) ?>
+                      </a>
+                    <?php else: ?>
+                      <span class="badge badge-pieza">
+                        <i class="fas fa-cog me-1"></i><?= htmlspecialchars($pieza) ?>
+                      </span>
+                    <?php endif; ?>
                   </div>
                   <h6 class="card-title fw-semibold text-black clamp-2 mt-auto mb-2" style="line-height: 1.4;">
                     <?= htmlspecialchars($tutorial['titulo']) ?>

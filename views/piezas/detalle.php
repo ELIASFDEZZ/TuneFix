@@ -110,7 +110,7 @@
           </p>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 d-flex align-items-center gap-3 flex-wrap">
           <?php
             if ($motorizacionId > 0) {
               $urlPiezas = 'todas-piezas.php?motorizacion_id=' . $motorizacionId . ($vehiculo !== '' ? '&vehiculo=' . urlencode($vehiculo) : '');
@@ -120,10 +120,67 @@
               $labelPiezas = 'Ver todas las piezas';
             }
           ?>
-          <a href="<?= $urlPiezas ?>" class="btn btn-outline-secondary me-2">
+          <a href="<?= $urlPiezas ?>" class="btn btn-outline-secondary">
             <i class="fas fa-list me-1"></i> <?= htmlspecialchars($labelPiezas) ?>
           </a>
+
+          <?php if ($usuarioId): ?>
+          <button id="btn-megusta"
+                  data-pieza-id="<?= (int)$pieza['id'] ?>"
+                  data-liked="<?= $meGusta ? '1' : '0' ?>"
+                  onclick="toggleMeGusta(this)"
+                  class="btn d-flex align-items-center gap-2"
+                  style="<?= $meGusta
+                    ? 'background:linear-gradient(45deg,#a4042e,#ff3c00);color:#fff;border:none;'
+                    : 'background:#fff;color:#a4042e;border:1.5px solid #a4042e;' ?>
+                    border-radius:50px;font-weight:700;font-size:.9rem;padding:8px 20px;transition:all .25s;">
+            <i class="fas fa-heart"></i>
+            <span id="btn-megusta-label"><?= $meGusta ? 'Guardado' : 'Me gusta' ?></span>
+            <span id="btn-megusta-count"
+                  style="background:rgba(0,0,0,0.12);border-radius:50px;padding:1px 8px;font-size:.78rem;">
+              <?= $totalMeGusta ?>
+            </span>
+          </button>
+          <?php else: ?>
+          <a href="login.php" class="btn d-flex align-items-center gap-2"
+             style="background:#fff;color:#a4042e;border:1.5px solid #a4042e;border-radius:50px;font-weight:700;font-size:.9rem;padding:8px 20px;">
+            <i class="fas fa-heart"></i> Me gusta
+            <span style="background:rgba(0,0,0,0.08);border-radius:50px;padding:1px 8px;font-size:.78rem;">
+              <?= $totalMeGusta ?>
+            </span>
+          </a>
+          <?php endif; ?>
         </div>
+
+<script>
+function toggleMeGusta(btn) {
+  const piezaId = btn.dataset.piezaId;
+  btn.disabled = true;
+
+  fetch('public/ajax/toggle_megusta_pieza.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: 'pieza_id=' + piezaId
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) { btn.disabled = false; return; }
+
+    const liked = data.liked;
+    btn.dataset.liked = liked ? '1' : '0';
+    document.getElementById('btn-megusta-label').textContent = liked ? 'Guardado' : 'Me gusta';
+    document.getElementById('btn-megusta-count').textContent = data.total;
+
+    if (liked) {
+      btn.style.cssText = 'background:linear-gradient(45deg,#a4042e,#ff3c00);color:#fff;border:none;border-radius:50px;font-weight:700;font-size:.9rem;padding:8px 20px;transition:all .25s;display:flex;align-items:center;gap:.5rem;';
+    } else {
+      btn.style.cssText = 'background:#fff;color:#a4042e;border:1.5px solid #a4042e;border-radius:50px;font-weight:700;font-size:.9rem;padding:8px 20px;transition:all .25s;display:flex;align-items:center;gap:.5rem;';
+    }
+    btn.disabled = false;
+  })
+  .catch(() => { btn.disabled = false; });
+}
+</script>
       </div>
 
     </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-03-2026 a las 22:05:35
+-- Tiempo de generación: 30-04-2026 a las 23:53:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -136,7 +136,20 @@ CREATE TABLE `marca` (
 INSERT INTO `marca` (`id`, `nombre`) VALUES
 (1, 'Volkswagen'),
 (2, 'BMW'),
-(3, 'Toyota');
+(3, 'Toyota'),
+(4, 'Audi'),
+(5, 'Ford'),
+(6, 'Mercedes-Benz'),
+(7, 'Seat'),
+(8, 'Renault'),
+(9, 'Peugeot'),
+(10, 'Opel'),
+(11, 'Honda'),
+(12, 'Nissan'),
+(13, 'Hyundai'),
+(14, 'Kia'),
+(15, 'Mazda'),
+(19, 'Seat');
 
 -- --------------------------------------------------------
 
@@ -160,7 +173,48 @@ INSERT INTO `modelo` (`id`, `nombre`, `anio_inicio`, `anio_fin`, `marca_id`) VAL
 (1, 'Golf VII', 2012, 2019, 1),
 (2, 'Golf VIII', 2019, 2025, 1),
 (3, 'Serie 3 (G20)', 2019, NULL, 2),
-(4, 'Corolla E210', 2018, NULL, 3);
+(4, 'Corolla E210', 2018, NULL, 3),
+(5, 'A4 B9', 2015, NULL, 4),
+(6, 'A3 8Y', 2020, NULL, 4),
+(7, 'Focus MK4', 2018, NULL, 5),
+(8, 'Fiesta MK8', 2017, NULL, 5),
+(9, 'Clase C W206', 2021, NULL, 6),
+(10, 'Yaris GR', 2020, NULL, 3),
+(11, 'RAV4 XA50', 2018, NULL, 3),
+(12, 'Leon MK4', 2020, NULL, 7),
+(13, 'Ibiza MK5', 2017, NULL, 7),
+(14, 'Ateca', 2016, NULL, 7),
+(15, 'Megane IV', 2015, 2023, 8),
+(16, 'Clio V', 2019, NULL, 8),
+(17, 'Kadjar', 2015, NULL, 8),
+(18, '308 MK3', 2021, NULL, 9),
+(19, '208 MK2', 2019, NULL, 9),
+(20, 'Astra L', 2021, NULL, 10),
+(21, 'Corsa F', 2019, NULL, 10),
+(22, 'Civic MK11', 2021, NULL, 11),
+(23, 'CR-V MK5', 2018, NULL, 11),
+(24, 'Qashqai J12', 2021, NULL, 12),
+(25, 'Juke F16', 2019, NULL, 12),
+(26, 'i30 PD', 2017, NULL, 13),
+(27, 'Tucson NX4', 2020, NULL, 13),
+(28, 'Ceed CD', 2018, NULL, 14),
+(29, 'Sportage NQ5', 2021, NULL, 14),
+(30, 'Mazda3 BP', 2019, NULL, 15),
+(31, 'CX-5 KF', 2017, NULL, 15),
+(32, 'A4 B9', 2015, NULL, 4),
+(33, 'A3 8Y', 2020, NULL, 4),
+(34, 'Focus MK4', 2018, NULL, 5),
+(35, 'Fiesta MK8', 2017, NULL, 5),
+(36, 'Clase C W206', 2021, NULL, 6),
+(37, 'Leon MK4', 2020, NULL, 7),
+(38, 'Ibiza MK5', 2017, NULL, 7),
+(39, 'Clio V', 2019, NULL, 8),
+(40, 'Megane IV', 2015, 2023, 8),
+(41, '208 MK2', 2019, NULL, 9),
+(42, '308 MK3', 2021, NULL, 9),
+(43, 'Civic MK11', 2021, NULL, 10),
+(44, 'i30 PD', 2017, NULL, 11),
+(45, 'Tucson NX4', 2020, NULL, 11);
 
 -- --------------------------------------------------------
 
@@ -187,7 +241,14 @@ INSERT INTO `motorizacion` (`id`, `nombre`, `potencia`, `tipo_combustible`, `tip
 (2, '2.0 TDI EA288', '150 CV', 'Diésel', '4 cilindros common rail', 'DFGA', 1),
 (3, '1.5 TSI EVO', '130 CV', 'Gasolina', '4 cilindros turbo', 'DADA', 2),
 (4, '2.0 TFSI EA888', '190 CV', 'Gasolina', '4 cilindros turbo', 'DKZA', 2),
-(5, '320d B48', '190 CV', 'Diésel', '4 cilindros turbo', 'B47', 3);
+(5, '320d B48', '190 CV', 'Diésel', '4 cilindros turbo', 'B47', 3),
+(6, '2.0 TDI EA288', '150 CV', 'Diésel', '4 cilindros common rail', 'DEUA', 5),
+(7, '40 TFSI', '204 CV', 'Gasolina', '4 cilindros turbo', 'DKWB', 5),
+(8, '30 TDI', '116 CV', 'Diésel', '4 cilindros turbo', 'DETA', 6),
+(9, '35 TFSI', '150 CV', 'Gasolina', '3 cilindros turbo', 'CZPB', 6),
+(10, '1.5 EcoBlue', '120 CV', 'Diésel', '4 cilindros turbo', 'XWJA', 7),
+(11, '1.0 EcoBoost', '125 CV', 'Gasolina', '3 cilindros turbo', 'B7DA', 8),
+(12, 'C 220d OM654', '200 CV', 'Diésel', '4 cilindros turbo', 'OM654', 9);
 
 -- --------------------------------------------------------
 
@@ -253,26 +314,48 @@ INSERT INTO `pieza` (`id`, `referencia`, `nombre`, `descripcion`, `imagen`) VALU
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `seguimiento`
+--
+
+CREATE TABLE `seguimiento` (
+  `id` int(11) NOT NULL,
+  `seguidor_id` int(11) NOT NULL,
+  `profesional_id` int(11) NOT NULL,
+  `fecha_seguimiento` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `seguimiento`
+--
+
+INSERT INTO `seguimiento` (`id`, `seguidor_id`, `profesional_id`, `fecha_seguimiento`) VALUES
+(4, 13, 6, '2026-04-30 23:39:59'),
+(6, 15, 14, '2026-04-30 23:48:27');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tutorial`
 --
 
 CREATE TABLE `tutorial` (
   `id` int(11) NOT NULL,
-  `pieza_id` int(11) NOT NULL,
-  `motorizacion_id` int(11) NOT NULL,
-  `titulo` varchar(200) NOT NULL,
-  `imagen` varchar(255) NOT NULL
+  `usuario_id` int(11) DEFAULT NULL,
+  `pieza_id` int(11) DEFAULT NULL,
+  `motorizacion_id` int(11) DEFAULT NULL,
+  `titulo` varchar(255) NOT NULL,
+  `imagen` varchar(500) DEFAULT NULL,
+  `youtube_id` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tutorial`
 --
 
-INSERT INTO `tutorial` (`id`, `pieza_id`, `motorizacion_id`, `titulo`, `imagen`) VALUES
-(1, 3, 1, 'Cómo cambiar kit de distribución 1.6 TDI CLHA Golf MK7 (paso a paso)', 'https://imgs.search.brave.com/grJKT60Hh1HltlS7NHA32gC8A22Or_hdmg2OaM_3WBA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnl0/aW1nLmNvbS92aS9M/NHFRbklJWk52by9t/cWRlZmF1bHQuanBn'),
-(2, 1, 1, 'Reemplazo de brazos de suspensión delantera Golf VII 1.6 TDI', 'https://imgs.search.brave.com/J8wGrJkKTOvMd34O6s_rulCBYrV-3EMLVjKjdt75rKQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9mdmlw/YnRibS5maWxlcm9i/b3QuY29tL21jMTIv/NTkuMDEuMjMvNTku/MDEuMjMuMDguMTUu/MDMucG5n'),
-(3, 2, 2, 'Cambio de bomba de aceite en motor 2.0 TDI EA288 - Golf 2015-2019', 'https://imgs.search.brave.com/U2jt2vqKJWTGssamuFXqkn7f2_ypkersUF3_8diGNFk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9ibG9n/LnRvdGFsZW5lcmdp/ZXMuZXMvd3AtY29u/dGVudC91cGxvYWRz/LzIwMjUvMDYvaVN0/b2NrLTExNjUzMTQy/NjYtMzAweDIwMC5q/cGc'),
-(4, 5, 1, 'Instalación de batería AGM start-stop en Volkswagen Golf VII', 'https://imgs.search.brave.com/GRUOzEIaPXKOdoyj7qX7079GA_9aRQ1jWHzaEkwghlw/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9mdmlw/YnRibS5maWxlcm9i/b3QuY29tL21jMTIv/NTUuMDEuMTMvNTUu/MDEuMTMuMDMuMDMu/MDIucG5n');
+INSERT INTO `tutorial` (`id`, `usuario_id`, `pieza_id`, `motorizacion_id`, `titulo`, `imagen`, `youtube_id`) VALUES
+(1, 6, 44, 1, 'fallo motor', NULL, 'l5AnyaVrd-s'),
+(2, 14, 34, 1, 'Prueba', NULL, 'KrENUOj_A3s'),
+(3, 14, 44, 1, 'piezas', NULL, 'i71fqvqs7KY');
 
 -- --------------------------------------------------------
 
@@ -285,17 +368,24 @@ CREATE TABLE `usuario` (
   `nombre` varchar(100) NOT NULL,
   `email` varchar(150) NOT NULL,
   `contrasenia` varchar(255) NOT NULL,
-  `rol` enum('principiante','entusiasta','profesional') NOT NULL DEFAULT 'principiante'
+  `rol` enum('principiante','entusiasta','profesional') NOT NULL DEFAULT 'principiante',
+  `token_verificacion` varchar(64) DEFAULT NULL,
+  `email_verificado` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`id`, `nombre`, `email`, `contrasenia`, `rol`) VALUES
-(1, 'Juan Pérez', 'juan.mecanico@gmail.com', '$2y$10$ejemploHasheado1234567890', 'principiante'),
-(2, 'Ana López', 'ana.tunefix@hotmail.com', '$2y$10$otroHashSeguroAqui..', 'profesional'),
-(3, 'Carlos Gómez', 'carlos88@yahoo.es', '$2y$10$hashDePruebaParaInsert', 'entusiasta');
+INSERT INTO `usuario` (`id`, `nombre`, `email`, `contrasenia`, `rol`, `token_verificacion`, `email_verificado`) VALUES
+(1, 'Juan Pérez', 'juan.mecanico@gmail.com', '$2y$10$ejemploHasheado1234567890', 'principiante', NULL, 1),
+(3, 'Carlos Gómez', 'carlos88@yahoo.es', '$2y$10$hashDePruebaParaInsert', 'principiante', NULL, 1),
+(5, 'admin', 'admin1@admin.com', '$2y$10$5oebGAExrKDGvGiM.Yvem.nJYbvU3x/iMcyuSIp3EErEBLGWL7aIq', 'principiante', NULL, 1),
+(6, 'profesional', 'profesional@gmail.com', '$2y$10$1L6.Triz5MnuWADLsMs2ZuyPXxj6/tdw0z0/9.SYPEO/4ef4fsqw.', 'profesional', NULL, 1),
+(7, 'elias', 'eliasfernandezmu@gmail.com', '$2y$10$2XBn6YJsfBl4.RtpS0Arx.KtpWAtbiy.UMvykbzR/DhiEsMbEj02i', 'profesional', NULL, 1),
+(13, 'entusiasta', 'entusiasta@gmail.com', '$2y$10$MZ9GfmtNvCiTXxwNb557xO0NYzkorQm.JKcKjoabyMAw7/eRLxIAa', 'entusiasta', NULL, 1),
+(14, 'Alejandro', 'alejandrotaguaaguilar2006@gmail.com', '$2y$10$IUkph/fmTQnwI74XQfnEe.rHy1cB3dvBK.DUijEAxZIwMuE6tw.im', 'profesional', NULL, 1),
+(15, 'Alejandro', 'alejandrotaguaaguilar@gmail.com', '$2y$10$7wMfZIku49O1lKRwMxHqg.hQt/0IsW4FKLYrcEBKJFrsjEIE87DAS', 'profesional', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -308,6 +398,15 @@ CREATE TABLE `usuario_motorizacion` (
   `usuario_id` int(11) NOT NULL,
   `motorizacion_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario_motorizacion`
+--
+
+INSERT INTO `usuario_motorizacion` (`id`, `usuario_id`, `motorizacion_id`) VALUES
+(2, 5, 5),
+(3, 6, 5),
+(4, 13, 1);
 
 --
 -- Índices para tablas volcadas
@@ -371,12 +470,21 @@ ALTER TABLE `pieza`
   ADD UNIQUE KEY `referencia` (`referencia`);
 
 --
+-- Indices de la tabla `seguimiento`
+--
+ALTER TABLE `seguimiento`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_seguimiento` (`seguidor_id`,`profesional_id`),
+  ADD KEY `fk_seg_profesional` (`profesional_id`);
+
+--
 -- Indices de la tabla `tutorial`
 --
 ALTER TABLE `tutorial`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `pieza_id` (`pieza_id`),
-  ADD KEY `motorizacion_id` (`motorizacion_id`);
+  ADD KEY `fk_tutorial_usuario` (`usuario_id`),
+  ADD KEY `fk_tutorial_pieza` (`pieza_id`),
+  ADD KEY `fk_tutorial_motorizacion` (`motorizacion_id`);
 
 --
 -- Indices de la tabla `usuario`
@@ -425,43 +533,49 @@ ALTER TABLE `manual`
 -- AUTO_INCREMENT de la tabla `marca`
 --
 ALTER TABLE `marca`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `modelo`
 --
 ALTER TABLE `modelo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de la tabla `motorizacion`
 --
 ALTER TABLE `motorizacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `pieza`
 --
 ALTER TABLE `pieza`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT de la tabla `seguimiento`
+--
+ALTER TABLE `seguimiento`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `tutorial`
 --
 ALTER TABLE `tutorial`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_motorizacion`
 --
 ALTER TABLE `usuario_motorizacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
@@ -501,11 +615,19 @@ ALTER TABLE `motorizacion`
   ADD CONSTRAINT `motorizacion_ibfk_1` FOREIGN KEY (`modelo_id`) REFERENCES `modelo` (`id`);
 
 --
+-- Filtros para la tabla `seguimiento`
+--
+ALTER TABLE `seguimiento`
+  ADD CONSTRAINT `fk_seg_profesional` FOREIGN KEY (`profesional_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_seg_seguidor` FOREIGN KEY (`seguidor_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `tutorial`
 --
 ALTER TABLE `tutorial`
-  ADD CONSTRAINT `tutorial_ibfk_1` FOREIGN KEY (`pieza_id`) REFERENCES `pieza` (`id`),
-  ADD CONSTRAINT `tutorial_ibfk_2` FOREIGN KEY (`motorizacion_id`) REFERENCES `motorizacion` (`id`);
+  ADD CONSTRAINT `fk_tutorial_motorizacion` FOREIGN KEY (`motorizacion_id`) REFERENCES `motorizacion` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_tutorial_pieza` FOREIGN KEY (`pieza_id`) REFERENCES `pieza` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_tutorial_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE SET NULL;
 
 --
 -- Filtros para la tabla `usuario_motorizacion`
@@ -513,6 +635,20 @@ ALTER TABLE `tutorial`
 ALTER TABLE `usuario_motorizacion`
   ADD CONSTRAINT `usuario_motorizacion_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
   ADD CONSTRAINT `usuario_motorizacion_ibfk_2` FOREIGN KEY (`motorizacion_id`) REFERENCES `motorizacion` (`id`);
+--
+-- Estructura de tabla para la tabla `megusta_pieza`
+--
+CREATE TABLE IF NOT EXISTS `megusta_pieza` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario_id` int(11) NOT NULL,
+  `pieza_id` int(11) NOT NULL,
+  `fecha` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_like` (`usuario_id`,`pieza_id`),
+  KEY `fk_mg_usuario` (`usuario_id`),
+  KEY `fk_mg_pieza` (`pieza_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

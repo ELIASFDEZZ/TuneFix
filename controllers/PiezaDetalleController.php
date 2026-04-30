@@ -1,14 +1,17 @@
 <?php
 
 require_once __DIR__ . '/../models/PiezaModel.php';
+require_once __DIR__ . '/../models/MeGustaPiezaModel.php';
 
 class PiezaDetalleController
 {
-    private PiezaModel $piezaModel;
+    private PiezaModel        $piezaModel;
+    private MeGustaPiezaModel $meGustaModel;
 
     public function __construct()
     {
-        $this->piezaModel = new PiezaModel();
+        $this->piezaModel   = new PiezaModel();
+        $this->meGustaModel = new MeGustaPiezaModel();
     }
 
     public function index(): void
@@ -29,12 +32,18 @@ class PiezaDetalleController
 
         $motorizacionId = isset($_GET['motorizacion_id']) ? (int) $_GET['motorizacion_id'] : 0;
         $vehiculo       = trim($_GET['vehiculo'] ?? '');
+        $usuarioId      = isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : null;
+        $meGusta        = $usuarioId ? $this->meGustaModel->isLiked($usuarioId, $id) : false;
+        $totalMeGusta   = $this->meGustaModel->getCount($id);
 
         $data = [
             'titulo'         => htmlspecialchars($pieza['nombre']) . ' - TuneFix',
             'pieza'          => $pieza,
             'motorizacionId' => $motorizacionId,
             'vehiculo'       => $vehiculo,
+            'usuarioId'      => $usuarioId,
+            'meGusta'        => $meGusta,
+            'totalMeGusta'   => $totalMeGusta,
         ];
 
         $this->render('piezas/detalle', $data);

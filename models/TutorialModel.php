@@ -86,7 +86,7 @@ class TutorialModel {
     public function getAll(string $busqueda = ''): array {
         if ($busqueda !== '') {
             $stmt = $this->pdo->prepare(
-                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre,
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, t.pieza_id, p.nombre AS pieza_nombre,
                         t.usuario_id, u.nombre AS nombre_usuario
                  FROM tutorial t
                  LEFT JOIN pieza p ON t.pieza_id = p.id
@@ -99,7 +99,7 @@ class TutorialModel {
             $stmt->bindValue(2, $like);
         } else {
             $stmt = $this->pdo->prepare(
-                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, p.nombre AS pieza_nombre,
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, t.pieza_id, p.nombre AS pieza_nombre,
                         t.usuario_id, u.nombre AS nombre_usuario
                  FROM tutorial t
                  LEFT JOIN pieza p ON t.pieza_id = p.id
