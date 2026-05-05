@@ -21,6 +21,11 @@
                 <i class="fas fa-clock me-1"></i>
                 Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.
               </div>
+            <?php elseif ($error === 'proveedor_pendiente'): ?>
+              <div class="alert alert-warning py-2 small text-center" role="alert">
+                <i class="fas fa-hourglass-half me-1"></i>
+                Tu solicitud aún no ha sido aprobada. Te avisaremos por email cuando sea revisada.
+              </div>
             <?php elseif ($error): ?>
               <div class="alert alert-danger py-2 small text-center" role="alert">
                 <i class="fas fa-exclamation-circle me-1"></i>

@@ -1,0 +1,9 @@
+# Permitir acceso a fotos de piezas (imágenes públicas del catálogo)
+Order Allow,Deny
+Allow from all
+
+# Evitar ejecución de scripts en esta carpeta
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|py|cgi|asp|aspx)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>

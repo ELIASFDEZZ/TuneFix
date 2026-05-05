@@ -1,15 +1,18 @@
 <?php
 
 require_once __DIR__ . '/../models/UsuarioModel.php';
+require_once __DIR__ . '/../models/ProveedorModel.php';
 require_once __DIR__ . '/../config/mailer.php';
 
 class AuthController
 {
     private UsuarioModel $usuarioModel;
+    private ProveedorModel $proveedorModel;
 
     public function __construct()
     {
-        $this->usuarioModel = new UsuarioModel();
+        $this->usuarioModel   = new UsuarioModel();
+        $this->proveedorModel = new ProveedorModel();
     }
 
     /**
@@ -48,11 +51,30 @@ class AuthController
         $redirect = $_POST['redirect'] ?? 'index';
 
         // Páginas permitidas como destino tras login
-        $permitidas = ['principiante', 'entusiasta', 'profesional', 'index'];
+        $permitidas = ['principiante', 'entusiasta', 'profesional', 'proveedor', 'index'];
         if (!in_array($redirect, $permitidas, true)) {
             $redirect = 'index';
         }
 
+        // ── Intentar login como Proveedor primero ─────────────────────────────
+        $proveedor = $this->proveedorModel->login($email, $password);
+        if ($proveedor !== false) {
+            if ($proveedor['estado'] !== 'aceptado') {
+                header('Location: login.php?redirect=' . urlencode($redirect) . '&error=proveedor_pendiente');
+                exit;
+            }
+            $_SESSION['usuario_id']          = $proveedor['id'];
+            $_SESSION['usuario_nombre']      = $proveedor['nombre_empresa'];
+            $_SESSION['usuario_email']       = $proveedor['email'];
+            $_SESSION['usuario_rol']         = 'proveedor';
+            $_SESSION['proveedor_id']        = $proveedor['id'];
+            $_SESSION['proveedor_empresa']   = $proveedor['nombre_empresa'];
+            $_SESSION['proveedor_responsable'] = $proveedor['nombre_responsable'];
+            header('Location: proveedor.php');
+            exit;
+        }
+
+        // ── Login normal de usuario ───────────────────────────────────────────
         $usuario = $this->usuarioModel->login($email, $password);
 
         if ($usuario === false) {

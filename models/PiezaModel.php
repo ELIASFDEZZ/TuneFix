@@ -16,6 +16,7 @@ class PiezaModel {
         $stmt = $this->pdo->prepare(
             "SELECT id, referencia, nombre, descripcion, imagen
              FROM pieza
+             WHERE activa = 1
              ORDER BY id DESC
              LIMIT ?"
         );
@@ -33,6 +34,7 @@ class PiezaModel {
              FROM pieza p
              JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
              WHERE cp.motorizacion_id = ?
+               AND p.activa = 1
              ORDER BY p.id DESC
              LIMIT ?"
         );
@@ -49,6 +51,7 @@ class PiezaModel {
              JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
              JOIN motorizacion m ON m.id = cp.motorizacion_id
              WHERE m.modelo_id = ?
+               AND p.activa = 1
              ORDER BY p.id DESC
              LIMIT ?"
         );
@@ -69,6 +72,7 @@ class PiezaModel {
                  FROM pieza p
                  JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
                  WHERE cp.motorizacion_id = ?
+                   AND p.activa = 1
                    AND (p.nombre LIKE ? OR p.referencia LIKE ?)
                  ORDER BY p.nombre ASC"
             );
@@ -82,6 +86,7 @@ class PiezaModel {
                  FROM pieza p
                  JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
                  WHERE cp.motorizacion_id = ?
+                   AND p.activa = 1
                  ORDER BY p.nombre ASC"
             );
             $stmt->bindValue(1, $motorizacionId, PDO::PARAM_INT);
@@ -97,12 +102,32 @@ class PiezaModel {
         $stmt = $this->pdo->prepare(
             "SELECT id, referencia, nombre, descripcion, imagen
              FROM pieza
-             WHERE id = ?"
+             WHERE id = ?
+               AND activa = 1"
         );
         $stmt->bindValue(1, $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch();
         return $row ?: null;
+    }
+
+    public function crear(array $datos): int {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO pieza (referencia, nombre, descripcion, imagen)
+             VALUES (?, ?, ?, ?)"
+        );
+        $stmt->execute([
+            $datos['referencia'] ?? '',
+            $datos['nombre'],
+            $datos['descripcion'] ?? null,
+            $datos['imagen'] ?? '',
+        ]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    public function updateImagen(int $id, string $imagen): void {
+        $stmt = $this->pdo->prepare("UPDATE pieza SET imagen = ? WHERE id = ?");
+        $stmt->execute([$imagen, $id]);
     }
 
     /**
@@ -113,7 +138,8 @@ class PiezaModel {
             $stmt = $this->pdo->prepare(
                 "SELECT id, referencia, nombre, descripcion, imagen
                  FROM pieza
-                 WHERE nombre LIKE ? OR referencia LIKE ?
+                 WHERE activa = 1
+                   AND (nombre LIKE ? OR referencia LIKE ?)
                  ORDER BY nombre ASC"
             );
             $like = '%' . $busqueda . '%';
@@ -123,6 +149,7 @@ class PiezaModel {
             $stmt = $this->pdo->prepare(
                 "SELECT id, referencia, nombre, descripcion, imagen
                  FROM pieza
+                 WHERE activa = 1
                  ORDER BY nombre ASC"
             );
         }

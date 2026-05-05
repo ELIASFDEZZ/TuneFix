@@ -12,7 +12,7 @@ if (!isset($_SESSION[ADMIN_SESSION_KEY])) {
 $pdo = Database::getConnection();
 
 // ── Routing ──────────────────────────────────────────────────────────────────
-$pages = ['dashboard', 'usuarios', 'piezas', 'tutoriales', 'manuales'];
+$pages = ['dashboard', 'usuarios', 'piezas', 'tutoriales', 'manuales', 'proveedores', 'proveedor-detalle'];
 $page  = $_GET['page'] ?? 'dashboard';
 if (!in_array($page, $pages, true)) $page = 'dashboard';
 
@@ -106,22 +106,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id > 0) $pdo->prepare("DELETE FROM manual WHERE id=?")->execute([$id]);
         header("Location: index.php?page=manuales&ok=del"); exit;
     }
+
+    // ── Proveedores ──
+    if ($action === 'aceptar_proveedor') {
+        require_once __DIR__ . '/../models/ProveedorModel.php';
+        require_once __DIR__ . '/../config/mailer.php';
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) {
+            $pm = new ProveedorModel();
+            $prov = $pm->getPorId($id);
+            $pm->aceptar($id);
+            if ($prov) {
+                enviarEmailProveedorAceptado($prov['email'], $prov['nombre_empresa'], $prov['nombre_responsable']);
+            }
+        }
+        header("Location: index.php?page=proveedores&ok=aceptado"); exit;
+    }
+    if ($action === 'rechazar_proveedor') {
+        require_once __DIR__ . '/../models/ProveedorModel.php';
+        require_once __DIR__ . '/../config/mailer.php';
+        $id     = (int)($_POST['id'] ?? 0);
+        $motivo = trim($_POST['motivo'] ?? '');
+        if ($id > 0 && $motivo !== '') {
+            $pm = new ProveedorModel();
+            $prov = $pm->getPorId($id);
+            $pm->rechazar($id, $motivo);
+            if ($prov) {
+                enviarEmailProveedorRechazado($prov['email'], $prov['nombre_empresa'], $prov['nombre_responsable'], $motivo);
+            }
+        }
+        header("Location: index.php?page=proveedores&ok=rechazado"); exit;
+    }
 }
 
 // ── Labels ───────────────────────────────────────────────────────────────────
 $pageTitles = [
-    'dashboard'  => 'Dashboard',
-    'usuarios'   => 'Gestión de Usuarios',
-    'piezas'     => 'Gestión de Piezas',
-    'tutoriales' => 'Tutoriales',
-    'manuales'   => 'Manuales',
+    'dashboard'        => 'Dashboard',
+    'usuarios'         => 'Gestión de Usuarios',
+    'piezas'           => 'Gestión de Piezas',
+    'tutoriales'       => 'Tutoriales',
+    'manuales'         => 'Manuales',
+    'proveedores'      => 'Proveedores',
+    'proveedor-detalle'=> 'Detalle de Solicitud',
 ];
 $pageIcons = [
-    'dashboard'  => 'fa-chart-bar',
-    'usuarios'   => 'fa-users',
-    'piezas'     => 'fa-cog',
-    'tutoriales' => 'fa-play-circle',
-    'manuales'   => 'fa-file-pdf',
+    'dashboard'        => 'fa-chart-bar',
+    'usuarios'         => 'fa-users',
+    'piezas'           => 'fa-cog',
+    'tutoriales'       => 'fa-play-circle',
+    'manuales'         => 'fa-file-pdf',
+    'proveedores'      => 'fa-store',
+    'proveedor-detalle'=> 'fa-store',
 ];
 ?>
 <!DOCTYPE html>
@@ -236,6 +271,10 @@ $pageIcons = [
     .rol-principiante { background: rgba(13,110,253,.15); color: #6ea8fe; border: 1px solid rgba(13,110,253,.3); }
     .rol-entusiasta   { background: rgba(255,136,0,.15);  color: #ffaa44; border: 1px solid rgba(255,136,0,.3); }
     .rol-profesional  { background: rgba(164,4,46,.15);   color: #ff6b6b; border: 1px solid rgba(164,4,46,.3); }
+    .rol-proveedor    { background: rgba(255,193,7,.12);  color: #ffc107; border: 1px solid rgba(255,193,7,.3); }
+    .estado-pendiente { background: rgba(255,193,7,.12);  color: #ffc107; border: 1px solid rgba(255,193,7,.3); display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; }
+    .estado-aceptado  { background: rgba(25,135,84,.15);  color: #75b798; border: 1px solid rgba(25,135,84,.3);  display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; }
+    .estado-rechazado { background: rgba(220,53,69,.12);  color: #ff6b6b; border: 1px solid rgba(220,53,69,.3);  display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:600; }
 
     /* ── BUTTONS ── */
     .btn-red { background: var(--red); color: #fff; border: none; border-radius: 8px; font-size: .82rem; font-weight: 600; padding: 6px 14px; }
@@ -295,6 +334,27 @@ $pageIcons = [
         </a>
       </div>
     <?php endforeach; ?>
+    <div class="nav-section-label" style="margin-top:12px;">Proveedores</div>
+    <?php
+      // Contar solicitudes pendientes para el badge
+      $pendientesCount = 0;
+      try {
+          $stmtP = $pdo->query("SELECT COUNT(*) FROM proveedores WHERE estado='pendiente'");
+          $pendientesCount = (int)$stmtP->fetchColumn();
+      } catch (\Exception $e) { /* tabla aún no existe */ }
+    ?>
+    <div class="nav-item">
+      <a href="index.php?page=proveedores" class="<?= in_array($page, ['proveedores','proveedor-detalle']) ? 'active' : '' ?>"
+         style="justify-content:space-between;">
+        <span style="display:flex; align-items:center; gap:10px;">
+          <span class="nav-icon"><i class="fas fa-store"></i></span>
+          Proveedores
+        </span>
+        <?php if ($pendientesCount > 0): ?>
+          <span style="background:rgba(164,4,46,.8); color:#fff; font-size:.65rem; font-weight:700; padding:2px 7px; border-radius:10px;"><?= $pendientesCount ?></span>
+        <?php endif; ?>
+      </a>
+    </div>
   </nav>
 
   <div class="sidebar-footer">

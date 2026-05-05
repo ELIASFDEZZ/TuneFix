@@ -216,6 +216,15 @@
                   </a>
                 </li>
                 <?php endif; ?>
+                <!-- Panel Proveedor (solo proveedor) -->
+                <?php if (($_SESSION['usuario_rol'] ?? '') === 'proveedor'): ?>
+                <li>
+                  <a class="dropdown-item-tuning" href="proveedor.php">
+                    <span class="item-icon" style="background:rgba(255,193,7,0.15);color:#ffc107;"><i class="fas fa-store"></i></span>
+                    Mi panel de proveedor
+                  </a>
+                </li>
+                <?php endif; ?>
                 <!-- Separador -->
                 <li><hr class="dropdown-divider dropdown-divider-tuning"></li>
                 <!-- Cerrar sesión -->

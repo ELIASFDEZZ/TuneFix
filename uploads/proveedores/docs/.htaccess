@@ -1,0 +1,4 @@
+# Bloquear acceso directo a los documentos de proveedores
+# Solo accesibles a través de admin/admin-doc.php
+Order Deny,Allow
+Deny from all
