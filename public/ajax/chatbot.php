@@ -34,7 +34,7 @@ foreach ($historial as $msg) {
 }
 $contents[] = ['role' => 'user', 'parts' => [['text' => $mensaje]]];
 
-$apiKey = 'AIzaSyApjX-9YU2JkbIM4lApV-lEhJLTuoAtWB0';
+$apiKey = 'AIzaSyCtBwlSPzKAreUSozRwpBjfZ04hG5emsZw';
 
 $payload = json_encode([
     'contents'         => $contents,

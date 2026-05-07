@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-05-2026 a las 13:48:09
+-- Tiempo de generación: 07-05-2026 a las 12:04:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -22,6 +22,21 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `tunefix` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `tunefix`;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `carrito`
+--
+
+CREATE TABLE `carrito` (
+  `id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
+  `pieza_id` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL DEFAULT 1,
+  `precio_u` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -275,6 +290,49 @@ INSERT INTO `motorizacion` (`id`, `nombre`, `potencia`, `tipo_combustible`, `tip
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pedido`
+--
+
+CREATE TABLE `pedido` (
+  `id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
+  `stripe_session_id` varchar(200) NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `estado` enum('pendiente','pagado','cancelado') DEFAULT 'pendiente',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pedido`
+--
+
+INSERT INTO `pedido` (`id`, `usuario_id`, `stripe_session_id`, `total`, `estado`, `created_at`) VALUES
+(1, 15, 'cs_test_a1IpQBx7T6FaAgjXH8nRUlcZ4e7gPNTNcX2Yb0NewVal85tXt2KShSJw6q', 82.68, 'pagado', '2026-05-07 09:52:12');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pedido_item`
+--
+
+CREATE TABLE `pedido_item` (
+  `id` int(11) NOT NULL,
+  `pedido_id` int(11) NOT NULL,
+  `pieza_id` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_u` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pedido_item`
+--
+
+INSERT INTO `pedido_item` (`id`, `pedido_id`, `pieza_id`, `cantidad`, `precio_u`) VALUES
+(1, 1, 1, 1, 82.68);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `pieza`
 --
 
@@ -300,48 +358,48 @@ CREATE TABLE `pieza` (
 --
 
 INSERT INTO `pieza` (`id`, `referencia`, `nombre`, `descripcion`, `imagen`, `url`, `proveedor_id`, `categoria`, `estado_pieza`, `precio`, `stock`, `garantia`, `activa`, `created_at`) VALUES
-(1, '5Q0 407 151 A', 'Brazo de suspensión delantero izquierdo', 'Brazo inferior control arm para Golf MK7, compatible con 1.6 TDI y 2.0 TDI', 'https://imgs.search.brave.com/_rudAtrBif2z-onEo-oRVUN2JhrK_-iGTSIp_6d98tw/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFEYWFSNlVVRkwu/anBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(2, '04L 115 466', 'Bomba de aceite', 'Bomba de aceite original para motores EA288 2.0 TDI', 'https://imgs.search.brave.com/hW5Fz3PY_5IOiAkM2mFAnF9o0yLgtuujIOf2lIbxRXA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0yNjQ3/MTY0NCZtPTAmbj0w/JmxuZz1lcyZyZXY9/OTQwNzc5OTE', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(3, '5Q0 198 119 B', 'Kit de distribución + bomba de agua', 'Kit completo de correa de distribución + bomba para 1.6 TDI CLHA/CRKB', 'https://imgs.search.brave.com/ww2K7_FxpjXBwcpHi6u2MmSvUkTjeK3asO-yGL-vvZQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tb3RvcmRvY3Rv/ci5kZS8zNjBfcGhv/dG9zLzIxODg3NTk5/L3ByZXZpZXcuanBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(4, '1K0 919 081 AH', 'Sensor de temperatura del refrigerante', 'Sensor NTC para Golf VII varios motores TDI/TSI', 'https://imgs.search.brave.com/D7Z0YDHqzMY9L9D0lsefblECKypwwaiTk7QveZkDues/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL3Ro/dW1icy9pbWFnZXMv/Zy91VzBBQU9TdzRp/SmVlSn5pL3MtbDQw/MC53ZWJw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(5, '5Q0 915 105 AB', 'Batería AGM 70Ah', 'Batería start-stop original VW para Golf 2015-2020', 'https://imgs.search.brave.com/wYgymLjPzqo69MQ2iH3wup_NW9Za-Kp8TTVjv_QDYIY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0xMTI5/MjMyJm09MCZuPTAm/bG5nPWVzJnJldj05/NDA3NzkxNQ', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(6, '3C0 919 081', 'Módulo de control de motor (ECU)', 'ECU para 2.0 TDI 150 CV - reprogramable', 'https://imgs.search.brave.com/YA9WwbsWANlxUcuFq4WrLrHaJHfa9JiGuhPMBm0U9lc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Y2FyLXRlYy5lcy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMS8w/Mi9JTUdfMjAyMTAy/MjVfMTAyMDQ3LTg0/NXg2ODQuanBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(16, '11 42 8 575 516', 'Filtro de aceite BMW B47/B48', 'Filtro de aceite original para motores BMW B47 (diésel) y B48 (gasolina)', 'https://imgs.search.brave.com/Fie3Uaw6q4ys2FCTb9ENk7urY7AU9z0vtIL3cYHfMOk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9yZXB1/ZXN0b3ZlaGljdWxh/ci5jb20vY2RuL3No/b3AvZmlsZXMvRklM/VFJPQUNFSVRFWDEu/anBnP3Y9MTcwNDEz/ODIzMyZ3aWR0aD0x/NDQ1', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(17, '13 71 7 619 279', 'Filtro de aire BMW Serie 3 G20', 'Filtro de aire de recambio para motor BMW B47 2.0d y derivados', 'https://imgs.search.brave.com/AFGsgemh8cEop_20fPmPVGF3xYnvUsx5Z0TbzjneUV4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0yMTg1/NTE4MSZtPTAmbj0w/JmxuZz1lcyZyZXY9/OTQwNzc5NTA', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(18, '34 11 6 884 307', 'Kit pastillas de freno delanteras BMW G20', 'Pastillas de freno delanteras Brembo para BMW Serie 3 G20 320d', 'https://imgs.search.brave.com/v4WjYOzx1W3478jwlttMn0DYoYJjyAHDh5Odg_Ll1Ag/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5hdXRvZG9jLmRl/LzM2MF9waG90b3Mv/MTY2MDgzMy9oLXBy/ZXZpZXcuanBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(19, '34 21 6 884 308', 'Kit pastillas de freno traseras BMW G20', 'Pastillas traseras con sensor de desgaste para BMW Serie 3 G20', 'https://imgs.search.brave.com/5c7EkWGV8DElSQpoBlscs30vCIMN1WlVdIIgmRVA9so/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5hdXRvZG9jLmRl/LzM2MF9waG90b3Mv/MTExOTcyOTEvaC1w/cmV2aWV3LmpwZw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(20, '64 11 9 248 280', 'Filtro habitáculo (polen) BMW Serie 3 G20', 'Filtro antipolen con carbón activado para BMW Serie 3/Serie 1 F40', 'https://imgs.search.brave.com/Jfg455YsE2JueR0L3fngFd6VZOgvXiLx2z4IINr-Lws/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFVRDNtcHowNUwu/anBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(21, '04C 129 620 D', 'Filtro de aire Golf VIII 1.0 TSI', 'Filtro de aire para motores 1.0 TSI tres cilindros (código DLAA/DKRF)', 'https://imgs.search.brave.com/-u4xcAjiqJIRUzrYM4arP-09Qwj8odK052BWdkSCF_A/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0yMzky/Mzk2NyZtPTAmbj0w/JmxuZz1lcyZyZXY9/OTQwNzc5MjY', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(22, '04C 115 561 H', 'Filtro de aceite Golf VIII 1.0 TSI', 'Cartucho de filtro de aceite para motor 1.0 TSI EA211', 'https://imgs.search.brave.com/pElJInvM5QIJRhGwyVpckA9vv5CPBisrk-fNUGB7bEM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hcmQt/bW90b3JzcG9ydC5j/b20vMTk3MC1tZWRp/dW1fZGVmYXVsdC9m/aWx0cm8tYWNlaXRl/LTIwLXRzaS1lYTg4/ODMuanBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(23, '1EA 698 151', 'Pastillas de freno delanteras Golf VIII', 'Pastillas delanteras Textar para VW Golf VIII todos los motores', 'https://imgs.search.brave.com/ZSxZ6gd7OWSopgviwYP8e7vWIJTAPM5TooCZCr07VyM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zY2Ru/LmF1dG90ZWlsZWRp/cmVrdC5kZS9jYXRh/bG9nL2NhdGVnb3Jp/ZXMvNTAweDUwMC8x/OS5wbmc', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(24, '13 72 7 848 557', 'Filtro de aire BMW Serie 1 F40', 'Filtro de aire para BMW 116d (B37) y 118i (B38A) del modelo F40', 'https://imgs.search.brave.com/-B6qAtcammRSetVg9Y827JdhG_cuJmMX-CyANYY2Nvk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF85/NTMzMTYtTUxBNTAw/Nzg5NjcwMDBfMDUy/MDIyLU8ud2VicA', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(25, '34 10 6 889 441', 'Discos de freno delanteros BMW F40', 'Par de discos ventilados delanteros para BMW Serie 1 F40 116d/118i', 'https://imgs.search.brave.com/eEj4k5xyVqZR1sW0Be_HZerktfmefYK3Vc2ZyiwZns4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bWVjYXRlY2huaWMu/Y29tL2ltZy9waG90/b3Mvem9vbS9CSDMw/MjAwWi0zLmpwZw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(26, '11 42 8 570 410', 'Filtro de aceite BMW B37 diésel', 'Filtro de aceite para motor BMW B37 tres cilindros diésel (116d F40)', 'https://imgs.search.brave.com/6oOdWXqOjWAOchFp-oAeleGm9fYiq1JTrtKXJLPZkuY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bWVjYXRlY2huaWMu/Y29tL2ltZy9waG90/b3Mvem9vbS9CQzUx/MTA5LmpwZw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(27, '12 13 8 616 153', 'Bujías NGK Iridium BMW 118i B38', 'Set de 3 bujías NGK Iridium para motor BMW B38A 1.5 gasolina', 'https://imgs.search.brave.com/MzDd7laQztd9CgNKU4z5H1e3yPhkbhtKoJlRrx449ow/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hbGxp/bnBlcmZvcm1hbmNl/LmVzL3dwLWNvbnRl/bnQvdXBsb2Fkcy9u/Z2staXJpZGl1bWJp/eC1ibXctMzVpLmpw/Zw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(28, '04152-YZZA6', 'Filtro de aceite Toyota Yaris IV Hybrid', 'Filtro de aceite original Toyota para motor M15A-FXE híbrido', 'https://imgs.search.brave.com/Vo3pjQVU0LiUKVeFDyGDW7o_WnnW1Ji7qgb4uKijvb4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL2lt/YWdlcy9nL3Zjb0FB/T1N3RXcxbHBYWXEv/cy1sOTYwLndlYnA', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(29, '17801-21050', 'Filtro de aire Toyota Yaris IV', 'Filtro de aire panel para motor Toyota 1.5 Hybrid M15A Yaris IV', 'https://imgs.search.brave.com/vEFhtrkdSHTFw1cmUirWuta8rh4Rp3KoOFlcSJpz5IA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NjE0bGlxKzRNQ0wu/anBn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(30, '04465-52310', 'Pastillas de freno delanteras Toyota Yaris IV', 'Pastillas delanteras originales Toyota para Yaris IV 2020 en adelante', 'https://imgs.search.brave.com/uxBv-eqAwd7NvPW7_uKat-hgDsc085RhYYxILqGZAII/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9RX05QXzJY/XzkzOTQ0OS1NTEM4/MjgyMjc2MDY3OV8w/MzIwMjUtVi1wYXN0/aWxsYXMtZGVsYW50/ZXJhcy1wYXJhLXRv/eW90YS15YXJpcy0x/NS0xNn', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(31, '28303-21020', 'Inversor/convertidor DC-DC Toyota Yaris Hybrid', 'Módulo convertidor DC-DC del sistema híbrido Toyota Yaris IV', 'https://imgs.search.brave.com/Xy0y454yq7d5lK8V_EGXYwgJ4yyPp-H7h8heVWmLoFE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL2lt/YWdlcy9nL2ZpQUFB/T1N3STZCYzRuLTcv/cy1sMzAwLmpwZw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(32, 'JX6Z-6731-B', 'Filtro de aceite Ford Focus 1.5 EcoBlue', 'Filtro de aceite para motor Ford EcoBlue 1.5 diésel 4 cilindros', 'https://imgs.search.brave.com/MKDxbhmMzswcap8-ZVIJbvOWA2qwUUEtcDEHSPxFFcM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zaG9w/LmZvcmQuZXMvY2Ru/L3Nob3AvZmlsZXMv/OTVlYjM4MDctYzBk/Yy00ZjJlLWEzM2Yt/NmFmYjg2NzZlYzRi/LmpwZz92PTE3NjUy/MzYyNzMmd2lkdGg9/NzIw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(33, 'F1FZ-9601-A', 'Filtro de aire Ford Focus MK4 1.5 EcoBlue', 'Filtro de aire de recambio para Ford Focus MK4 motor diésel EcoBlue', 'https://imgs.search.brave.com/g99r_BovQ7zFD0BbfOnwui1uHPNEJTpzgpI-fAfBbX4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5hdXRvZG9jLmRl/LzM2MF9waG90b3Mv/MTM4OTgzNzkvaC1w/cmV2aWV3LmpwZw', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(34, 'CV6Z-2001-A', 'Pastillas de freno delanteras Ford Focus MK4', 'Pastillas delanteras EBC para Ford Focus MK4 gasolina y diésel', 'https://imgs.search.brave.com/esWOEu34Ljd0DvW3ex5LjydOzg5CPPTOfvrVocshWoc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b3RlaWxlcHJv/ZmkuZGUvdGh1bWIv/YXNzZXRzL3ByZi9l/cnNhdHpfY2F0ZWdv/cmllcy8xOS5qcGc', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(35, 'JX6Z-6K682-A', 'Kit de correa de distribución Ford 1.5 EcoBlue', 'Kit completo correa distribución + tensores para Ford EcoBlue 1.5d', 'https://images.unsplash.com/photo-1504222490345-c075b626e313?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(36, 'CM5G-6714-BA', 'Filtro de aceite Ford Fiesta 1.0 EcoBoost', 'Filtro de aceite cartucho para Ford Fiesta MK8 motor EcoBoost 1.0', 'https://images.unsplash.com/photo-1600661653561-629509216228?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(37, '1758893', 'Filtro de aire Ford Fiesta MK8 1.0', 'Filtro de aire panel para Ford Fiesta MK8 1.0 EcoBoost 100 CV', 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(38, '2115285', 'Pastillas de freno delanteras Ford Fiesta MK8', 'Pastillas delanteras para Ford Fiesta MK8 1.0 EcoBoost desde 2017', 'https://images.unsplash.com/photo-1617886322168-72b886573c35?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(39, '04C 115 562', 'Filtro de aceite Seat Ibiza 1.0 MPI', 'Filtro de aceite para motor Seat/VW 1.0 MPI tres cilindros CHYB', 'https://images.unsplash.com/photo-1622187679297-bc5ce5e0ba98?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(40, '6F0 129 620', 'Filtro de aire Seat Ibiza MK5 1.0 MPI', 'Filtro de aire para Seat Ibiza MK5 motor 1.0 MPI 80 CV', 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(41, '6Q0 698 151 F', 'Pastillas de freno delanteras Seat Ibiza MK5', 'Pastillas delanteras Ferodo para Seat Ibiza MK5 1.0 MPI y 1.6 TDI', 'https://images.unsplash.com/photo-1636207543865-acf3ad382295?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(42, '6F0 955 651', 'Escobillas limpiaparabrisas Seat Ibiza MK5', 'Par de escobillas planas para Seat Ibiza MK5 (2017 en adelante)', 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(43, '04L 115 562 C', 'Filtro de aceite Audi A3 8Y 30 TDI', 'Filtro de aceite para motor Audi/VW 1.6 TDI y 2.0 TDI EA288 (DGTE)', 'https://images.unsplash.com/photo-1599256871679-6a9e5ba04f2c?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(44, '8W0 129 620 B', 'Filtro de aire Audi A3 8Y / A4 B9', 'Filtro de aire original para Audi A3 8Y y A4 B9 motores TDI', 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(45, '8V0 698 151 G', 'Kit frenos delanteros Audi A3 8Y', 'Discos + pastillas delanteros para Audi A3 8Y 30 TDI y 35 TFSI', 'https://images.unsplash.com/photo-1611545678786-f3d8916e8a64?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(46, '8W0 615 301 M', 'Disco de freno delantero Audi A4 B9 / A3 8Y', 'Disco ventilado delantero para Audi A3 8Y y A4 B9 todos los motores', 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(47, '06K 115 562', 'Filtro de aceite Golf VIII 2.0 TFSI EA888', 'Filtro de aceite cartucho para motor 2.0 TFSI generación 3 EA888', 'https://images.unsplash.com/photo-1598965402089-897ce52e8355?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(48, '5Q0 611 701 C', 'Manguera de freno delantera VW Golf VIII', 'Manguera flexible de freno delantera para Golf VIII y León IV', 'https://images.unsplash.com/photo-1606577924006-27d39b132ae2?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(49, '5H0 915 105', 'Batería AGM 60Ah Seat León IV', 'Batería start-stop AGM para Seat León IV 1.5 TSI y 2.0 TDI', 'https://images.unsplash.com/photo-1609767905372-b9a40be58dbc?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(50, '5H0 145 962', 'Manguito de turbo Seat León IV 2.0 TDI', 'Manguito de presión entre turbo e intercooler León IV 2.0 TDI', 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=500', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
-(52, '1A56315', 'sdssdsdsdsdsd', 'sdsdsdsdsdsdsdd', '', NULL, NULL, NULL, 'nueva', 0.00, 0, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(1, '5Q0 407 151 A', 'Brazo de suspensión delantero izquierdo', 'Brazo inferior control arm para Golf MK7, compatible con 1.6 TDI y 2.0 TDI', 'https://imgs.search.brave.com/_rudAtrBif2z-onEo-oRVUN2JhrK_-iGTSIp_6d98tw/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFEYWFSNlVVRkwu/anBn', NULL, NULL, NULL, 'nueva', 82.68, 7, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(2, '04L 115 466', 'Bomba de aceite', 'Bomba de aceite original para motores EA288 2.0 TDI', 'https://imgs.search.brave.com/hW5Fz3PY_5IOiAkM2mFAnF9o0yLgtuujIOf2lIbxRXA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0yNjQ3/MTY0NCZtPTAmbj0w/JmxuZz1lcyZyZXY9/OTQwNzc5OTE', NULL, NULL, NULL, 'nueva', 180.70, 11, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(3, '5Q0 198 119 B', 'Kit de distribución + bomba de agua', 'Kit completo de correa de distribución + bomba para 1.6 TDI CLHA/CRKB', 'https://imgs.search.brave.com/ww2K7_FxpjXBwcpHi6u2MmSvUkTjeK3asO-yGL-vvZQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5tb3RvcmRvY3Rv/ci5kZS8zNjBfcGhv/dG9zLzIxODg3NTk5/L3ByZXZpZXcuanBn', NULL, NULL, NULL, 'nueva', 439.15, 14, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(4, '1K0 919 081 AH', 'Sensor de temperatura del refrigerante', 'Sensor NTC para Golf VII varios motores TDI/TSI', 'https://imgs.search.brave.com/D7Z0YDHqzMY9L9D0lsefblECKypwwaiTk7QveZkDues/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL3Ro/dW1icy9pbWFnZXMv/Zy91VzBBQU9TdzRp/SmVlSn5pL3MtbDQw/MC53ZWJw', NULL, NULL, NULL, 'nueva', 417.60, 1, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(5, '5Q0 915 105 AB', 'Batería AGM 70Ah', 'Batería start-stop original VW para Golf 2015-2020', 'https://imgs.search.brave.com/wYgymLjPzqo69MQ2iH3wup_NW9Za-Kp8TTVjv_QDYIY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0xMTI5/MjMyJm09MCZuPTAm/bG5nPWVzJnJldj05/NDA3NzkxNQ', NULL, NULL, NULL, 'nueva', 382.10, 12, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(6, '3C0 919 081', 'Módulo de control de motor (ECU)', 'ECU para 2.0 TDI 150 CV - reprogramable', 'https://imgs.search.brave.com/YA9WwbsWANlxUcuFq4WrLrHaJHfa9JiGuhPMBm0U9lc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Y2FyLXRlYy5lcy93/cC1jb250ZW50L3Vw/bG9hZHMvMjAyMS8w/Mi9JTUdfMjAyMTAy/MjVfMTAyMDQ3LTg0/NXg2ODQuanBn', NULL, NULL, NULL, 'nueva', 351.52, 13, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(16, '11 42 8 575 516', 'Filtro de aceite BMW B47/B48', 'Filtro de aceite original para motores BMW B47 (diésel) y B48 (gasolina)', 'https://imgs.search.brave.com/Fie3Uaw6q4ys2FCTb9ENk7urY7AU9z0vtIL3cYHfMOk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9yZXB1/ZXN0b3ZlaGljdWxh/ci5jb20vY2RuL3No/b3AvZmlsZXMvRklM/VFJPQUNFSVRFWDEu/anBnP3Y9MTcwNDEz/ODIzMyZ3aWR0aD0x/NDQ1', NULL, NULL, NULL, 'nueva', 89.93, 12, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(17, '13 71 7 619 279', 'Filtro de aire BMW Serie 3 G20', 'Filtro de aire de recambio para motor BMW B47 2.0d y derivados', 'https://imgs.search.brave.com/AFGsgemh8cEop_20fPmPVGF3xYnvUsx5Z0TbzjneUV4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0yMTg1/NTE4MSZtPTAmbj0w/JmxuZz1lcyZyZXY9/OTQwNzc5NTA', NULL, NULL, NULL, 'nueva', 345.04, 11, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(18, '34 11 6 884 307', 'Kit pastillas de freno delanteras BMW G20', 'Pastillas de freno delanteras Brembo para BMW Serie 3 G20 320d', 'https://imgs.search.brave.com/v4WjYOzx1W3478jwlttMn0DYoYJjyAHDh5Odg_Ll1Ag/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5hdXRvZG9jLmRl/LzM2MF9waG90b3Mv/MTY2MDgzMy9oLXBy/ZXZpZXcuanBn', NULL, NULL, NULL, 'nueva', 346.45, 15, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(19, '34 21 6 884 308', 'Kit pastillas de freno traseras BMW G20', 'Pastillas traseras con sensor de desgaste para BMW Serie 3 G20', 'https://imgs.search.brave.com/5c7EkWGV8DElSQpoBlscs30vCIMN1WlVdIIgmRVA9so/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5hdXRvZG9jLmRl/LzM2MF9waG90b3Mv/MTExOTcyOTEvaC1w/cmV2aWV3LmpwZw', NULL, NULL, NULL, 'nueva', 327.09, 19, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(20, '64 11 9 248 280', 'Filtro habitáculo (polen) BMW Serie 3 G20', 'Filtro antipolen con carbón activado para BMW Serie 3/Serie 1 F40', 'https://imgs.search.brave.com/Jfg455YsE2JueR0L3fngFd6VZOgvXiLx2z4IINr-Lws/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NzFVRDNtcHowNUwu/anBn', NULL, NULL, NULL, 'nueva', 396.68, 2, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(21, '04C 129 620 D', 'Filtro de aire Golf VIII 1.0 TSI', 'Filtro de aire para motores 1.0 TSI tres cilindros (código DLAA/DKRF)', 'https://imgs.search.brave.com/-u4xcAjiqJIRUzrYM4arP-09Qwj8odK052BWdkSCF_A/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b2RvYy5kZS90/aHVtYj9pZD0yMzky/Mzk2NyZtPTAmbj0w/JmxuZz1lcyZyZXY9/OTQwNzc5MjY', NULL, NULL, NULL, 'nueva', 93.03, 5, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(22, '04C 115 561 H', 'Filtro de aceite Golf VIII 1.0 TSI', 'Cartucho de filtro de aceite para motor 1.0 TSI EA211', 'https://imgs.search.brave.com/pElJInvM5QIJRhGwyVpckA9vv5CPBisrk-fNUGB7bEM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hcmQt/bW90b3JzcG9ydC5j/b20vMTk3MC1tZWRp/dW1fZGVmYXVsdC9m/aWx0cm8tYWNlaXRl/LTIwLXRzaS1lYTg4/ODMuanBn', NULL, NULL, NULL, 'nueva', 447.54, 15, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(23, '1EA 698 151', 'Pastillas de freno delanteras Golf VIII', 'Pastillas delanteras Textar para VW Golf VIII todos los motores', 'https://imgs.search.brave.com/ZSxZ6gd7OWSopgviwYP8e7vWIJTAPM5TooCZCr07VyM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zY2Ru/LmF1dG90ZWlsZWRp/cmVrdC5kZS9jYXRh/bG9nL2NhdGVnb3Jp/ZXMvNTAweDUwMC8x/OS5wbmc', NULL, NULL, NULL, 'nueva', 465.89, 10, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(24, '13 72 7 848 557', 'Filtro de aire BMW Serie 1 F40', 'Filtro de aire para BMW 116d (B37) y 118i (B38A) del modelo F40', 'https://imgs.search.brave.com/-B6qAtcammRSetVg9Y827JdhG_cuJmMX-CyANYY2Nvk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF85/NTMzMTYtTUxBNTAw/Nzg5NjcwMDBfMDUy/MDIyLU8ud2VicA', NULL, NULL, NULL, 'nueva', 324.01, 13, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(25, '34 10 6 889 441', 'Discos de freno delanteros BMW F40', 'Par de discos ventilados delanteros para BMW Serie 1 F40 116d/118i', 'https://imgs.search.brave.com/eEj4k5xyVqZR1sW0Be_HZerktfmefYK3Vc2ZyiwZns4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bWVjYXRlY2huaWMu/Y29tL2ltZy9waG90/b3Mvem9vbS9CSDMw/MjAwWi0zLmpwZw', NULL, NULL, NULL, 'nueva', 163.15, 9, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(26, '11 42 8 570 410', 'Filtro de aceite BMW B37 diésel', 'Filtro de aceite para motor BMW B37 tres cilindros diésel (116d F40)', 'https://imgs.search.brave.com/6oOdWXqOjWAOchFp-oAeleGm9fYiq1JTrtKXJLPZkuY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/bWVjYXRlY2huaWMu/Y29tL2ltZy9waG90/b3Mvem9vbS9CQzUx/MTA5LmpwZw', NULL, NULL, NULL, 'nueva', 183.73, 6, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(27, '12 13 8 616 153', 'Bujías NGK Iridium BMW 118i B38', 'Set de 3 bujías NGK Iridium para motor BMW B38A 1.5 gasolina', 'https://imgs.search.brave.com/MzDd7laQztd9CgNKU4z5H1e3yPhkbhtKoJlRrx449ow/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9hbGxp/bnBlcmZvcm1hbmNl/LmVzL3dwLWNvbnRl/bnQvdXBsb2Fkcy9u/Z2staXJpZGl1bWJp/eC1ibXctMzVpLmpw/Zw', NULL, NULL, NULL, 'nueva', 222.62, 4, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(28, '04152-YZZA6', 'Filtro de aceite Toyota Yaris IV Hybrid', 'Filtro de aceite original Toyota para motor M15A-FXE híbrido', 'https://imgs.search.brave.com/Vo3pjQVU0LiUKVeFDyGDW7o_WnnW1Ji7qgb4uKijvb4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL2lt/YWdlcy9nL3Zjb0FB/T1N3RXcxbHBYWXEv/cy1sOTYwLndlYnA', NULL, NULL, NULL, 'nueva', 326.13, 13, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(29, '17801-21050', 'Filtro de aire Toyota Yaris IV', 'Filtro de aire panel para motor Toyota 1.5 Hybrid M15A Yaris IV', 'https://imgs.search.brave.com/vEFhtrkdSHTFw1cmUirWuta8rh4Rp3KoOFlcSJpz5IA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NjE0bGlxKzRNQ0wu/anBn', NULL, NULL, NULL, 'nueva', 142.89, 5, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(30, '04465-52310', 'Pastillas de freno delanteras Toyota Yaris IV', 'Pastillas delanteras originales Toyota para Yaris IV 2020 en adelante', 'https://imgs.search.brave.com/uxBv-eqAwd7NvPW7_uKat-hgDsc085RhYYxILqGZAII/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9RX05QXzJY/XzkzOTQ0OS1NTEM4/MjgyMjc2MDY3OV8w/MzIwMjUtVi1wYXN0/aWxsYXMtZGVsYW50/ZXJhcy1wYXJhLXRv/eW90YS15YXJpcy0x/NS0xNn', NULL, NULL, NULL, 'nueva', 229.80, 8, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(31, '28303-21020', 'Inversor/convertidor DC-DC Toyota Yaris Hybrid', 'Módulo convertidor DC-DC del sistema híbrido Toyota Yaris IV', 'https://imgs.search.brave.com/Xy0y454yq7d5lK8V_EGXYwgJ4yyPp-H7h8heVWmLoFE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLmVi/YXlpbWcuY29tL2lt/YWdlcy9nL2ZpQUFB/T1N3STZCYzRuLTcv/cy1sMzAwLmpwZw', NULL, NULL, NULL, 'nueva', 380.10, 11, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(32, 'JX6Z-6731-B', 'Filtro de aceite Ford Focus 1.5 EcoBlue', 'Filtro de aceite para motor Ford EcoBlue 1.5 diésel 4 cilindros', 'https://imgs.search.brave.com/MKDxbhmMzswcap8-ZVIJbvOWA2qwUUEtcDEHSPxFFcM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zaG9w/LmZvcmQuZXMvY2Ru/L3Nob3AvZmlsZXMv/OTVlYjM4MDctYzBk/Yy00ZjJlLWEzM2Yt/NmFmYjg2NzZlYzRi/LmpwZz92PTE3NjUy/MzYyNzMmd2lkdGg9/NzIw', NULL, NULL, NULL, 'nueva', 203.78, 4, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(33, 'F1FZ-9601-A', 'Filtro de aire Ford Focus MK4 1.5 EcoBlue', 'Filtro de aire de recambio para Ford Focus MK4 motor diésel EcoBlue', 'https://imgs.search.brave.com/g99r_BovQ7zFD0BbfOnwui1uHPNEJTpzgpI-fAfBbX4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5hdXRvZG9jLmRl/LzM2MF9waG90b3Mv/MTM4OTgzNzkvaC1w/cmV2aWV3LmpwZw', NULL, NULL, NULL, 'nueva', 450.96, 19, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(34, 'CV6Z-2001-A', 'Pastillas de freno delanteras Ford Focus MK4', 'Pastillas delanteras EBC para Ford Focus MK4 gasolina y diésel', 'https://imgs.search.brave.com/esWOEu34Ljd0DvW3ex5LjydOzg5CPPTOfvrVocshWoc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YXV0b3RlaWxlcHJv/ZmkuZGUvdGh1bWIv/YXNzZXRzL3ByZi9l/cnNhdHpfY2F0ZWdv/cmllcy8xOS5qcGc', NULL, NULL, NULL, 'nueva', 434.25, 12, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(35, 'JX6Z-6K682-A', 'Kit de correa de distribución Ford 1.5 EcoBlue', 'Kit completo correa distribución + tensores para Ford EcoBlue 1.5d', 'https://images.unsplash.com/photo-1504222490345-c075b626e313?w=500', NULL, NULL, NULL, 'nueva', 142.02, 8, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(36, 'CM5G-6714-BA', 'Filtro de aceite Ford Fiesta 1.0 EcoBoost', 'Filtro de aceite cartucho para Ford Fiesta MK8 motor EcoBoost 1.0', 'https://images.unsplash.com/photo-1600661653561-629509216228?w=500', NULL, NULL, NULL, 'nueva', 140.19, 19, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(37, '1758893', 'Filtro de aire Ford Fiesta MK8 1.0', 'Filtro de aire panel para Ford Fiesta MK8 1.0 EcoBoost 100 CV', 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=500', NULL, NULL, NULL, 'nueva', 485.39, 2, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(38, '2115285', 'Pastillas de freno delanteras Ford Fiesta MK8', 'Pastillas delanteras para Ford Fiesta MK8 1.0 EcoBoost desde 2017', 'https://images.unsplash.com/photo-1617886322168-72b886573c35?w=500', NULL, NULL, NULL, 'nueva', 310.68, 13, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(39, '04C 115 562', 'Filtro de aceite Seat Ibiza 1.0 MPI', 'Filtro de aceite para motor Seat/VW 1.0 MPI tres cilindros CHYB', 'https://images.unsplash.com/photo-1622187679297-bc5ce5e0ba98?w=500', NULL, NULL, NULL, 'nueva', 184.39, 14, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(40, '6F0 129 620', 'Filtro de aire Seat Ibiza MK5 1.0 MPI', 'Filtro de aire para Seat Ibiza MK5 motor 1.0 MPI 80 CV', 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=500', NULL, NULL, NULL, 'nueva', 257.22, 6, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(41, '6Q0 698 151 F', 'Pastillas de freno delanteras Seat Ibiza MK5', 'Pastillas delanteras Ferodo para Seat Ibiza MK5 1.0 MPI y 1.6 TDI', 'https://images.unsplash.com/photo-1636207543865-acf3ad382295?w=500', NULL, NULL, NULL, 'nueva', 77.64, 9, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(42, '6F0 955 651', 'Escobillas limpiaparabrisas Seat Ibiza MK5', 'Par de escobillas planas para Seat Ibiza MK5 (2017 en adelante)', 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=500', NULL, NULL, NULL, 'nueva', 60.19, 16, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(43, '04L 115 562 C', 'Filtro de aceite Audi A3 8Y 30 TDI', 'Filtro de aceite para motor Audi/VW 1.6 TDI y 2.0 TDI EA288 (DGTE)', 'https://images.unsplash.com/photo-1599256871679-6a9e5ba04f2c?w=500', NULL, NULL, NULL, 'nueva', 444.79, 1, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(44, '8W0 129 620 B', 'Filtro de aire Audi A3 8Y / A4 B9', 'Filtro de aire original para Audi A3 8Y y A4 B9 motores TDI', 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?w=500', NULL, NULL, NULL, 'nueva', 259.28, 6, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(45, '8V0 698 151 G', 'Kit frenos delanteros Audi A3 8Y', 'Discos + pastillas delanteros para Audi A3 8Y 30 TDI y 35 TFSI', 'https://images.unsplash.com/photo-1611545678786-f3d8916e8a64?w=500', NULL, NULL, NULL, 'nueva', 473.21, 19, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(46, '8W0 615 301 M', 'Disco de freno delantero Audi A4 B9 / A3 8Y', 'Disco ventilado delantero para Audi A3 8Y y A4 B9 todos los motores', 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=500', NULL, NULL, NULL, 'nueva', 357.58, 15, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(47, '06K 115 562', 'Filtro de aceite Golf VIII 2.0 TFSI EA888', 'Filtro de aceite cartucho para motor 2.0 TFSI generación 3 EA888', 'https://images.unsplash.com/photo-1598965402089-897ce52e8355?w=500', NULL, NULL, NULL, 'nueva', 285.00, 10, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(48, '5Q0 611 701 C', 'Manguera de freno delantera VW Golf VIII', 'Manguera flexible de freno delantera para Golf VIII y León IV', 'https://images.unsplash.com/photo-1606577924006-27d39b132ae2?w=500', NULL, NULL, NULL, 'nueva', 396.75, 10, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(49, '5H0 915 105', 'Batería AGM 60Ah Seat León IV', 'Batería start-stop AGM para Seat León IV 1.5 TSI y 2.0 TDI', 'https://images.unsplash.com/photo-1609767905372-b9a40be58dbc?w=500', NULL, NULL, NULL, 'nueva', 473.19, 8, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(50, '5H0 145 962', 'Manguito de turbo Seat León IV 2.0 TDI', 'Manguito de presión entre turbo e intercooler León IV 2.0 TDI', 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=500', NULL, NULL, NULL, 'nueva', 469.97, 13, 'Sin garantía', 1, '2026-05-05 10:57:35'),
+(52, '1A56315', 'sdssdsdsdsdsd', 'sdsdsdsdsdsdsdd', '', NULL, NULL, NULL, 'nueva', 170.60, 10, 'Sin garantía', 1, '2026-05-05 10:57:35'),
 (53, 'adadad1adad', 'adadadadadadadadada', 'adadadadadadadadad', '', NULL, 1, 'Motor', 'nueva', 14.14, 14, 'Sin garantía', 1, '2026-05-05 11:00:29'),
 (54, '1A15124A', 'manguito', 'manguito para el refrigerante', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRII7GucWnzQaTSfzmK6TVkfAi5DeLiw6OARw&s', NULL, 1, 'Otros', 'nueva', 22.22, 22, 'Sin garantía', 1, '2026-05-05 11:12:26');
 
@@ -481,6 +539,14 @@ INSERT INTO `usuario_motorizacion` (`id`, `usuario_id`, `motorizacion_id`) VALUE
 --
 
 --
+-- Indices de la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_usuario_pieza` (`usuario_id`,`pieza_id`),
+  ADD KEY `pieza_id` (`pieza_id`);
+
+--
 -- Indices de la tabla `compatibilidad_pieza`
 --
 ALTER TABLE `compatibilidad_pieza`
@@ -540,6 +606,21 @@ ALTER TABLE `motorizacion`
   ADD KEY `modelo_id` (`modelo_id`);
 
 --
+-- Indices de la tabla `pedido`
+--
+ALTER TABLE `pedido`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `usuario_id` (`usuario_id`);
+
+--
+-- Indices de la tabla `pedido_item`
+--
+ALTER TABLE `pedido_item`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pedido_id` (`pedido_id`),
+  ADD KEY `pieza_id` (`pieza_id`);
+
+--
 -- Indices de la tabla `pieza`
 --
 ALTER TABLE `pieza`
@@ -592,6 +673,12 @@ ALTER TABLE `usuario_motorizacion`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `compatibilidad_pieza`
 --
 ALTER TABLE `compatibilidad_pieza`
@@ -640,6 +727,18 @@ ALTER TABLE `motorizacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
+-- AUTO_INCREMENT de la tabla `pedido`
+--
+ALTER TABLE `pedido`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `pedido_item`
+--
+ALTER TABLE `pedido_item`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `pieza`
 --
 ALTER TABLE `pieza`
@@ -680,6 +779,13 @@ ALTER TABLE `usuario_motorizacion`
 --
 
 --
+-- Filtros para la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `carrito_ibfk_2` FOREIGN KEY (`pieza_id`) REFERENCES `pieza` (`id`) ON DELETE CASCADE;
+
+--
 -- Filtros para la tabla `compatibilidad_pieza`
 --
 ALTER TABLE `compatibilidad_pieza`
@@ -713,6 +819,19 @@ ALTER TABLE `motorizacion`
   ADD CONSTRAINT `motorizacion_ibfk_1` FOREIGN KEY (`modelo_id`) REFERENCES `modelo` (`id`);
 
 --
+-- Filtros para la tabla `pedido`
+--
+ALTER TABLE `pedido`
+  ADD CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `pedido_item`
+--
+ALTER TABLE `pedido_item`
+  ADD CONSTRAINT `pedido_item_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedido` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `pedido_item_ibfk_2` FOREIGN KEY (`pieza_id`) REFERENCES `pieza` (`id`);
+
+--
 -- Filtros para la tabla `seguimiento`
 --
 ALTER TABLE `seguimiento`
@@ -738,42 +857,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
--- ------------------------------------------------------------
--- Tablas del sistema de carrito y pedidos (Stripe)
--- ------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `carrito` (
-  `id`         int(11)       NOT NULL AUTO_INCREMENT,
-  `usuario_id` int(11)       NOT NULL,
-  `pieza_id`   int(11)       NOT NULL,
-  `cantidad`   int(11)       NOT NULL DEFAULT 1,
-  `precio_u`   decimal(10,2) NOT NULL,
-  `created_at` timestamp     NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uq_usuario_pieza` (`usuario_id`, `pieza_id`),
-  FOREIGN KEY (`usuario_id`) REFERENCES `usuario`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`pieza_id`)   REFERENCES `pieza`(`id`)   ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `pedido` (
-  `id`                int(11)        NOT NULL AUTO_INCREMENT,
-  `usuario_id`        int(11)        NOT NULL,
-  `stripe_session_id` varchar(200)   NOT NULL,
-  `total`             decimal(10,2)  NOT NULL,
-  `estado`            enum('pendiente','pagado','cancelado') DEFAULT 'pendiente',
-  `created_at`        timestamp      NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`usuario_id`) REFERENCES `usuario`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `pedido_item` (
-  `id`        int(11)       NOT NULL AUTO_INCREMENT,
-  `pedido_id` int(11)       NOT NULL,
-  `pieza_id`  int(11)       NOT NULL,
-  `cantidad`  int(11)       NOT NULL,
-  `precio_u`  decimal(10,2) NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`pedido_id`) REFERENCES `pedido`(`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`pieza_id`)  REFERENCES `pieza`(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
