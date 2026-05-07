@@ -14,7 +14,8 @@ class PiezaModel {
      */
     public function getRecientes(int $limite = 6): array {
         $stmt = $this->pdo->prepare(
-            "SELECT id, referencia, nombre, descripcion, imagen
+            "SELECT id, referencia, nombre, descripcion, imagen,
+                    precio, stock, garantia, estado_pieza, categoria
              FROM pieza
              WHERE activa = 1
              ORDER BY id DESC
@@ -30,7 +31,8 @@ class PiezaModel {
      */
     public function getByMotorizacion(int $motorizacionId, int $limite = 3): array {
         $stmt = $this->pdo->prepare(
-            "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen
+            "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen,
+                    p.precio, p.stock, p.garantia, p.estado_pieza, p.categoria
              FROM pieza p
              JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
              WHERE cp.motorizacion_id = ?
@@ -46,7 +48,8 @@ class PiezaModel {
 
     public function getByModelo(int $modeloId, int $limite = 3): array {
         $stmt = $this->pdo->prepare(
-            "SELECT DISTINCT p.id, p.referencia, p.nombre, p.descripcion, p.imagen
+            "SELECT DISTINCT p.id, p.referencia, p.nombre, p.descripcion, p.imagen,
+                    p.precio, p.stock, p.garantia, p.estado_pieza, p.categoria
              FROM pieza p
              JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
              JOIN motorizacion m ON m.id = cp.motorizacion_id
@@ -68,7 +71,8 @@ class PiezaModel {
     public function getAllByMotorizacion(int $motorizacionId, string $busqueda = ''): array {
         if ($busqueda !== '') {
             $stmt = $this->pdo->prepare(
-                "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen
+                "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen,
+                        p.precio, p.stock, p.garantia, p.estado_pieza, p.categoria
                  FROM pieza p
                  JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
                  WHERE cp.motorizacion_id = ?
@@ -82,7 +86,8 @@ class PiezaModel {
             $stmt->bindValue(3, $like);
         } else {
             $stmt = $this->pdo->prepare(
-                "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen
+                "SELECT p.id, p.referencia, p.nombre, p.descripcion, p.imagen,
+                        p.precio, p.stock, p.garantia, p.estado_pieza, p.categoria
                  FROM pieza p
                  JOIN compatibilidad_pieza cp ON cp.pieza_id = p.id
                  WHERE cp.motorizacion_id = ?
@@ -100,7 +105,8 @@ class PiezaModel {
      */
     public function getById(int $id): ?array {
         $stmt = $this->pdo->prepare(
-            "SELECT id, referencia, nombre, descripcion, imagen
+            "SELECT id, referencia, nombre, descripcion, imagen,
+                    precio, stock, garantia, estado_pieza, categoria
              FROM pieza
              WHERE id = ?
                AND activa = 1"
@@ -136,7 +142,8 @@ class PiezaModel {
     public function getAll(string $busqueda = ''): array {
         if ($busqueda !== '') {
             $stmt = $this->pdo->prepare(
-                "SELECT id, referencia, nombre, descripcion, imagen
+                "SELECT id, referencia, nombre, descripcion, imagen,
+                        precio, stock, garantia, estado_pieza, categoria
                  FROM pieza
                  WHERE activa = 1
                    AND (nombre LIKE ? OR referencia LIKE ?)
@@ -147,7 +154,8 @@ class PiezaModel {
             $stmt->bindValue(2, $like);
         } else {
             $stmt = $this->pdo->prepare(
-                "SELECT id, referencia, nombre, descripcion, imagen
+                "SELECT id, referencia, nombre, descripcion, imagen,
+                        precio, stock, garantia, estado_pieza, categoria
                  FROM pieza
                  WHERE activa = 1
                  ORDER BY nombre ASC"

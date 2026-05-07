@@ -231,8 +231,9 @@
             $desc = !empty($pieza['descripcion']) ? $pieza['descripcion'] : 'Sin descripción disponible.';
           ?>
           <div class="col-sm-6 col-md-4 col-xl-3">
-            <a href="pieza-detalle.php?id=<?= $pieza['id'] ?><?= $motorizacionId > 0 ? '&motorizacion_id=' . $motorizacionId . '&vehiculo=' . urlencode($vehiculo) : '' ?>" class="text-decoration-none d-block h-100">
-              <div class="card border-0 shadow-sm card-pieza h-100">
+            <div class="card border-0 shadow-sm card-pieza h-100 d-flex flex-column">
+              <a href="pieza-detalle.php?id=<?= $pieza['id'] ?><?= $motorizacionId > 0 ? '&motorizacion_id=' . $motorizacionId . '&vehiculo=' . urlencode($vehiculo) : '' ?>"
+                 class="text-decoration-none d-block flex-grow-1">
                 <img
                   src="<?= htmlspecialchars($img) ?>"
                   class="card-img-top"
@@ -251,10 +252,35 @@
                     <?= htmlspecialchars($desc) ?>
                   </p>
                 </div>
-                <!-- Línea inferior roja-naranja (guiño al footer) -->
-                <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
+              </a>
+              <?php if (!empty($pieza['precio']) && (float)$pieza['precio'] > 0): ?>
+              <div class="px-3 pb-3 d-flex justify-content-between align-items-center mt-1">
+                <span class="fw-bold" style="color:rgb(164,4,46);font-size:.95rem;">
+                  <?= number_format((float)$pieza['precio'], 2) ?> €
+                </span>
+                <?php if (isset($_SESSION['usuario_id']) && (int)($pieza['stock'] ?? 0) > 0): ?>
+                <button onclick="addToCart(<?= (int)$pieza['id'] ?>, this)"
+                        class="btn btn-sm fw-bold"
+                        style="background:rgb(164,4,46);color:#fff;border-radius:50px;padding:5px 13px;"
+                        title="Añadir al carrito">
+                  <i class="fas fa-cart-plus"></i>
+                </button>
+                <?php elseif (!isset($_SESSION['usuario_id'])): ?>
+                <a href="login.php" class="btn btn-sm"
+                   style="background:rgba(164,4,46,.15);color:rgb(164,4,46);border-radius:50px;padding:5px 13px;"
+                   title="Inicia sesión para comprar">
+                  <i class="fas fa-lock"></i>
+                </a>
+                <?php else: ?>
+                <span class="badge" style="background:rgba(220,53,69,.1);color:#dc3545;border:1px solid rgba(220,53,69,.2);font-size:.65rem;">
+                  Sin stock
+                </span>
+                <?php endif; ?>
               </div>
-            </a>
+              <?php endif; ?>
+              <!-- Línea inferior roja-naranja -->
+              <div style="height: 3px; background: linear-gradient(90deg, rgb(164,4,46), #ff8800);"></div>
+            </div>
           </div>
         <?php endforeach; ?>
       </div>
@@ -262,3 +288,32 @@
 
   </div>
 </section>
+
+<script>
+function addToCart(piezaId, btn) {
+  btn.disabled = true;
+  fetch('public/ajax/carrito_add.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: 'pieza_id=' + piezaId
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      const badge = document.getElementById('cart-badge');
+      if (badge) { badge.textContent = data.total_items; badge.style.display = ''; }
+      const orig = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i>';
+      btn.style.background = '#28a745';
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.style.background = 'rgb(164,4,46)';
+        btn.disabled = false;
+      }, 1500);
+    } else {
+      btn.disabled = false;
+    }
+  })
+  .catch(() => { btn.disabled = false; });
+}
+</script>

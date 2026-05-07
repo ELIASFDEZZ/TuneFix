@@ -150,20 +150,40 @@
     <div class="row align-items-center">
       <div class="col-lg-6">
         <h1 class="display-4 fw-bold mb-2">
-          <i class="fas fa-play-circle me-3" style="color: rgba(255,60,0,0.9);"></i>Tutoriales para Principiantes
+          <i class="fas fa-play-circle me-3" style="color: rgba(255,60,0,0.9);"></i>
+          <?php if ($motorizacionId > 0): ?>
+            Tutoriales Compatibles
+          <?php else: ?>
+            Tutoriales para Principiantes
+          <?php endif; ?>
         </h1>
-        <p class="lead mb-0" style="color: rgba(255,255,255,0.65);">
-          Aprende paso a paso con nuestra guía completa de tutoriales de tuning
-        </p>
+        <?php if ($motorizacionId > 0 && $vehiculo !== ''): ?>
+          <div class="mb-2">
+            <span class="badge fs-6 px-3 py-2" style="background: linear-gradient(45deg, rgb(164,4,46), #ff8800);">
+              <i class="fas fa-car me-2"></i><?= htmlspecialchars($vehiculo) ?>
+            </span>
+          </div>
+          <p class="lead mb-0" style="color: rgba(255,255,255,0.65);">
+            Tutoriales específicos y generales para tu vehículo
+          </p>
+        <?php else: ?>
+          <p class="lead mb-0" style="color: rgba(255,255,255,0.65);">
+            Aprende paso a paso con nuestra guía completa de tutoriales de tuning
+          </p>
+        <?php endif; ?>
       </div>
       <div class="col-lg-6 mt-4 mt-lg-0">
         <form method="GET" action="">
+          <?php if ($motorizacionId > 0): ?>
+            <input type="hidden" name="motorizacion_id" value="<?= $motorizacionId ?>">
+            <input type="hidden" name="vehiculo" value="<?= htmlspecialchars($vehiculo) ?>">
+          <?php endif; ?>
           <div class="input-group input-group-lg">
             <input
               type="text"
               name="busqueda"
               class="form-control search-input"
-              placeholder="Buscar tutoriales..."
+              placeholder="<?= $motorizacionId > 0 ? 'Buscar entre tutoriales compatibles...' : 'Buscar tutoriales...' ?>"
               value="<?= htmlspecialchars($busqueda) ?>"
             >
             <button class="btn btn-buscar px-4" type="submit">
@@ -172,7 +192,12 @@
           </div>
           <?php if ($busqueda !== ''): ?>
             <div class="mt-2">
-              <a href="todos-tutoriales.php" class="text-decoration-none" style="color: rgba(255,255,255,0.55); font-size: 0.85rem;">
+              <?php
+                $urlLimpiar = $motorizacionId > 0
+                  ? 'todos-tutoriales.php?motorizacion_id=' . $motorizacionId . '&vehiculo=' . urlencode($vehiculo)
+                  : 'todos-tutoriales.php';
+              ?>
+              <a href="<?= $urlLimpiar ?>" class="text-decoration-none" style="color: rgba(255,255,255,0.55); font-size: 0.85rem;">
                 <i class="fas fa-times me-1"></i>Limpiar búsqueda
               </a>
             </div>
@@ -196,7 +221,11 @@
         <i class="fas fa-graduation-cap me-2"></i>
         <?php
           $total = count($tutoriales);
-          if ($busqueda !== '') {
+          if ($motorizacionId > 0 && $busqueda !== '') {
+            echo $total . ' resultado' . ($total !== 1 ? 's' : '') . ' para "<em>' . htmlspecialchars($busqueda) . '</em>" en tu vehículo';
+          } elseif ($motorizacionId > 0) {
+            echo $total . ' tutorial' . ($total !== 1 ? 'es' : '') . ' compatible' . ($total !== 1 ? 's' : '') . ' con tu vehículo';
+          } elseif ($busqueda !== '') {
             echo $total . ' resultado' . ($total !== 1 ? 's' : '') . ' para "<em>' . htmlspecialchars($busqueda) . '</em>"';
           } else {
             echo $total . ' tutorial' . ($total !== 1 ? 'es' : '') . ' disponible' . ($total !== 1 ? 's' : '');
@@ -204,7 +233,12 @@
         ?>
       </span>
       <?php if ($busqueda !== ''): ?>
-        <a href="todos-tutoriales.php" class="btn btn-sm btn-outline-secondary">
+        <?php
+          $urlVerTodos = $motorizacionId > 0
+            ? 'todos-tutoriales.php?motorizacion_id=' . $motorizacionId . '&vehiculo=' . urlencode($vehiculo)
+            : 'todos-tutoriales.php';
+        ?>
+        <a href="<?= $urlVerTodos ?>" class="btn btn-sm btn-outline-secondary">
           <i class="fas fa-list me-1"></i> Ver todos
         </a>
       <?php endif; ?>
@@ -215,7 +249,12 @@
       <div class="text-center py-5">
         <i class="fas fa-video-slash fa-4x empty-icon mb-4 d-block"></i>
         <h4 class="text-black-50">No se encontraron tutoriales</h4>
-        <?php if ($busqueda !== ''): ?>
+        <?php if ($motorizacionId > 0): ?>
+          <p class="text-black-50">No hay tutoriales registrados como compatibles con este vehículo aún.</p>
+          <a href="todos-tutoriales.php" class="btn mt-2" style="background: rgb(164,4,46); color:#fff;">
+            Ver catálogo completo de tutoriales
+          </a>
+        <?php elseif ($busqueda !== ''): ?>
           <p class="text-black-50">Ningún tutorial coincide con "<?= htmlspecialchars($busqueda) ?>".</p>
           <a href="todos-tutoriales.php" class="btn mt-2" style="background: rgb(164,4,46); color:#fff;">
             Ver todos los tutoriales

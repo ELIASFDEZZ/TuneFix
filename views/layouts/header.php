@@ -178,7 +178,22 @@
               $nombreNav  = htmlspecialchars($_SESSION['usuario_nombre']);
               $emailNav   = htmlspecialchars($_SESSION['usuario_email'] ?? '');
               $inicialNav = strtoupper(mb_substr($_SESSION['usuario_nombre'], 0, 1));
+
+              // Badge carrito
+              require_once __DIR__ . '/../../models/CarritoModel.php';
+              $_carritoModel = new CarritoModel();
+              $_carritoCount = $_carritoModel->countItems((int) $_SESSION['usuario_id']);
             ?>
+            <!-- Icono carrito con badge -->
+            <a href="carrito.php" class="btn position-relative me-1"
+               style="background:transparent;border:1.5px solid rgba(255,255,255,0.4);color:#fff;border-radius:50px;padding:7px 14px;">
+              <i class="fas fa-shopping-cart"></i>
+              <span id="cart-badge"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                    style="background:#ff3c00;font-size:0.65rem;<?= $_carritoCount === 0 ? 'display:none;' : '' ?>">
+                <?= $_carritoCount ?>
+              </span>
+            </a>
             <div class="dropdown">
               <button class="user-dropdown-toggle dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="user-avatar"><?= $inicialNav ?></div>

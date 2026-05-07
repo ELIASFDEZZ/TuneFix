@@ -81,6 +81,43 @@ class TutorialModel {
     }
 
     /**
+     * Tutoriales compatibles con una motorización (específicos + genéricos), con búsqueda opcional.
+     */
+    public function getAllByMotorizacion(int $motorizacionId, string $busqueda = ''): array {
+        if ($busqueda !== '') {
+            $stmt = $this->pdo->prepare(
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, t.pieza_id, p.nombre AS pieza_nombre,
+                        t.usuario_id, u.nombre AS nombre_usuario
+                 FROM tutorial t
+                 LEFT JOIN pieza p ON t.pieza_id = p.id
+                 LEFT JOIN usuario u ON t.usuario_id = u.id
+                 WHERE (t.motorizacion_id = ? OR t.motorizacion_id IS NULL)
+                   AND (t.titulo LIKE ? OR p.nombre LIKE ?)
+                 ORDER BY IF(t.motorizacion_id = ?, 0, 1) ASC, t.titulo ASC"
+            );
+            $like = '%' . $busqueda . '%';
+            $stmt->bindValue(1, $motorizacionId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $like);
+            $stmt->bindValue(3, $like);
+            $stmt->bindValue(4, $motorizacionId, PDO::PARAM_INT);
+        } else {
+            $stmt = $this->pdo->prepare(
+                "SELECT t.id, t.titulo, t.imagen, t.youtube_id, t.pieza_id, p.nombre AS pieza_nombre,
+                        t.usuario_id, u.nombre AS nombre_usuario
+                 FROM tutorial t
+                 LEFT JOIN pieza p ON t.pieza_id = p.id
+                 LEFT JOIN usuario u ON t.usuario_id = u.id
+                 WHERE t.motorizacion_id = ? OR t.motorizacion_id IS NULL
+                 ORDER BY IF(t.motorizacion_id = ?, 0, 1) ASC, t.titulo ASC"
+            );
+            $stmt->bindValue(1, $motorizacionId, PDO::PARAM_INT);
+            $stmt->bindValue(2, $motorizacionId, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Devuelve todos los tutoriales, con búsqueda opcional por título.
      */
     public function getAll(string $busqueda = ''): array {

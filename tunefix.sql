@@ -738,3 +738,42 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- ------------------------------------------------------------
+-- Tablas del sistema de carrito y pedidos (Stripe)
+-- ------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `carrito` (
+  `id`         int(11)       NOT NULL AUTO_INCREMENT,
+  `usuario_id` int(11)       NOT NULL,
+  `pieza_id`   int(11)       NOT NULL,
+  `cantidad`   int(11)       NOT NULL DEFAULT 1,
+  `precio_u`   decimal(10,2) NOT NULL,
+  `created_at` timestamp     NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_usuario_pieza` (`usuario_id`, `pieza_id`),
+  FOREIGN KEY (`usuario_id`) REFERENCES `usuario`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`pieza_id`)   REFERENCES `pieza`(`id`)   ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `pedido` (
+  `id`                int(11)        NOT NULL AUTO_INCREMENT,
+  `usuario_id`        int(11)        NOT NULL,
+  `stripe_session_id` varchar(200)   NOT NULL,
+  `total`             decimal(10,2)  NOT NULL,
+  `estado`            enum('pendiente','pagado','cancelado') DEFAULT 'pendiente',
+  `created_at`        timestamp      NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`usuario_id`) REFERENCES `usuario`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `pedido_item` (
+  `id`        int(11)       NOT NULL AUTO_INCREMENT,
+  `pedido_id` int(11)       NOT NULL,
+  `pieza_id`  int(11)       NOT NULL,
+  `cantidad`  int(11)       NOT NULL,
+  `precio_u`  decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`pedido_id`) REFERENCES `pedido`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`pieza_id`)  REFERENCES `pieza`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

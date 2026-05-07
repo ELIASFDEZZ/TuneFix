@@ -132,7 +132,7 @@ style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1e
             <div class="col-lg-6">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="accent-orange"><i class="fas fa-cog me-2"></i> Piezas compatibles</h3>
-                <a href="todas-piezas.php" class="btn btn-outline-light btn-all">
+                <a href="todas-piezas.php" id="btn-todas-piezas" class="btn btn-outline-light btn-all">
                   <i class="fas fa-list me-1"></i> Ver todas las piezas
                 </a>
               </div>
@@ -281,6 +281,10 @@ function cargarResultados(motId, vehiculo) {
   document.getElementById('lista-manuales').innerHTML = '';
   document.getElementById('lista-piezas').innerHTML   = '';
   document.getElementById('sin-resultados').classList.add('d-none');
+
+  const params = `?motorizacion_id=${motId}&vehiculo=${encodeURIComponent(vehiculo)}`;
+  const btnPiezas = document.getElementById('btn-todas-piezas');
+  if (btnPiezas) btnPiezas.href = 'todas-piezas.php' + params;
 
   resultados.scrollIntoView({ behavior: 'smooth', block: 'start' });
 

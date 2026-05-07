@@ -110,6 +110,28 @@
           </p>
         </div>
 
+        <!-- Precio y stock -->
+        <?php
+          $precio = (float)($pieza['precio'] ?? 0);
+          $stock  = (int)($pieza['stock']   ?? 0);
+        ?>
+        <?php if ($precio > 0): ?>
+        <div class="mt-4 d-flex align-items-center gap-3 flex-wrap">
+          <span class="fw-bold" style="font-size:2rem;color:rgb(164,4,46);">
+            <?= number_format($precio, 2) ?> €
+          </span>
+          <?php if ($stock > 0): ?>
+            <span class="badge px-3 py-2" style="background:rgba(40,167,69,.12);color:#28a745;border:1px solid rgba(40,167,69,.3);font-size:.85rem;">
+              <i class="fas fa-boxes me-1"></i>Stock: <?= $stock ?> unidades
+            </span>
+          <?php else: ?>
+            <span class="badge px-3 py-2" style="background:rgba(220,53,69,.1);color:#dc3545;border:1px solid rgba(220,53,69,.2);font-size:.85rem;">
+              <i class="fas fa-times-circle me-1"></i>Sin stock
+            </span>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
         <div class="mt-4 d-flex align-items-center gap-3 flex-wrap">
           <?php
             if ($motorizacionId > 0) {
@@ -152,7 +174,78 @@
           <?php endif; ?>
         </div>
 
+        <!-- Botón Añadir al carrito -->
+        <?php if ($usuarioId && $precio > 0 && $stock > 0): ?>
+        <div class="mt-3 d-flex align-items-center gap-3 flex-wrap">
+          <div class="d-flex align-items-center border rounded-pill px-3 py-1"
+               style="border-color:rgb(164,4,46)!important;">
+            <button class="btn btn-sm p-0 fw-bold" style="color:rgb(164,4,46);"
+                    onclick="cambiarCantidad(-1)">−</button>
+            <span id="qty-value" class="px-3 fw-bold">1</span>
+            <button class="btn btn-sm p-0 fw-bold" style="color:rgb(164,4,46);"
+                    onclick="cambiarCantidad(1)">+</button>
+          </div>
+          <button id="btn-add-cart"
+                  onclick="addToCart(<?= (int)$pieza['id'] ?>)"
+                  class="btn fw-bold px-4 py-2"
+                  style="background:linear-gradient(45deg,#a4042e,#ff3c00);color:#fff;border-radius:50px;">
+            <i class="fas fa-shopping-cart me-2"></i>Añadir al carrito
+          </button>
+        </div>
+        <?php elseif ($usuarioId && $precio > 0 && $stock <= 0): ?>
+        <div class="mt-3">
+          <button class="btn fw-bold px-4 py-2" disabled
+                  style="background:rgba(164,4,46,.3);color:#fff;border-radius:50px;cursor:not-allowed;">
+            <i class="fas fa-shopping-cart me-2"></i>Sin stock disponible
+          </button>
+        </div>
+        <?php elseif ($usuarioId && $precio == 0): ?>
+        <p class="text-muted mt-3 mb-0">
+          <i class="fas fa-info-circle me-1"></i>Precio no disponible actualmente
+        </p>
+        <?php elseif (!$usuarioId && $precio > 0): ?>
+        <div class="mt-3">
+          <a href="login.php" class="btn fw-bold px-4 py-2"
+             style="background:linear-gradient(45deg,#a4042e,#ff3c00);color:#fff;border-radius:50px;">
+            <i class="fas fa-sign-in-alt me-2"></i>Inicia sesión para comprar
+          </a>
+        </div>
+        <?php endif; ?>
+
 <script>
+let qty = 1;
+function cambiarCantidad(delta) {
+  qty = Math.max(1, qty + delta);
+  document.getElementById('qty-value').textContent = qty;
+}
+function addToCart(piezaId) {
+  const btn = document.getElementById('btn-add-cart');
+  btn.disabled = true;
+  fetch('public/ajax/carrito_add.php', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: 'pieza_id=' + piezaId + '&cantidad=' + qty
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      const badge = document.getElementById('cart-badge');
+      if (badge) { badge.textContent = data.total_items; badge.style.display = ''; }
+      btn.innerHTML = '<i class="fas fa-check me-2"></i>¡Añadido!';
+      btn.style.background = 'linear-gradient(45deg,#28a745,#20c997)';
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Añadir al carrito';
+        btn.style.background = 'linear-gradient(45deg,#a4042e,#ff3c00)';
+        btn.disabled = false;
+      }, 2000);
+    } else {
+      alert('Error al añadir al carrito');
+      btn.disabled = false;
+    }
+  })
+  .catch(() => { alert('Error de conexión'); btn.disabled = false; });
+}
+
 function toggleMeGusta(btn) {
   const piezaId = btn.dataset.piezaId;
   btn.disabled = true;
@@ -165,12 +258,10 @@ function toggleMeGusta(btn) {
   .then(r => r.json())
   .then(data => {
     if (data.error) { btn.disabled = false; return; }
-
     const liked = data.liked;
     btn.dataset.liked = liked ? '1' : '0';
     document.getElementById('btn-megusta-label').textContent = liked ? 'Guardado' : 'Me gusta';
     document.getElementById('btn-megusta-count').textContent = data.total;
-
     if (liked) {
       btn.style.cssText = 'background:linear-gradient(45deg,#a4042e,#ff3c00);color:#fff;border:none;border-radius:50px;font-weight:700;font-size:.9rem;padding:8px 20px;transition:all .25s;display:flex;align-items:center;gap:.5rem;';
     } else {

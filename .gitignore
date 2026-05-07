@@ -1,0 +1,4 @@
+config/stripe.php
+composer.phar
+composer-setup.php
+vendor/

@@ -18,23 +18,35 @@ class TodosTutorialesController
     }
 
     /**
-     * Acción principal: muestra todos los tutoriales con búsqueda opcional
+     * Acción principal: muestra tutoriales filtrados por motorización si se indica, o todos.
      */
     public function index(): void
     {
-        $busqueda  = trim($_GET['busqueda'] ?? '');
-        $usuarioId = isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : null;
+        $motorizacionId = isset($_GET['motorizacion_id']) ? (int) $_GET['motorizacion_id'] : 0;
+        $vehiculo       = trim($_GET['vehiculo'] ?? '');
+        $busqueda       = trim($_GET['busqueda'] ?? '');
+        $usuarioId      = isset($_SESSION['usuario_id']) ? (int) $_SESSION['usuario_id'] : null;
 
         $seguidos = $usuarioId
             ? array_column($this->seguimientoModel->getProfesionalesSeguidos($usuarioId), 'id')
             : [];
 
+        if ($motorizacionId > 0) {
+            $tutoriales = $this->tutorialModel->getAllByMotorizacion($motorizacionId, $busqueda);
+            $titulo     = 'Tutoriales compatibles - TuneFix';
+        } else {
+            $tutoriales = $this->tutorialModel->getAll($busqueda);
+            $titulo     = 'Tutoriales para Principiantes - TuneFix';
+        }
+
         $data = [
-            'titulo'     => 'Tutoriales para Principiantes - TuneFix',
-            'tutoriales' => $this->tutorialModel->getAll($busqueda),
-            'busqueda'   => $busqueda,
-            'seguidos'   => $seguidos,
-            'usuarioId'  => $usuarioId,
+            'titulo'         => $titulo,
+            'tutoriales'     => $tutoriales,
+            'busqueda'       => $busqueda,
+            'seguidos'       => $seguidos,
+            'usuarioId'      => $usuarioId,
+            'motorizacionId' => $motorizacionId,
+            'vehiculo'       => $vehiculo,
         ];
 
         $this->render('tutoriales/index', $data);
