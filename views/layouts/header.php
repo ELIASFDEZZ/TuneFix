@@ -162,13 +162,18 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <!-- Menú central -->
         <ul class="navbar-nav mx-auto">
+          <?php $_rolNav = $_SESSION['usuario_rol'] ?? ''; ?>
           <li class="nav-item"><a class="nav-link" href="./index.php"><i class="fas fa-home me-1"></i> Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="./principiante.php"><i class="fas fa-graduation-cap me-1"></i>
               Principiantes</a></li>
+          <?php if ($_rolNav === '' || $_rolNav === 'entusiasta' || $_rolNav === 'profesional'): ?>
           <li class="nav-item"><a class="nav-link" href="./entusiasta.php"><i class="fas fa-tools me-1"></i>
               Entusiasta</a></li>
+          <?php endif; ?>
+          <?php if ($_rolNav === '' || $_rolNav === 'profesional'): ?>
           <li class="nav-item"><a class="nav-link" href="./profesional.php"><i class="fas fa-user-tie me-1"></i>
               Profesional</a></li>
+          <?php endif; ?>
         </ul>
 
         <!-- Botones derecha -->
@@ -222,12 +227,18 @@
                     Favoritos
                   </a>
                 </li>
-                <!-- Subir vídeo (solo profesional) -->
+                <!-- Mi Canal + Subir pieza (solo profesional) -->
                 <?php if (($_SESSION['usuario_rol'] ?? '') === 'profesional'): ?>
                 <li>
-                  <a class="dropdown-item-tuning" href="subir-video.php">
-                    <span class="item-icon" style="background:rgba(0,180,100,0.15);color:#00b464;"><i class="fas fa-video"></i></span>
-                    Subir vídeo
+                  <a class="dropdown-item-tuning" href="mi-canal.php">
+                    <span class="item-icon" style="background:rgba(255,60,0,0.15);color:#ff3c00;"><i class="fas fa-play-circle"></i></span>
+                    Mi Canal
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item-tuning" href="subir-pieza.php">
+                    <span class="item-icon" style="background:rgba(255,136,0,0.15);color:#ff8800;"><i class="fas fa-cog"></i></span>
+                    Subir pieza
                   </a>
                 </li>
                 <?php endif; ?>

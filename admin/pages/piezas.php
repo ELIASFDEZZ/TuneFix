@@ -87,9 +87,9 @@ $ok = $_GET['ok'] ?? '';
         <?php foreach ($piezas as $p): ?>
         <tr>
           <td>
-            <img src="<?= htmlspecialchars($p['imagen'] ?: 'https://via.placeholder.com/44?text=?') ?>"
+            <img src="<?= htmlspecialchars($p['imagen'] ?: '../public/img/no-image.svg') ?>"
                  class="pieza-thumb" alt=""
-                 onerror="this.src='https://via.placeholder.com/44?text=?'">
+                 onerror="this.src='../public/img/no-image.svg'">
           </td>
           <td><span style="background:rgba(164,4,46,.15);color:rgb(164,4,46);padding:3px 8px;border-radius:6px;font-size:.75rem;font-family:monospace;"><?= htmlspecialchars($p['referencia']) ?></span></td>
           <td style="color:#fff;font-weight:500;max-width:200px;"><?= htmlspecialchars($p['nombre']) ?></td>

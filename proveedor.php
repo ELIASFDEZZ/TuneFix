@@ -20,6 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $controller->togglePieza();
     } elseif ($action === 'guardar_perfil') {
         $controller->guardarPerfil();
+    } elseif ($action === 'guardar_edicion_pieza') {
+        $controller->guardarEdicionPieza();
+    } elseif ($action === 'eliminar_pieza') {
+        $controller->eliminarPieza();
     } else {
         header('Location: proveedor.php');
     }
@@ -30,6 +34,8 @@ if ($page === 'mis-piezas') {
     $controller->misPiezas();
 } elseif ($page === 'publicar-pieza') {
     $controller->publicarPieza();
+} elseif ($page === 'editar-pieza') {
+    $controller->editarPieza();
 } elseif ($page === 'estadisticas') {
     $controller->estadisticas();
 } elseif ($page === 'perfil') {

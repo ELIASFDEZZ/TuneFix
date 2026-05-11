@@ -269,7 +269,7 @@
       <div class="row g-4">
         <?php foreach ($tutoriales as $tutorial): ?>
           <?php
-            $img      = !empty($tutorial['imagen'])       ? $tutorial['imagen']       : 'https://via.placeholder.com/400x220?text=Sin+imagen';
+            $img      = !empty($tutorial['imagen'])       ? $tutorial['imagen']       : 'public/img/no-image.svg';
             $pieza    = !empty($tutorial['pieza_nombre']) ? $tutorial['pieza_nombre'] : 'General';
             $piezaId  = $tutorial['pieza_id'] ?? null;
           ?>
@@ -277,7 +277,7 @@
             $ytId     = $tutorial['youtube_id'] ?? '';
             $thumb    = $ytId
               ? "https://img.youtube.com/vi/{$ytId}/hqdefault.jpg"
-              : (!empty($tutorial['imagen']) ? $tutorial['imagen'] : 'https://via.placeholder.com/400x220?text=Sin+imagen');
+              : (!empty($tutorial['imagen']) ? $tutorial['imagen'] : 'public/img/no-image.svg');
             $ytUrl    = $ytId ? "https://www.youtube.com/watch?v={$ytId}" : '#';
             $target   = $ytId ? '_blank' : '_self';
           ?>
@@ -292,7 +292,7 @@
                     class="card-img-top"
                     style="height: 175px; object-fit: cover; display: block;"
                     alt="<?= htmlspecialchars($tutorial['titulo']) ?>"
-                    onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
+                    onerror="this.src='public/img/no-image.svg'"
                   >
                   <div class="play-overlay">
                     <div class="play-btn"><i class="fas fa-play"></i></div>
@@ -331,9 +331,12 @@
                   ?>
                   <?php if ($subidorId && !$esMio): ?>
                   <div class="d-flex align-items-center justify-content-between mt-1" onclick="event.stopPropagation()">
-                    <span class="text-muted" style="font-size:.72rem;">
+                    <a href="perfil-usuario.php?id=<?= $subidorId ?>"
+                       class="text-muted text-decoration-none"
+                       style="font-size:.72rem;"
+                       title="Ver perfil de <?= htmlspecialchars($subidorNom) ?>">
                       <i class="fas fa-user me-1"></i><?= htmlspecialchars($subidorNom) ?>
-                    </span>
+                    </a>
                     <button
                       class="btn-seguir-tutorial"
                       data-id="<?= $subidorId ?>"

@@ -118,6 +118,28 @@ class TutorialModel {
     }
 
     /**
+     * Tutoriales subidos por un usuario específico, con ordenación variable.
+     */
+    public function getByUsuario(int $usuarioId, string $orden = 'recientes'): array
+    {
+        $orderBy = match($orden) {
+            'antiguos'  => 't.id ASC',
+            'populares' => 't.titulo ASC',
+            default     => 't.id DESC',
+        };
+
+        $stmt = $this->pdo->prepare(
+            "SELECT t.id, t.titulo, t.imagen, t.youtube_id, t.pieza_id, p.nombre AS pieza_nombre
+             FROM tutorial t
+             LEFT JOIN pieza p ON t.pieza_id = p.id
+             WHERE t.usuario_id = ?
+             ORDER BY {$orderBy}"
+        );
+        $stmt->execute([$usuarioId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
      * Devuelve todos los tutoriales, con búsqueda opcional por título.
      */
     public function getAll(string $busqueda = ''): array {

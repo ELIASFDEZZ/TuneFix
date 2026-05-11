@@ -162,14 +162,84 @@ class ProveedorController
         exit;
     }
 
+    public function editarPieza(): void
+    {
+        $this->guard();
+        $piezaId  = (int)($_GET['id'] ?? 0);
+        $pieza    = $piezaId ? $this->model->getPiezaPorId($piezaId, $this->proveedorId()) : false;
+
+        if (!$pieza) {
+            header('Location: proveedor.php?page=mis-piezas');
+            exit;
+        }
+
+        $proveedor = $this->model->getPorId($this->proveedorId());
+        $error     = $_GET['error'] ?? null;
+        $data = compact('proveedor', 'pieza', 'error');
+        $this->render('editar-pieza', $data);
+    }
+
+    public function guardarEdicionPieza(): void
+    {
+        $this->guard();
+        $piezaId = (int)($_POST['pieza_id'] ?? 0);
+
+        if (!$piezaId) {
+            header('Location: proveedor.php?page=mis-piezas');
+            exit;
+        }
+
+        $nombre      = trim($_POST['nombre']      ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $precio      = $_POST['precio']           ?? '';
+        $stock       = $_POST['stock']            ?? '';
+        $categoria   = $_POST['categoria']        ?? '';
+        $estadoPieza = $_POST['estado_pieza']     ?? '';
+        $garantia    = $_POST['garantia']         ?? 'Sin garantía';
+        $referencia  = trim($_POST['referencia_oem'] ?? '');
+        $imagenUrl   = trim($_POST['imagen_url']  ?? '');
+
+        if (!$nombre || $precio === '' || $stock === '' || !$categoria || !$estadoPieza) {
+            header("Location: proveedor.php?page=editar-pieza&id={$piezaId}&error=campos");
+            exit;
+        }
+
+        $this->model->actualizarPieza($piezaId, $this->proveedorId(), [
+            'nombre'       => $nombre,
+            'referencia'   => $referencia,
+            'categoria'    => $categoria,
+            'estado_pieza' => $estadoPieza,
+            'garantia'     => $garantia,
+            'precio'       => (float)str_replace(',', '.', $precio),
+            'stock'        => (int)$stock,
+            'descripcion'  => $descripcion,
+            'imagen'       => $imagenUrl,
+        ]);
+
+        header('Location: proveedor.php?page=mis-piezas&ok=editada');
+        exit;
+    }
+
+    public function eliminarPieza(): void
+    {
+        $this->guard();
+        $piezaId = (int)($_POST['pieza_id'] ?? 0);
+        if ($piezaId > 0) {
+            $this->model->eliminarPieza($piezaId, $this->proveedorId());
+        }
+        header('Location: proveedor.php?page=mis-piezas&ok=eliminada');
+        exit;
+    }
+
     public function estadisticas(): void
     {
         $this->guard();
-        $proveedor = $this->model->getPorId($this->proveedorId());
-        $stats     = $this->model->getEstadisticas($this->proveedorId());
-        $piezas    = $this->model->getPiezas($this->proveedorId());
+        $proveedor   = $this->model->getPorId($this->proveedorId());
+        $stats       = $this->model->getEstadisticas($this->proveedorId());
+        $piezas      = $this->model->getPiezas($this->proveedorId());
+        $statsVentas = $this->model->getEstadisticasVentas($this->proveedorId());
 
-        $data = compact('proveedor', 'stats', 'piezas');
+        $data = compact('proveedor', 'stats', 'piezas', 'statsVentas');
         $this->render('estadisticas', $data);
     }
 
@@ -244,6 +314,6 @@ class ProveedorController
     {
         $vista = $vistaName;
         extract($data);
-        require_once __DIR__ . '/../views/proveedor/layout.php';
+        require __DIR__ . '/../views/proveedor/layout.php';
     }
 }

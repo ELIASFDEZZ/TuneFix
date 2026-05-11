@@ -208,6 +208,50 @@ class ProveedorModel
         return $stmt->execute([$piezaId, $proveedorId]);
     }
 
+    public function actualizarPieza(int $piezaId, int $proveedorId, array $datos): bool
+    {
+        $stmt = $this->pdo->prepare(
+            "UPDATE pieza
+                SET nombre=?, referencia=?, categoria=?, estado_pieza=?,
+                    garantia=?, precio=?, stock=?, descripcion=?, imagen=?
+              WHERE id=? AND proveedor_id=?"
+        );
+        return $stmt->execute([
+            $datos['nombre'],
+            $datos['referencia']   ?? '',
+            $datos['categoria']    ?? null,
+            $datos['estado_pieza'] ?? 'nueva',
+            $datos['garantia']     ?? 'Sin garantía',
+            $datos['precio']       ?? 0,
+            $datos['stock']        ?? 0,
+            $datos['descripcion']  ?? null,
+            $datos['imagen']       ?? '',
+            $piezaId,
+            $proveedorId,
+        ]);
+    }
+
+    public function eliminarPieza(int $piezaId, int $proveedorId): bool
+    {
+        // Verificar propiedad antes de borrar
+        $check = $this->pdo->prepare("SELECT id FROM pieza WHERE id=? AND proveedor_id=?");
+        $check->execute([$piezaId, $proveedorId]);
+        if (!$check->fetch()) return false;
+
+        // Limpiar tablas dependientes
+        foreach ([
+            "DELETE FROM compatibilidad_pieza WHERE pieza_id=?",
+            "DELETE FROM megusta_pieza          WHERE pieza_id=?",
+            "DELETE FROM carrito                WHERE pieza_id=?",
+            "UPDATE tutorial SET pieza_id=NULL  WHERE pieza_id=?",
+        ] as $sql) {
+            $this->pdo->prepare($sql)->execute([$piezaId]);
+        }
+
+        $stmt = $this->pdo->prepare("DELETE FROM pieza WHERE id=? AND proveedor_id=?");
+        return $stmt->execute([$piezaId, $proveedorId]);
+    }
+
     // ── Estadísticas ──────────────────────────────────────────────────────────
 
     public function getEstadisticas(int $proveedorId): array
@@ -225,6 +269,93 @@ class ProveedorModel
             'total'    => (int)$total->fetchColumn(),
             'activas'  => (int)$activas->fetchColumn(),
             'sin_stock'=> (int)$sinStock->fetchColumn(),
+        ];
+    }
+
+    public function getEstadisticasVentas(int $proveedorId): array
+    {
+        // Una pieza "pertenece" al proveedor si:
+        //   a) proveedor_id = ? (subida desde el panel proveedor)
+        //   b) subido_por es un usuario cuyo email coincide con el del proveedor
+        $filtro = "
+            (p.proveedor_id = :pid
+             OR p.subido_por IN (
+                 SELECT u.id FROM usuario u
+                 INNER JOIN proveedores pv ON pv.email COLLATE utf8mb4_general_ci = u.email
+                 WHERE pv.id = :pid2
+             ))
+        ";
+
+        // Totales globales (solo pedidos pagados)
+        $stmt = $this->pdo->prepare("
+            SELECT
+                COUNT(DISTINCT ped.id)                       AS num_pedidos,
+                COALESCE(SUM(pi.cantidad), 0)                AS unidades_vendidas,
+                COALESCE(SUM(pi.cantidad * pi.precio_u), 0)  AS ingresos_totales
+            FROM pedido_item pi
+            JOIN pieza  p   ON p.id   = pi.pieza_id
+            JOIN pedido ped ON ped.id = pi.pedido_id
+            WHERE $filtro AND ped.estado = 'pagado'
+        ");
+        $stmt->execute([':pid' => $proveedorId, ':pid2' => $proveedorId]);
+        $totales = $stmt->fetch();
+
+        // Piezas más vendidas (top 5)
+        $stmt = $this->pdo->prepare("
+            SELECT p.nombre, p.imagen,
+                   SUM(pi.cantidad)               AS unidades,
+                   SUM(pi.cantidad * pi.precio_u) AS ingresos
+            FROM pedido_item pi
+            JOIN pieza  p   ON p.id   = pi.pieza_id
+            JOIN pedido ped ON ped.id = pi.pedido_id
+            WHERE $filtro AND ped.estado = 'pagado'
+            GROUP BY p.id
+            ORDER BY unidades DESC
+            LIMIT 5
+        ");
+        $stmt->execute([':pid' => $proveedorId, ':pid2' => $proveedorId]);
+        $topPiezas = $stmt->fetchAll();
+
+        // Ingresos por mes (últimos 6 meses)
+        $stmt = $this->pdo->prepare("
+            SELECT DATE_FORMAT(ped.created_at, '%Y-%m') AS mes,
+                   DATE_FORMAT(ped.created_at, '%b %Y') AS mes_label,
+                   COALESCE(SUM(pi.cantidad * pi.precio_u), 0) AS ingresos
+            FROM pedido_item pi
+            JOIN pieza  p   ON p.id   = pi.pieza_id
+            JOIN pedido ped ON ped.id = pi.pedido_id
+            WHERE $filtro
+              AND ped.estado = 'pagado'
+              AND ped.created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY mes
+            ORDER BY mes ASC
+        ");
+        $stmt->execute([':pid' => $proveedorId, ':pid2' => $proveedorId]);
+        $porMes = $stmt->fetchAll();
+
+        // Pedidos recientes (últimos 10)
+        $stmt = $this->pdo->prepare("
+            SELECT ped.id, ped.created_at,
+                   p.nombre AS pieza_nombre,
+                   pi.cantidad, pi.precio_u,
+                   (pi.cantidad * pi.precio_u) AS subtotal
+            FROM pedido_item pi
+            JOIN pieza  p   ON p.id   = pi.pieza_id
+            JOIN pedido ped ON ped.id = pi.pedido_id
+            WHERE $filtro AND ped.estado = 'pagado'
+            ORDER BY ped.created_at DESC
+            LIMIT 10
+        ");
+        $stmt->execute([':pid' => $proveedorId, ':pid2' => $proveedorId]);
+        $recientes = $stmt->fetchAll();
+
+        return [
+            'num_pedidos'      => (int)$totales['num_pedidos'],
+            'unidades_vendidas'=> (int)$totales['unidades_vendidas'],
+            'ingresos_totales' => (float)$totales['ingresos_totales'],
+            'top_piezas'       => $topPiezas,
+            'por_mes'          => $porMes,
+            'recientes'        => $recientes,
         ];
     }
 }

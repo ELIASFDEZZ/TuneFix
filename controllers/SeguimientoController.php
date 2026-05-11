@@ -51,6 +51,21 @@ class SeguimientoController
         $this->json(['success' => $ok, 'seguidores' => $seguidores]);
     }
 
+    /** GET — lista de profesionales que sigue el usuario autenticado */
+    public function misSeguidos(): void
+    {
+        $this->requireSesion();
+
+        $seguidorId = (int) $_SESSION['usuario_id'];
+        $seguidos   = $this->seguimientoModel->getProfesionalesSeguidos($seguidorId);
+        $total      = count($seguidos);
+
+        $titulo_pagina = 'Mis seguidos - TuneFix';
+        require_once __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/seguimiento/mis-seguidos.php';
+        require_once __DIR__ . '/../views/layouts/footer.php';
+    }
+
     /** GET — vista de seguidores del profesional autenticado */
     public function misSeguidores(): void
     {

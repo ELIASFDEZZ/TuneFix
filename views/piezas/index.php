@@ -227,7 +227,8 @@
       <div class="row g-4">
         <?php foreach ($piezas as $pieza): ?>
           <?php
-            $img  = !empty($pieza['imagen'])      ? $pieza['imagen']      : 'https://via.placeholder.com/400x220?text=Sin+imagen';
+            $noImg = 'public/img/no-image.svg';
+            $img  = !empty($pieza['imagen']) ? $pieza['imagen'] : (!empty($pieza['url']) ? $pieza['url'] : $noImg);
             $desc = !empty($pieza['descripcion']) ? $pieza['descripcion'] : 'Sin descripción disponible.';
           ?>
           <div class="col-sm-6 col-md-4 col-xl-3">
@@ -239,7 +240,7 @@
                   class="card-img-top"
                   style="height: 175px; object-fit: cover;"
                   alt="<?= htmlspecialchars($pieza['nombre']) ?>"
-                  onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
+                  onerror="this.onerror=null;this.src='public/img/no-image.svg'"
                 >
                 <div class="card-body d-flex flex-column p-3">
                   <span class="badge badge-ref align-self-start mb-2">

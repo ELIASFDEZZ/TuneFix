@@ -1,12 +1,16 @@
 <?php
-$errores = [
-    'publicada' => null,
+$okMsgs = [
+    'publicada' => 'Pieza publicada correctamente.',
+    'editada'   => 'Pieza actualizada correctamente.',
+    'eliminada' => 'Pieza eliminada del catálogo.',
 ];
-$okMsg = isset($_GET['ok']) && $_GET['ok'] === 'publicada' ? 'Pieza publicada correctamente.' : null;
+$okMsg = $okMsgs[$_GET['ok'] ?? ''] ?? null;
 ?>
 
 <?php if ($okMsg): ?>
-  <div class="alert-ok-prov"><i class="fas fa-check-circle me-2"></i><?= $okMsg ?></div>
+  <div class="<?= ($_GET['ok'] ?? '') === 'eliminada' ? 'alert-err-prov' : 'alert-ok-prov' ?>">
+    <i class="fas fa-<?= ($_GET['ok'] ?? '') === 'eliminada' ? 'trash-alt' : 'check-circle' ?> me-2"></i><?= $okMsg ?>
+  </div>
 <?php endif; ?>
 
 <div class="admin-card">
@@ -69,16 +73,35 @@ $okMsg = isset($_GET['ok']) && $_GET['ok'] === 'publicada' ? 'Pieza publicada co
               <?php endif; ?>
             </td>
             <td>
-              <form method="POST" action="proveedor.php" style="display:inline;">
-                <input type="hidden" name="action" value="toggle_pieza">
-                <input type="hidden" name="pieza_id" value="<?= $p['id'] ?>">
-                <button type="submit" class="btn btn-sm"
-                  style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.7); border-radius:6px; font-size:.78rem; padding:4px 10px;"
-                  title="<?= $p['activa'] ? 'Pausar' : 'Activar' ?>">
-                  <i class="fas <?= $p['activa'] ? 'fa-pause' : 'fa-play' ?>"></i>
-                  <?= $p['activa'] ? 'Pausar' : 'Activar' ?>
-                </button>
-              </form>
+              <div class="d-flex gap-1 flex-wrap">
+                <!-- Pausar / Activar -->
+                <form method="POST" action="proveedor.php" style="display:inline;">
+                  <input type="hidden" name="action" value="toggle_pieza">
+                  <input type="hidden" name="pieza_id" value="<?= $p['id'] ?>">
+                  <button type="submit" class="btn btn-sm"
+                    style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);border-radius:6px;font-size:.75rem;padding:4px 9px;"
+                    title="<?= $p['activa'] ? 'Pausar' : 'Activar' ?>">
+                    <i class="fas <?= $p['activa'] ? 'fa-pause' : 'fa-play' ?>"></i>
+                  </button>
+                </form>
+                <!-- Editar -->
+                <a href="proveedor.php?page=editar-pieza&id=<?= $p['id'] ?>" class="btn btn-sm"
+                   style="background:rgba(255,193,7,.12);border:1px solid rgba(255,193,7,.25);color:#ffc107;border-radius:6px;font-size:.75rem;padding:4px 9px;"
+                   title="Editar">
+                  <i class="fas fa-pen"></i>
+                </a>
+                <!-- Eliminar -->
+                <form method="POST" action="proveedor.php" style="display:inline;"
+                      onsubmit="return confirm('¿Eliminar esta pieza del catálogo? No se puede deshacer.')">
+                  <input type="hidden" name="action" value="eliminar_pieza">
+                  <input type="hidden" name="pieza_id" value="<?= $p['id'] ?>">
+                  <button type="submit" class="btn btn-sm"
+                    style="background:rgba(220,53,69,.12);border:1px solid rgba(220,53,69,.25);color:#ff6b6b;border-radius:6px;font-size:.75rem;padding:4px 9px;"
+                    title="Eliminar">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </form>
+              </div>
             </td>
           </tr>
           <?php endforeach; ?>

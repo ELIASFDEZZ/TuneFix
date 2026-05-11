@@ -89,7 +89,7 @@
       <div class="row g-4" id="lista-favoritos">
         <?php foreach ($piezasGuardadas as $p): ?>
           <?php
-            $img  = !empty($p['imagen'])      ? $p['imagen']      : 'https://via.placeholder.com/400x220?text=Sin+imagen';
+            $img  = !empty($p['imagen'])      ? $p['imagen']      : 'public/img/no-image.svg';
             $desc = !empty($p['descripcion']) ? $p['descripcion'] : 'Sin descripción disponible.';
           ?>
           <div class="col-sm-6 col-md-4 col-xl-3" id="fav-card-<?= (int)$p['id'] ?>">
@@ -100,7 +100,7 @@
                   class="card-img-top"
                   style="height: 160px; object-fit: cover;"
                   alt="<?= htmlspecialchars($p['nombre']) ?>"
-                  onerror="this.src='https://via.placeholder.com/400x220?text=Sin+imagen'"
+                  onerror="this.src='public/img/no-image.svg'"
                 >
               </a>
               <div class="card-body d-flex flex-column p-3">

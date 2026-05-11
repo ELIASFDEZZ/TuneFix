@@ -81,13 +81,13 @@
         <?php
           $img = !empty($pieza['imagen'])
             ? $pieza['imagen']
-            : 'https://via.placeholder.com/600x400?text=Sin+imagen';
+            : (!empty($pieza['url']) ? $pieza['url'] : 'public/img/no-image.svg');
         ?>
         <img
           src="<?= htmlspecialchars($img) ?>"
           class="pieza-img shadow"
           alt="<?= htmlspecialchars($pieza['nombre']) ?>"
-          onerror="this.src='https://via.placeholder.com/600x400?text=Sin+imagen'"
+          onerror="this.onerror=null;this.src='public/img/no-image.svg'"
         >
       </div>
 
@@ -173,6 +173,48 @@
           </a>
           <?php endif; ?>
         </div>
+
+        <!-- Autor de la pieza (proveedor o profesional) -->
+        <?php
+          $tieneProveedor   = !empty($pieza['proveedor_id'])  && !empty($pieza['proveedor_nombre']);
+          $tieneProfesional = !empty($pieza['subido_por'])    && !empty($pieza['subido_por_nombre']);
+        ?>
+        <?php if ($tieneProveedor || $tieneProfesional): ?>
+        <div class="mt-4 d-flex align-items-center gap-3"
+             style="background:rgba(164,4,46,0.05);border:1px solid rgba(164,4,46,0.12);border-radius:12px;padding:14px 18px;">
+          <?php if ($tieneProveedor): ?>
+            <!-- Proveedor -->
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#ffc107,#ff8800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:1rem;flex-shrink:0;">
+              <?= mb_strtoupper(mb_substr(htmlspecialchars($pieza['proveedor_nombre']), 0, 1)) ?>
+            </div>
+            <div>
+              <div style="font-size:0.72rem;color:rgba(0,0,0,0.4);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">
+                <i class="fas fa-store me-1"></i>Proveedor
+              </div>
+              <a href="proveedor-perfil.php?id=<?= (int)$pieza['proveedor_id'] ?>"
+                 style="font-weight:700;color:rgb(164,4,46);text-decoration:none;font-size:0.95rem;">
+                <?= htmlspecialchars($pieza['proveedor_nombre']) ?>
+                <i class="fas fa-arrow-right ms-1" style="font-size:0.75rem;"></i>
+              </a>
+            </div>
+          <?php else: ?>
+            <!-- Profesional -->
+            <div style="width:40px;height:40px;background:linear-gradient(135deg,#a4042e,#ff8800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:1rem;flex-shrink:0;">
+              <?= mb_strtoupper(mb_substr(htmlspecialchars($pieza['subido_por_nombre']), 0, 1)) ?>
+            </div>
+            <div>
+              <div style="font-size:0.72rem;color:rgba(0,0,0,0.4);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;">
+                <i class="fas fa-user-tie me-1"></i>Publicado por
+              </div>
+              <a href="perfil-usuario.php?id=<?= (int)$pieza['subido_por'] ?>"
+                 style="font-weight:700;color:rgb(164,4,46);text-decoration:none;font-size:0.95rem;">
+                <?= htmlspecialchars($pieza['subido_por_nombre']) ?>
+                <i class="fas fa-arrow-right ms-1" style="font-size:0.75rem;"></i>
+              </a>
+            </div>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
 
         <!-- Botón Añadir al carrito -->
         <?php if ($usuarioId && $precio > 0 && $stock > 0): ?>

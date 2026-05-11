@@ -249,7 +249,7 @@ function cardTutorial(t) {
   const ytId  = t.youtube_id || '';
   const thumb = ytId
     ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
-    : (t.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen');
+    : (t.imagen || 'public/img/no-image.svg');
   const ytBadge = ytId
     ? `<span style="background:#ff0000;color:#fff;font-size:.65rem;padding:2px 7px;border-radius:4px;font-weight:700;">
          <i class="fab fa-youtube me-1"></i>YouTube
@@ -264,7 +264,7 @@ function cardTutorial(t) {
         <div class="card bg-dark text-white border-0 shadow card-tuning h-100" style="transition:transform .25s,box-shadow .25s;">
           <div style="position:relative;overflow:hidden;">
             <img src="${esc(thumb)}" class="card-img-top" style="height:160px;object-fit:cover;" alt="${esc(t.titulo)}"
-                 onerror="this.src='https://via.placeholder.com/300x180?text=Sin+imagen'">
+                 onerror="this.src='public/img/no-image.svg'">
             <div class="yt-play-overlay">
               <div class="yt-play-btn"><i class="fas fa-play"></i></div>
             </div>
@@ -281,7 +281,7 @@ function cardTutorial(t) {
 }
 
 function cardPieza(p) {
-  const img = p.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
+  const img = p.imagen || 'public/img/no-image.svg';
   const desc = (p.descripcion || '').substring(0, 80);
   return `
     <div class="col-12 col-sm-6">

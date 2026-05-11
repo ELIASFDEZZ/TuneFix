@@ -120,11 +120,12 @@
 <?php
 $page       = $_GET['page'] ?? 'dashboard';
 $pageLabels = [
-  'dashboard'     => ['Dashboard',           'fa-chart-bar'],
-  'mis-piezas'    => ['Mis Piezas',          'fa-boxes'],
-  'publicar-pieza'=> ['Publicar nueva pieza','fa-plus-circle'],
-  'estadisticas'  => ['Estadísticas',        'fa-chart-line'],
-  'perfil'        => ['Mi perfil',           'fa-building'],
+  'dashboard'      => ['Dashboard',           'fa-chart-bar'],
+  'mis-piezas'     => ['Mis Piezas',          'fa-boxes'],
+  'publicar-pieza' => ['Publicar nueva pieza','fa-plus-circle'],
+  'editar-pieza'   => ['Editar pieza',        'fa-pen'],
+  'estadisticas'   => ['Estadísticas',        'fa-chart-line'],
+  'perfil'         => ['Mi perfil',           'fa-building'],
 ];
 [$pageLabel, $pageIcon] = $pageLabels[$page] ?? ['Dashboard', 'fa-chart-bar'];
 $empresa = htmlspecialchars($_SESSION['proveedor_empresa'] ?? $_SESSION['usuario_nombre'] ?? '');
@@ -148,7 +149,8 @@ $empresa = htmlspecialchars($_SESSION['proveedor_empresa'] ?? $_SESSION['usuario
       'perfil'         => ['Mi perfil de empresa', 'fa-building'],
     ] as $key => [$label, $icon]): ?>
       <div class="nav-item">
-        <a href="proveedor.php?page=<?= $key ?>" class="<?= $page === $key ? 'active' : '' ?>">
+        <?php $activeKey = ($page === 'editar-pieza') ? 'mis-piezas' : $page; ?>
+        <a href="proveedor.php?page=<?= $key ?>" class="<?= $activeKey === $key ? 'active' : '' ?>">
           <span class="nav-icon"><i class="fas <?= $icon ?>"></i></span>
           <?= $label ?>
         </a>
@@ -173,7 +175,7 @@ $empresa = htmlspecialchars($_SESSION['proveedor_empresa'] ?? $_SESSION['usuario
   </header>
 
   <main class="content">
-    <?php require_once __DIR__ . '/' . $vista . '.php'; ?>
+    <?php require __DIR__ . '/' . $vista . '.php'; ?>
   </main>
 </div>
 

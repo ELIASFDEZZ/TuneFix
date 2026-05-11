@@ -194,7 +194,7 @@ function cardManual(m) {
 }
 
 function cardPieza(p) {
-  const img = p.imagen || 'https://via.placeholder.com/300x180?text=Sin+imagen';
+  const img = p.imagen || 'public/img/no-image.svg';
   const desc = (p.descripcion || '').substring(0, 80);
   return `
     <div class="col-12 col-sm-6">

@@ -75,9 +75,8 @@ $ok = isset($_GET['ok']);
           <?php foreach ($ultimasPiezas as $p): ?>
           <tr>
             <td>
-              <?php if ($p['foto_principal']): ?>
-                <img src="uploads/proveedores/piezas/<?= htmlspecialchars($p['foto_principal']) ?>"
-                     class="pieza-thumb" alt="">
+              <?php if (!empty($p['imagen'])): ?>
+                <img src="<?= htmlspecialchars($p['imagen']) ?>" class="pieza-thumb" alt="">
               <?php else: ?>
                 <div class="pieza-thumb d-flex align-items-center justify-content-center" style="background:#1a1a2e; color:rgba(255,255,255,.2);"><i class="fas fa-image"></i></div>
               <?php endif; ?>

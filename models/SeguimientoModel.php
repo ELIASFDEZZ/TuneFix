@@ -45,7 +45,7 @@ class SeguimientoModel
     public function getSeguidores(int $profesionalId): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT u.id, u.nombre, u.email
+            "SELECT u.id, u.nombre, u.email, s.fecha_seguimiento
              FROM seguimiento s
              JOIN usuario u ON u.id = s.seguidor_id
              WHERE s.profesional_id = ?

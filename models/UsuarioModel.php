@@ -153,4 +153,14 @@ class UsuarioModel
         );
         return $stmt->execute([$relId, $usuarioId]);
     }
+
+    /** Devuelve datos públicos de un usuario por ID */
+    public function getById(int $id): array|false
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT id, nombre, email, rol, email_verificado FROM usuario WHERE id = ? LIMIT 1"
+        );
+        $stmt->execute([$id]);
+        return $stmt->fetch() ?: false;
+    }
 }

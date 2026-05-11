@@ -67,22 +67,22 @@ $ok = $_GET['ok'] ?? '';
           $ytId  = $t['youtube_id'] ?? '';
           $thumb = $ytId
             ? "https://img.youtube.com/vi/{$ytId}/default.jpg"
-            : ($t['imagen'] ?: 'https://via.placeholder.com/44?text=?');
+            : ($t['imagen'] ?: '../public/img/no-image.svg');
         ?>
         <tr>
           <td>
             <?php if ($ytId): ?>
               <div style="position:relative;width:64px;height:36px;border-radius:6px;overflow:hidden;border:1px solid rgba(255,60,0,.2);">
                 <img src="<?= htmlspecialchars($thumb) ?>" style="width:100%;height:100%;object-fit:cover;" alt=""
-                     onerror="this.src='https://via.placeholder.com/64x36?text=YT'">
+                     onerror="this.src='../public/img/no-image.svg'">
                 <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
                   <i class="fab fa-youtube" style="color:#ff0000;font-size:.9rem;filter:drop-shadow(0 0 3px #000);"></i>
                 </div>
               </div>
             <?php else: ?>
-              <img src="<?= htmlspecialchars($t['imagen'] ?: 'https://via.placeholder.com/44?text=?') ?>"
+              <img src="<?= htmlspecialchars($t['imagen'] ?: '../public/img/no-image.svg') ?>"
                    class="pieza-thumb" alt=""
-                   onerror="this.src='https://via.placeholder.com/44?text=?'">
+                   onerror="this.src='../public/img/no-image.svg'">
             <?php endif; ?>
           </td>
           <td style="color:#fff;font-weight:500;max-width:260px;"><?= htmlspecialchars($t['titulo']) ?></td>

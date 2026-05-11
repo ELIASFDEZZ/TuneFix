@@ -158,13 +158,13 @@
             <tbody id="carrito-body">
               <?php foreach ($items as $item): ?>
               <?php
-                $img      = !empty($item['imagen']) ? $item['imagen'] : 'https://via.placeholder.com/70?text=N/A';
+                $img      = !empty($item['imagen']) ? $item['imagen'] : 'public/img/no-image.svg';
                 $subtotal = (float)$item['cantidad'] * (float)$item['precio_u'];
               ?>
               <tr id="row-<?= (int)$item['id'] ?>">
                 <td>
                   <img src="<?= htmlspecialchars($img) ?>" class="img-carrito"
-                       onerror="this.src='https://via.placeholder.com/70?text=N/A'"
+                       onerror="this.src='public/img/no-image.svg'"
                        alt="<?= htmlspecialchars($item['nombre']) ?>">
                 </td>
                 <td>
