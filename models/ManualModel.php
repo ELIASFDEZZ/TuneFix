@@ -11,10 +11,7 @@ class ManualModel
         $this->pdo = Database::getConnection();
     }
 
-    /**
-     * Devuelve los manuales asociados a una motorización concreta,
-     * incluyendo el nombre de la pieza relacionada si existe.
-     */
+    /** Manuales de una motorización concreta */
     public function getByMotorizacion(int $motorizacionId): array
     {
         $stmt = $this->pdo->prepare(
@@ -29,7 +26,7 @@ class ManualModel
         return $stmt->fetchAll();
     }
 
-    /** Todos los manuales disponibles */
+    /** Todos los manuales */
     public function getAll(): array
     {
         $stmt = $this->pdo->query(
@@ -40,5 +37,59 @@ class ManualModel
              ORDER BY m.titulo ASC"
         );
         return $stmt->fetchAll();
+    }
+
+    /** Un manual por id */
+    public function getById(int $id): array|false
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT m.*, p.nombre AS pieza_nombre
+             FROM manual m
+             LEFT JOIN pieza p ON p.id = m.pieza_id
+             WHERE m.id = ?"
+        );
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    /** Crea un manual y devuelve el id insertado */
+    public function crear(
+        string $titulo,
+        ?string $fuente,
+        ?string $archivoUrl,
+        ?int $motorizacionId,
+        ?int $piezaId
+    ): int {
+        $this->pdo->prepare(
+            "INSERT INTO manual (titulo, fuente, archivo_url, motorizacion_id, pieza_id)
+             VALUES (?, ?, ?, ?, ?)"
+        )->execute([$titulo, $fuente, $archivoUrl, $motorizacionId, $piezaId]);
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    /** Actualiza un manual existente */
+    public function actualizar(
+        int $id,
+        string $titulo,
+        ?string $fuente,
+        ?string $archivoUrl,
+        ?int $motorizacionId,
+        ?int $piezaId
+    ): void {
+        $this->pdo->prepare(
+            "UPDATE manual
+             SET titulo=?, fuente=?, archivo_url=?, motorizacion_id=?, pieza_id=?
+             WHERE id=?"
+        )->execute([$titulo, $fuente, $archivoUrl, $motorizacionId, $piezaId, $id]);
+    }
+
+    /** Elimina un manual y devuelve la ruta del PDF para borrarlo del disco */
+    public function eliminar(int $id): ?string
+    {
+        $stmt = $this->pdo->prepare("SELECT archivo_url FROM manual WHERE id=?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        $this->pdo->prepare("DELETE FROM manual WHERE id=?")->execute([$id]);
+        return $row['archivo_url'] ?? null;
     }
 }

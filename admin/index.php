@@ -12,7 +12,7 @@ if (!isset($_SESSION[ADMIN_SESSION_KEY])) {
 $pdo = Database::getConnection();
 
 // ── Routing ──────────────────────────────────────────────────────────────────
-$pages = ['dashboard', 'usuarios', 'piezas', 'tutoriales', 'manuales', 'proveedores', 'proveedor-detalle'];
+$pages = ['dashboard', 'usuarios', 'piezas', 'tutoriales', 'manuales', 'vehiculos', 'distribuidores', 'proveedores', 'proveedor-detalle'];
 $page  = $_GET['page'] ?? 'dashboard';
 if (!in_array($page, $pages, true)) $page = 'dashboard';
 
@@ -101,10 +101,186 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // ── Manuales ──
+    if ($action === 'save_manual') {
+        $id      = (int)($_POST['id']              ?? 0);
+        $titulo  = trim($_POST['titulo']           ?? '');
+        $fuente  = trim($_POST['fuente']           ?? '');
+        $motId   = (int)($_POST['motorizacion_id'] ?? 0) ?: null;
+        $piezaId = (int)($_POST['pieza_id']        ?? 0) ?: null;
+
+        if ($titulo !== '') {
+            $archiveUrl = trim($_POST['archivo_url_actual'] ?? '');
+
+            if (!empty($_FILES['pdf']['name'])) {
+                $ext = strtolower(pathinfo($_FILES['pdf']['name'], PATHINFO_EXTENSION));
+                if ($ext === 'pdf' && $_FILES['pdf']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = __DIR__ . '/../uploads/manuales/';
+                    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+
+                    $htaccess = $uploadDir . '.htaccess';
+                    if (!file_exists($htaccess)) {
+                        file_put_contents($htaccess, "Options -Indexes\nAddType application/octet-stream .pdf\n");
+                    }
+
+                    $filename = 'manual_' . time() . '_' . bin2hex(random_bytes(4)) . '.pdf';
+                    $destPath = $uploadDir . $filename;
+                    if (move_uploaded_file($_FILES['pdf']['tmp_name'], $destPath)) {
+                        if ($archiveUrl && str_starts_with($archiveUrl, 'uploads/manuales/')) {
+                            $oldFile = __DIR__ . '/../' . $archiveUrl;
+                            if (file_exists($oldFile)) unlink($oldFile);
+                        }
+                        $archiveUrl = 'uploads/manuales/' . $filename;
+                    }
+                }
+            }
+
+            if ($id > 0) {
+                $pdo->prepare(
+                    "UPDATE manual SET titulo=?, fuente=?, archivo_url=?, motorizacion_id=?, pieza_id=? WHERE id=?"
+                )->execute([$titulo, $fuente ?: null, $archiveUrl ?: null, $motId, $piezaId, $id]);
+            } else {
+                $pdo->prepare(
+                    "INSERT INTO manual (titulo, fuente, archivo_url, motorizacion_id, pieza_id) VALUES (?,?,?,?,?)"
+                )->execute([$titulo, $fuente ?: null, $archiveUrl ?: null, $motId, $piezaId]);
+            }
+        }
+        header("Location: index.php?page=manuales&ok=saved"); exit;
+    }
     if ($action === 'delete_manual') {
         $id = (int)($_POST['id'] ?? 0);
-        if ($id > 0) $pdo->prepare("DELETE FROM manual WHERE id=?")->execute([$id]);
+        if ($id > 0) {
+            $row = $pdo->prepare("SELECT archivo_url FROM manual WHERE id=?");
+            $row->execute([$id]);
+            $manual = $row->fetch();
+            if ($manual && $manual['archivo_url'] && str_starts_with($manual['archivo_url'], 'uploads/manuales/')) {
+                $oldFile = __DIR__ . '/../' . $manual['archivo_url'];
+                if (file_exists($oldFile)) unlink($oldFile);
+            }
+            $pdo->prepare("DELETE FROM manual WHERE id=?")->execute([$id]);
+        }
         header("Location: index.php?page=manuales&ok=del"); exit;
+    }
+    
+    // ── Distribuidores ──
+if ($action === 'save_distribuidor') {
+    $id     = (int)($_POST['id']      ?? 0);
+    $nombre = trim($_POST['nombre']   ?? '');
+    $url    = trim($_POST['url_base'] ?? '') ?: null;
+    if ($nombre !== '') {
+        if ($id > 0) {
+            $pdo->prepare("UPDATE distribuidor SET nombre=?, url_base=? WHERE id=?")
+                ->execute([$nombre, $url, $id]);
+        } else {
+            $pdo->prepare("INSERT INTO distribuidor (nombre, url_base) VALUES (?,?)")
+                ->execute([$nombre, $url]);
+        }
+    }
+    header("Location: index.php?page=distribuidores&tab=tiendas&ok=saved"); exit;
+}
+if ($action === 'delete_distribuidor') {
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id > 0) {
+        $pdo->prepare("DELETE FROM distribuidor_pieza WHERE distribuidor_id=?")->execute([$id]);
+        $pdo->prepare("DELETE FROM distribuidor WHERE id=?")->execute([$id]);
+    }
+    header("Location: index.php?page=distribuidores&tab=tiendas&ok=del"); exit;
+}
+if ($action === 'save_distribuidor_pieza') {
+    $id             = (int)($_POST['id']              ?? 0);
+    $distribuidorId = (int)($_POST['distribuidor_id'] ?? 0);
+    $piezaId        = (int)($_POST['pieza_id']        ?? 0);
+    $nombre         = trim($_POST['nombre']           ?? '') ?: null;
+    $urlDirecta     = trim($_POST['url_directa']      ?? '') ?: null;
+    if ($distribuidorId > 0 && $piezaId > 0) {
+        if ($id > 0) {
+            $pdo->prepare(
+                "UPDATE distribuidor_pieza SET distribuidor_id=?, pieza_id=?, nombre=?, url_directa=? WHERE id=?"
+            )->execute([$distribuidorId, $piezaId, $nombre, $urlDirecta, $id]);
+        } else {
+            $pdo->prepare(
+                "INSERT INTO distribuidor_pieza (distribuidor_id, pieza_id, nombre, url_directa) VALUES (?,?,?,?)"
+            )->execute([$distribuidorId, $piezaId, $nombre, $urlDirecta]);
+        }
+    }
+    header("Location: index.php?page=distribuidores&tab=links&ok=saved"); exit;
+}
+if ($action === 'delete_distribuidor_pieza') {
+    $id = (int)($_POST['id'] ?? 0);
+    if ($id > 0) $pdo->prepare("DELETE FROM distribuidor_pieza WHERE id=?")->execute([$id]);
+    header("Location: index.php?page=distribuidores&tab=links&ok=del"); exit;
+}
+
+    // ── Vehículos: Marcas ──
+    if ($action === 'save_marca') {
+        $id     = (int)($_POST['id'] ?? 0);
+        $nombre = trim($_POST['nombre'] ?? '');
+        if ($nombre !== '') {
+            if ($id > 0) {
+                $pdo->prepare("UPDATE marca SET nombre=? WHERE id=?")->execute([$nombre, $id]);
+            } else {
+                $pdo->prepare("INSERT INTO marca (nombre) VALUES (?)")->execute([$nombre]);
+            }
+        }
+        header("Location: index.php?page=vehiculos&tab=marcas&ok=saved"); exit;
+    }
+    if ($action === 'delete_marca') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) $pdo->prepare("DELETE FROM marca WHERE id=?")->execute([$id]);
+        header("Location: index.php?page=vehiculos&tab=marcas&ok=del"); exit;
+    }
+
+    // ── Vehículos: Modelos ──
+    if ($action === 'save_modelo') {
+        $id         = (int)($_POST['id']          ?? 0);
+        $nombre     = trim($_POST['nombre']       ?? '');
+        $marcaId    = (int)($_POST['marca_id']    ?? 0);
+        $anioInicio = (int)($_POST['anio_inicio'] ?? 0) ?: null;
+        $anioFin    = (int)($_POST['anio_fin']    ?? 0) ?: null;
+        if ($nombre !== '' && $marcaId > 0) {
+            if ($id > 0) {
+                $pdo->prepare("UPDATE modelo SET nombre=?, marca_id=?, anio_inicio=?, anio_fin=? WHERE id=?")
+                    ->execute([$nombre, $marcaId, $anioInicio, $anioFin, $id]);
+            } else {
+                $pdo->prepare("INSERT INTO modelo (nombre, marca_id, anio_inicio, anio_fin) VALUES (?,?,?,?)")
+                    ->execute([$nombre, $marcaId, $anioInicio, $anioFin]);
+            }
+        }
+        header("Location: index.php?page=vehiculos&tab=modelos&ok=saved"); exit;
+    }
+    if ($action === 'delete_modelo') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) $pdo->prepare("DELETE FROM modelo WHERE id=?")->execute([$id]);
+        header("Location: index.php?page=vehiculos&tab=modelos&ok=del"); exit;
+    }
+
+    // ── Vehículos: Motorizaciones ──
+    if ($action === 'save_motorizacion') {
+        $id          = (int)($_POST['id']              ?? 0);
+        $nombre      = trim($_POST['nombre']           ?? '');
+        $modeloId    = (int)($_POST['modelo_id']       ?? 0);
+        $potencia    = trim($_POST['potencia']         ?? '') ?: null;
+        $combustible = trim($_POST['tipo_combustible'] ?? '') ?: null;
+        $tipoMotor   = trim($_POST['tipo_motor']       ?? '') ?: null;
+        $codigo      = trim($_POST['codigo_motor']     ?? '') ?: null;
+        if ($nombre !== '' && $modeloId > 0) {
+            if ($id > 0) {
+                $pdo->prepare(
+                    "UPDATE motorizacion SET nombre=?, modelo_id=?, potencia=?,
+                     tipo_combustible=?, tipo_motor=?, codigo_motor=? WHERE id=?"
+                )->execute([$nombre, $modeloId, $potencia, $combustible, $tipoMotor, $codigo, $id]);
+            } else {
+                $pdo->prepare(
+                    "INSERT INTO motorizacion (nombre, modelo_id, potencia, tipo_combustible, tipo_motor, codigo_motor)
+                     VALUES (?,?,?,?,?,?)"
+                )->execute([$nombre, $modeloId, $potencia, $combustible, $tipoMotor, $codigo]);
+            }
+        }
+        header("Location: index.php?page=vehiculos&tab=motorizaciones&ok=saved"); exit;
+    }
+    if ($action === 'delete_motorizacion') {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id > 0) $pdo->prepare("DELETE FROM motorizacion WHERE id=?")->execute([$id]);
+        header("Location: index.php?page=vehiculos&tab=motorizaciones&ok=del"); exit;
     }
 
     // ── Proveedores ──
@@ -146,6 +322,8 @@ $pageTitles = [
     'piezas'           => 'Gestión de Piezas',
     'tutoriales'       => 'Tutoriales',
     'manuales'         => 'Manuales',
+    'vehiculos'        => 'Vehículos',
+    'distribuidores'   => 'Distribuidores',
     'proveedores'      => 'Proveedores',
     'proveedor-detalle'=> 'Detalle de Solicitud',
 ];
@@ -155,6 +333,8 @@ $pageIcons = [
     'piezas'           => 'fa-cog',
     'tutoriales'       => 'fa-play-circle',
     'manuales'         => 'fa-file-pdf',
+    'vehiculos'        => 'fa-car',
+    'distribuidores'   => 'fa-truck',
     'proveedores'      => 'fa-store',
     'proveedor-detalle'=> 'fa-store',
 ];
@@ -326,6 +506,8 @@ $pageIcons = [
       'piezas'     => ['Piezas',       'fa-cog'],
       'tutoriales' => ['Tutoriales',   'fa-play-circle'],
       'manuales'   => ['Manuales',     'fa-file-pdf'],
+      'vehiculos'  => ['Vehículos',    'fa-car'],
+      'distribuidores' => ['Distribuidores', 'fa-truck'],
     ] as $key => [$label, $icon]): ?>
       <div class="nav-item">
         <a href="index.php?page=<?= $key ?>" class="<?= $page === $key ? 'active' : '' ?>">
