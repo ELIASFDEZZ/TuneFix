@@ -14,7 +14,7 @@ $docsDir = __DIR__ . '/../../uploads/proveedores/docs/';
 ?>
 
 <div style="margin-bottom:16px;">
-  <a href="index.php?page=proveedores" style="color:rgba(255,255,255,.45); text-decoration:none; font-size:.85rem;">
+  <a href="index.php?page=proveedores" style="color:#6b7280; text-decoration:none; font-size:.85rem;">
     <i class="fas fa-arrow-left me-1"></i> Volver a Proveedores
   </a>
 </div>
@@ -36,26 +36,26 @@ $docsDir = __DIR__ . '/../../uploads/proveedores/docs/';
             'Dirección fiscal' => $prov['direccion'],
             'Provincia'        => $prov['provincia'],
             'Teléfono'         => $prov['telefono'],
-            'Sitio web'        => $prov['sitio_web'] ? '<a href="'.htmlspecialchars($prov['sitio_web']).'" target="_blank" style="color:#6ea8fe;">'.htmlspecialchars($prov['sitio_web']).'</a>' : '—',
+            'Sitio web'        => $prov['sitio_web'] ? '<a href="'.htmlspecialchars($prov['sitio_web']).'" target="_blank" style="color:rgb(164,4,46);">'.htmlspecialchars($prov['sitio_web']).'</a>' : '—',
             'Responsable'      => $prov['nombre_responsable'],
-            'Email'            => '<a href="mailto:'.htmlspecialchars($prov['email']).'" style="color:#6ea8fe;">'.htmlspecialchars($prov['email']).'</a>',
+            'Email'            => '<a href="mailto:'.htmlspecialchars($prov['email']).'" style="color:rgb(164,4,46);">'.htmlspecialchars($prov['email']).'</a>',
             'Fecha solicitud'  => date('d/m/Y H:i', strtotime($prov['created_at'])),
           ];
           foreach ($campos as $label => $valor): ?>
             <div class="col-md-6">
-              <div style="font-size:.7rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;"><?= $label ?></div>
-              <div style="color:rgba(255,255,255,.8); font-size:.9rem;"><?= $valor ?></div>
+              <div style="font-size:.7rem; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;"><?= $label ?></div>
+              <div style="color:#111827; font-size:.9rem;"><?= $valor ?></div>
             </div>
           <?php endforeach; ?>
           <div class="col-12">
-            <div style="font-size:.7rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Descripción</div>
-            <div style="background:#0d0d1a; border-radius:8px; padding:14px; color:rgba(255,255,255,.65); font-size:.88rem; line-height:1.6;">
+            <div style="font-size:.7rem; color:#9ca3af; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Descripción</div>
+            <div style="background:#f9fafb; border:1px solid #f0f0f0; border-radius:8px; padding:14px; color:#374151; font-size:.88rem; line-height:1.6;">
               <?= nl2br(htmlspecialchars($prov['descripcion'] ?? '—')) ?>
             </div>
           </div>
           <?php if ($prov['estado'] === 'rechazado' && $prov['motivo_rechazo']): ?>
             <div class="col-12">
-              <div style="font-size:.7rem; color:rgba(255,100,100,.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Motivo de rechazo</div>
+              <div style="font-size:.7rem; color:#dc2626; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Motivo de rechazo</div>
               <div style="background:rgba(220,53,69,.08); border:1px solid rgba(220,53,69,.2); border-radius:8px; padding:14px; color:#ff8888; font-size:.88rem;">
                 <?= nl2br(htmlspecialchars($prov['motivo_rechazo'])) ?>
               </div>
@@ -77,8 +77,8 @@ $docsDir = __DIR__ . '/../../uploads/proveedores/docs/';
             'IAE / Certificado' => $prov['doc_iae'],
         ];
         foreach ($docs as $nombre => $archivo): ?>
-          <div style="background:#0d0d1a; border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:16px; min-width:200px;">
-            <div style="font-size:.75rem; color:rgba(255,255,255,.35); margin-bottom:8px;"><?= $nombre ?></div>
+          <div style="background:#f9fafb; border:1px solid #e4e6ea; border-radius:10px; padding:16px; min-width:200px;">
+            <div style="font-size:.75rem; color:#9ca3af; margin-bottom:8px;"><?= $nombre ?></div>
             <?php if ($archivo && file_exists($docsDir . $archivo)): ?>
               <?php $ext = strtolower(pathinfo($archivo, PATHINFO_EXTENSION)); ?>
               <?php if (in_array($ext, ['jpg','jpeg','png'])): ?>
@@ -94,7 +94,7 @@ $docsDir = __DIR__ . '/../../uploads/proveedores/docs/';
                 <i class="fas fa-download me-1"></i>Ver / Descargar
               </a>
             <?php else: ?>
-              <div style="color:rgba(255,255,255,.25); font-size:.82rem; text-align:center;">No disponible</div>
+              <div style="color:#9ca3af; font-size:.82rem; text-align:center;">No disponible</div>
             <?php endif; ?>
           </div>
         <?php endforeach; ?>
@@ -128,8 +128,8 @@ $docsDir = __DIR__ . '/../../uploads/proveedores/docs/';
 
         <?php if ($prov['estado'] !== 'rechazado'): ?>
         <!-- Rechazar con motivo -->
-        <div style="background:#0d0d1a; border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:16px;">
-          <div style="font-size:.78rem; color:rgba(255,255,255,.35); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">❌ Rechazar solicitud</div>
+        <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:10px; padding:16px;">
+          <div style="font-size:.78rem; color:#be123c; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; font-weight:700;">❌ Rechazar solicitud</div>
           <form method="POST" action="index.php?page=proveedores" onsubmit="return validarRechazo()">
             <input type="hidden" name="action" value="rechazar_proveedor">
             <input type="hidden" name="id" value="<?= $prov['id'] ?>">

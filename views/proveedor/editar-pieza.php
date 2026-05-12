@@ -98,11 +98,11 @@ $categorias = ['Motor','Frenos','Suspensión','Transmisión','Carrocería','Elec
                placeholder="https://ejemplo.com/imagen.jpg">
       </div>
       <div class="col-md-5">
-        <div id="img-ph" style="width:100%;height:120px;border:1px dashed rgba(255,255,255,.12);border-radius:8px;display:<?= !empty($pieza['imagen']) ? 'none' : 'flex' ?>;align-items:center;justify-content:center;color:rgba(255,255,255,.2);font-size:.8rem;flex-direction:column;gap:6px;">
+        <div id="img-ph" style="width:100%;height:120px;border:1px dashed var(--border);border-radius:8px;display:<?= !empty($pieza['imagen']) ? 'none' : 'flex' ?>;align-items:center;justify-content:center;color:var(--text-faint);font-size:.8rem;flex-direction:column;gap:6px;background:var(--card-hover);">
           <i class="fas fa-image fa-2x"></i><span>Vista previa</span>
         </div>
         <img id="img-prev" src="<?= htmlspecialchars($pieza['imagen'] ?? '') ?>"
-             style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,.1);display:<?= !empty($pieza['imagen']) ? 'block' : 'none' ?>;"
+             style="width:100%;height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:<?= !empty($pieza['imagen']) ? 'block' : 'none' ?>;"
              onerror="this.style.display='none';document.getElementById('img-ph').style.display='flex';"
              alt="">
       </div>
@@ -120,13 +120,15 @@ $categorias = ['Motor','Frenos','Suspensión','Transmisión','Carrocería','Elec
 </form>
 
 <!-- ══ ELIMINAR (fuera del form principal) ══ -->
-<div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(220,53,69,0.18);">
+<div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(220,53,69,0.15);">
   <form method="POST" action="proveedor.php"
         onsubmit="return confirm('¿Eliminar esta pieza del catálogo? No se puede deshacer.')">
     <input type="hidden" name="action"   value="eliminar_pieza">
     <input type="hidden" name="pieza_id" value="<?= (int)$pieza['id'] ?>">
     <button type="submit" class="btn"
-            style="background:rgba(220,53,69,.12);border:1px solid rgba(220,53,69,.3);color:#ff6b6b;border-radius:8px;font-weight:600;padding:8px 18px;font-size:.85rem;">
+            style="background:rgba(220,53,69,.1);border:1px solid rgba(220,53,69,.28);color:#f87171;border-radius:8px;font-weight:600;padding:8px 18px;font-size:.85rem;transition:.18s;"
+            onmouseover="this.style.background='rgba(220,53,69,.22)'"
+            onmouseout="this.style.background='rgba(220,53,69,.1)'">
       <i class="fas fa-trash-alt me-2"></i>Eliminar pieza
     </button>
   </form>

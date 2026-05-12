@@ -127,6 +127,27 @@
               <?php endif; ?>
             </div>
 
+            <?php if ($esPropietario): ?>
+            <div class="d-flex align-items-center gap-2">
+              <a href="mis-ventas.php"
+                 style="background:rgba(255,60,0,0.12);border:1px solid rgba(255,60,0,0.3);border-radius:50px;
+                        color:#ff6b35;font-weight:700;font-size:0.85rem;padding:7px 20px;text-decoration:none;
+                        display:inline-flex;align-items:center;gap:6px;transition:all .2s;"
+                 onmouseover="this.style.background='rgba(255,60,0,0.22)'"
+                 onmouseout="this.style.background='rgba(255,60,0,0.12)'">
+                <i class="fas fa-store"></i> Mis Ventas
+              </a>
+              <a href="subir-pieza.php"
+                 style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:50px;
+                        color:rgba(255,255,255,0.6);font-size:0.8rem;padding:7px 16px;text-decoration:none;
+                        display:inline-flex;align-items:center;gap:5px;transition:all .2s;"
+                 onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='#fff'"
+                 onmouseout="this.style.background='rgba(255,255,255,0.07)';this.style.color='rgba(255,255,255,0.6)'">
+                <i class="fas fa-plus"></i> Subir pieza
+              </a>
+            </div>
+            <?php endif; ?>
+
             <?php if (!$esPropietario && isset($_SESSION['usuario_id'])): ?>
             <button id="btn-seguir"
                     onclick="toggleSeguir(<?= (int)($profesionalId ?? 0) ?>)"
@@ -230,6 +251,9 @@
                   <h3 class="accent-red mb-0">
                     <i class="fas fa-file-pdf me-2"></i> Manuales técnicos
                   </h3>
+                  <a href="todas-manuales.php" id="btn-todos-manuales" class="btn btn-outline-light btn-all">
+                    <i class="fas fa-list me-1"></i> Ver todos los manuales
+                  </a>
                 </div>
                 <div id="lista-manuales">
                   <!-- Cards inyectadas por JS -->
@@ -417,6 +441,10 @@ function cargarResultados(motId, vehiculo) {
   document.getElementById('lista-distribuidores').innerHTML = '';
   document.getElementById('lista-manuales').innerHTML = '';
   document.getElementById('sin-resultados').classList.add('d-none');
+
+  const params = `?motorizacion_id=${motId}&vehiculo=${encodeURIComponent(vehiculo)}`;
+  const btnManuales = document.getElementById('btn-todos-manuales');
+  if (btnManuales) btnManuales.href = 'todas-manuales.php' + params;
 
   resultados.scrollIntoView({ behavior: 'smooth', block: 'start' });
 

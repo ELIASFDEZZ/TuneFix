@@ -39,11 +39,12 @@ class ProveedorController
     public function dashboard(): void
     {
         $this->guard();
-        $proveedor  = $this->model->getPorId($this->proveedorId());
-        $stats      = $this->model->getEstadisticas($this->proveedorId());
-        $ultimasPiezas = array_slice($this->model->getPiezas($this->proveedorId()), 0, 5);
+        $proveedor     = $this->model->getPorId($this->proveedorId());
+        $stats         = $this->model->getEstadisticas($this->proveedorId());
+        $resumenPedidos = $this->model->getResumenPedidos($this->proveedorId());
+        $ultimasPiezas = array_slice($this->model->getPiezas($this->proveedorId()), 0, 6);
 
-        $data = compact('proveedor', 'stats', 'ultimasPiezas');
+        $data = compact('proveedor', 'stats', 'resumenPedidos', 'ultimasPiezas');
         $this->render('dashboard', $data);
     }
 
@@ -229,6 +230,35 @@ class ProveedorController
         }
         header('Location: proveedor.php?page=mis-piezas&ok=eliminada');
         exit;
+    }
+
+    public function pedidos(): void
+    {
+        $this->guard();
+        $proveedor = $this->model->getPorId($this->proveedorId());
+        $resumen   = $this->model->getResumenPedidos($this->proveedorId());
+        $lineas    = $this->model->getPedidos($this->proveedorId());
+
+        // Agrupar líneas por pedido_id
+        $pedidos = [];
+        foreach ($lineas as $linea) {
+            $pid = $linea['pedido_id'];
+            if (!isset($pedidos[$pid])) {
+                $pedidos[$pid] = [
+                    'pedido_id' => $pid,
+                    'fecha'     => $linea['fecha'],
+                    'estado'    => $linea['estado'],
+                    'comprador' => $linea['comprador'],
+                    'items'     => [],
+                    'subtotal'  => 0,
+                ];
+            }
+            $pedidos[$pid]['items'][]   = $linea;
+            $pedidos[$pid]['subtotal'] += (float) $linea['subtotal'];
+        }
+
+        $data = compact('proveedor', 'resumen', 'pedidos');
+        $this->render('pedidos', $data);
     }
 
     public function estadisticas(): void

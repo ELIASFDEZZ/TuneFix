@@ -65,20 +65,20 @@ $ok = $_GET['ok'] ?? '';
       </thead>
       <tbody>
         <?php if (empty($usuarios)): ?>
-          <tr><td colspan="6" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay usuarios.</td></tr>
+          <tr><td colspan="6" class="text-center" style="color:#9ca3af;padding:30px;">No hay usuarios.</td></tr>
         <?php endif; ?>
         <?php foreach ($usuarios as $u): ?>
         <tr>
-          <td style="color:rgba(255,255,255,.3);font-size:.8rem;"><?= $u['id'] ?></td>
+          <td style="color:#9ca3af;font-size:.8rem;"><?= $u['id'] ?></td>
           <td>
             <div style="display:flex;align-items:center;gap:10px;">
-              <div style="width:34px;height:34px;background:rgba(164,4,46,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:rgb(164,4,46);flex-shrink:0;">
+              <div style="width:34px;height:34px;background:rgba(164,4,46,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:rgb(164,4,46);flex-shrink:0;">
                 <?= strtoupper(mb_substr($u['nombre'],0,1)) ?>
               </div>
-              <span style="color:#fff;"><?= htmlspecialchars($u['nombre']) ?></span>
+              <span style="color:#111827;"><?= htmlspecialchars($u['nombre']) ?></span>
             </div>
           </td>
-          <td style="color:rgba(255,255,255,.5);"><?= htmlspecialchars($u['email']) ?></td>
+          <td style="color:#6b7280;"><?= htmlspecialchars($u['email']) ?></td>
           <td>
             <!-- Cambiar rol inline -->
             <form method="POST" action="index.php?page=usuarios" style="display:inline;">
@@ -94,8 +94,8 @@ $ok = $_GET['ok'] ?? '';
             </form>
           </td>
           <td>
-            <span style="background:rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;font-size:.78rem;">
-              <i class="fas fa-car me-1" style="color:rgba(255,255,255,.3);"></i><?= $u['coches'] ?>
+            <span style="background:#f3f4f6;padding:3px 10px;border-radius:20px;font-size:.78rem;color:#374151;">
+              <i class="fas fa-car me-1" style="color:#9ca3af;"></i><?= $u['coches'] ?>
             </span>
           </td>
           <td>

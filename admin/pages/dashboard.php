@@ -82,7 +82,7 @@ $topPiezas = $pdo->query(
                 <?= htmlspecialchars($u['nombre']) ?>
               </div>
             </td>
-            <td style="color:rgba(255,255,255,.5);font-size:.82rem;"><?= htmlspecialchars($u['email']) ?></td>
+            <td style="color:#6b7280;font-size:.82rem;"><?= htmlspecialchars($u['email']) ?></td>
             <td><span class="rol-badge rol-<?= $u['rol'] ?>"><?= ucfirst($u['rol']) ?></span></td>
           </tr>
           <?php endforeach; ?>
@@ -105,10 +105,10 @@ $topPiezas = $pdo->query(
         ?>
         <div class="mb-3">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-            <span style="font-size:.82rem;color:rgba(255,255,255,.7);"><?= ucfirst($r['rol']) ?></span>
-            <span style="font-size:.82rem;font-weight:700;color:#fff;"><?= $r['cnt'] ?></span>
+            <span style="font-size:.82rem;color:#374151;"><?= ucfirst($r['rol']) ?></span>
+            <span style="font-size:.82rem;font-weight:700;color:#111827;"><?= $r['cnt'] ?></span>
           </div>
-          <div style="background:rgba(255,255,255,.07);border-radius:20px;height:6px;">
+          <div style="background:#e5e7eb;border-radius:20px;height:6px;">
             <div style="background:<?= $roleColors[$r['rol']] ?? '#888' ?>;width:<?= $pct ?>%;height:6px;border-radius:20px;"></div>
           </div>
         </div>
@@ -130,8 +130,8 @@ $topPiezas = $pdo->query(
             <?= $i+1 ?>
           </div>
           <div style="flex:1;overflow:hidden;">
-            <div style="font-size:.8rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($p['nombre']) ?></div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.35);"><?= $p['compat'] ?> motorizaciones</div>
+            <div style="font-size:.8rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($p['nombre']) ?></div>
+            <div style="font-size:.72rem;color:#9ca3af;"><?= $p['compat'] ?> motorizaciones</div>
           </div>
         </div>
         <?php endforeach; ?>

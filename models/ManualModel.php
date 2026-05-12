@@ -26,16 +26,59 @@ class ManualModel
         return $stmt->fetchAll();
     }
 
-    /** Todos los manuales */
-    public function getAll(): array
+    /** Todos los manuales con info de vehículo y búsqueda opcional */
+    public function getAll(string $busqueda = ''): array
     {
-        $stmt = $this->pdo->query(
-            "SELECT m.id, m.titulo, m.fuente, m.archivo_url,
-                    p.nombre AS pieza_nombre
-             FROM manual m
-             LEFT JOIN pieza p ON p.id = m.pieza_id
-             ORDER BY m.titulo ASC"
-        );
+        $sql = "SELECT m.id, m.titulo, m.fuente, m.archivo_url,
+                       p.nombre  AS pieza_nombre,
+                       mk.nombre AS marca_nombre,
+                       mo.nombre AS modelo_nombre,
+                       mt.nombre AS motor_nombre
+                FROM manual m
+                LEFT JOIN pieza       p  ON p.id  = m.pieza_id
+                LEFT JOIN motorizacion mt ON mt.id = m.motorizacion_id
+                LEFT JOIN modelo      mo ON mo.id  = mt.modelo_id
+                LEFT JOIN marca       mk ON mk.id  = mo.marca_id";
+
+        if ($busqueda !== '') {
+            $sql .= " WHERE m.titulo LIKE :q OR m.fuente LIKE :q OR mk.nombre LIKE :q OR mo.nombre LIKE :q";
+            $sql .= " ORDER BY m.titulo ASC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':q' => '%' . $busqueda . '%']);
+        } else {
+            $sql .= " ORDER BY m.titulo ASC";
+            $stmt = $this->pdo->query($sql);
+        }
+
+        return $stmt->fetchAll();
+    }
+
+    /** Manuales filtrados por motorización con info de vehículo */
+    public function getAllByMotorizacion(int $motorizacionId, string $busqueda = ''): array
+    {
+        $sql = "SELECT m.id, m.titulo, m.fuente, m.archivo_url,
+                       p.nombre  AS pieza_nombre,
+                       mk.nombre AS marca_nombre,
+                       mo.nombre AS modelo_nombre,
+                       mt.nombre AS motor_nombre
+                FROM manual m
+                LEFT JOIN pieza       p  ON p.id  = m.pieza_id
+                LEFT JOIN motorizacion mt ON mt.id = m.motorizacion_id
+                LEFT JOIN modelo      mo ON mo.id  = mt.modelo_id
+                LEFT JOIN marca       mk ON mk.id  = mo.marca_id
+                WHERE m.motorizacion_id = :motId";
+
+        if ($busqueda !== '') {
+            $sql .= " AND (m.titulo LIKE :q OR m.fuente LIKE :q)";
+            $sql .= " ORDER BY m.titulo ASC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':motId' => $motorizacionId, ':q' => '%' . $busqueda . '%']);
+        } else {
+            $sql .= " ORDER BY m.titulo ASC";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':motId' => $motorizacionId]);
+        }
+
         return $stmt->fetchAll();
     }
 

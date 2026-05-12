@@ -124,6 +124,9 @@ style="background: url('https://images.unsplash.com/photo-1603386329225-868f9b1e
             <div class="col-lg-6">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <h3 class="accent-orange"><i class="fas fa-file-pdf me-2"></i> Manuales recomendados</h3>
+                <a href="todas-manuales.php" id="btn-todos-manuales" class="btn btn-outline-light btn-all">
+                  <i class="fas fa-list me-1"></i> Ver todos los manuales
+                </a>
               </div>
               <div id="lista-manuales"></div>
             </div>
@@ -283,8 +286,10 @@ function cargarResultados(motId, vehiculo) {
   document.getElementById('sin-resultados').classList.add('d-none');
 
   const params = `?motorizacion_id=${motId}&vehiculo=${encodeURIComponent(vehiculo)}`;
-  const btnPiezas = document.getElementById('btn-todas-piezas');
-  if (btnPiezas) btnPiezas.href = 'todas-piezas.php' + params;
+  const btnPiezas   = document.getElementById('btn-todas-piezas');
+  const btnManuales = document.getElementById('btn-todos-manuales');
+  if (btnPiezas)   btnPiezas.href   = 'todas-piezas.php'   + params;
+  if (btnManuales) btnManuales.href = 'todas-manuales.php' + params;
 
   resultados.scrollIntoView({ behavior: 'smooth', block: 'start' });
 

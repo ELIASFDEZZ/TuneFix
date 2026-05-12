@@ -82,7 +82,7 @@ $ok = $_GET['ok'] ?? '';
       </thead>
       <tbody>
         <?php if (empty($piezas)): ?>
-          <tr><td colspan="7" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay piezas.</td></tr>
+          <tr><td colspan="7" class="text-center" style="color:#9ca3af;padding:30px;">No hay piezas.</td></tr>
         <?php endif; ?>
         <?php foreach ($piezas as $p): ?>
         <tr>
@@ -92,11 +92,11 @@ $ok = $_GET['ok'] ?? '';
                  onerror="this.src='../public/img/no-image.svg'">
           </td>
           <td><span style="background:rgba(164,4,46,.15);color:rgb(164,4,46);padding:3px 8px;border-radius:6px;font-size:.75rem;font-family:monospace;"><?= htmlspecialchars($p['referencia']) ?></span></td>
-          <td style="color:#fff;font-weight:500;max-width:200px;"><?= htmlspecialchars($p['nombre']) ?></td>
-          <td style="color:rgba(255,255,255,.55);font-size:.78rem;max-width:180px;">
-            <?= $p['vehiculo'] ? htmlspecialchars($p['vehiculo']) : '<span style="color:rgba(255,255,255,.2);">—</span>' ?>
+          <td style="color:#111827;font-weight:500;max-width:200px;"><?= htmlspecialchars($p['nombre']) ?></td>
+          <td style="color:#6b7280;font-size:.78rem;max-width:180px;">
+            <?= $p['vehiculo'] ? htmlspecialchars($p['vehiculo']) : '<span style="color:#9ca3af;">—</span>' ?>
           </td>
-          <td><span style="background:rgba(255,255,255,.07);padding:3px 8px;border-radius:20px;font-size:.78rem;"><?= $p['compat'] ?></span></td>
+          <td><span style="background:#f3f4f6;padding:3px 8px;border-radius:20px;font-size:.78rem;color:#374151;"><?= $p['compat'] ?></span></td>
           <td>
             <div class="d-flex gap-2">
               <button class="btn-edit-sm"
@@ -126,11 +126,11 @@ $ok = $_GET['ok'] ?? '';
 
   <!-- Paginación -->
   <?php if ($totalPages > 1): ?>
-  <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:6px;justify-content:flex-end;">
+  <div style="padding:14px 20px;border-top:1px solid #f0f0f0;display:flex;gap:6px;justify-content:flex-end;">
     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
       <a href="index.php?page=piezas&p=<?= $i ?>&q=<?= urlencode($search) ?>"
          style="padding:5px 11px;border-radius:6px;font-size:.8rem;text-decoration:none;
-                <?= $i===$page_n ? 'background:rgb(164,4,46);color:#fff;' : 'background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);' ?>">
+                <?= $i===$page_n ? 'background:rgb(164,4,46);color:#fff;' : 'background:#f3f4f6;color:#6b7280;border:1px solid #e4e6ea;' ?>">
         <?= $i ?>
       </a>
     <?php endfor; ?>
@@ -146,7 +146,7 @@ $ok = $_GET['ok'] ?? '';
         <input type="hidden" name="action" value="save_pieza">
         <input type="hidden" name="id" id="pieza_id" value="">
         <div class="modal-header">
-          <h5 class="modal-title text-white" id="modalTitle"><i class="fas fa-cog me-2" style="color:rgb(164,4,46);"></i>Nueva pieza</h5>
+          <h5 class="modal-title" id="modalTitle" style="color:#111827;"><i class="fas fa-cog me-2" style="color:rgb(164,4,46);"></i>Nueva pieza</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -168,7 +168,7 @@ $ok = $_GET['ok'] ?? '';
               <input type="url" name="imagen" id="p_img" class="form-control-admin form-control" placeholder="https://...">
             </div>
             <div class="col-12">
-              <label class="form-label-admin">Vehículo / Motorización <span style="color:rgba(255,255,255,.3);font-weight:400;">(opcional)</span></label>
+              <label class="form-label-admin">Vehículo / Motorización <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
               <select name="motorizacion_id" id="p_mot" class="form-select form-select-admin">
                 <option value="">— Sin vehículo —</option>
                 <?php foreach ($motorizaciones as $m): ?>

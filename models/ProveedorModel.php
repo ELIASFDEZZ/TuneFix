@@ -272,6 +272,84 @@ class ProveedorModel
         ];
     }
 
+    /**
+     * Todos los pedidos que contienen piezas del proveedor.
+     * Devuelve líneas individuales; el controlador las agrupa por pedido_id.
+     */
+    public function getPedidos(int $proveedorId): array
+    {
+        $filtro = "
+            (p.proveedor_id = :pid
+             OR p.subido_por IN (
+                 SELECT u.id FROM usuario u
+                 INNER JOIN proveedores pv ON pv.email COLLATE utf8mb4_general_ci = u.email
+                 WHERE pv.id = :pid2
+             ))
+        ";
+
+        $stmt = $this->pdo->prepare("
+            SELECT
+                ped.id           AS pedido_id,
+                ped.created_at   AS fecha,
+                ped.estado,
+                u.nombre         AS comprador,
+                p.id             AS pieza_id,
+                p.nombre         AS pieza_nombre,
+                p.referencia     AS pieza_ref,
+                p.imagen         AS pieza_imagen,
+                pi.cantidad,
+                pi.precio_u,
+                (pi.cantidad * pi.precio_u) AS subtotal
+            FROM pedido_item pi
+            JOIN pieza  p   ON p.id   = pi.pieza_id
+            JOIN pedido ped ON ped.id = pi.pedido_id
+            JOIN usuario u  ON u.id   = ped.usuario_id
+            WHERE $filtro
+            ORDER BY ped.created_at DESC, ped.id DESC
+        ");
+        $stmt->execute([':pid' => $proveedorId, ':pid2' => $proveedorId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /** Resumen de pedidos para la cabecera de la página (4 queries separadas) */
+    public function getResumenPedidos(int $proveedorId): array
+    {
+        $filtro = "
+            (p.proveedor_id = :pid
+             OR p.subido_por IN (
+                 SELECT u.id FROM usuario u
+                 INNER JOIN proveedores pv ON pv.email COLLATE utf8mb4_general_ci = u.email
+                 WHERE pv.id = :pid2
+             ))
+        ";
+        $params = [':pid' => $proveedorId, ':pid2' => $proveedorId];
+
+        $q = fn(string $sql) => (function() use ($sql, $params) {
+            $s = $this->pdo->prepare($sql); $s->execute($params); return $s->fetchColumn();
+        })();
+
+        $base = "FROM pedido_item pi JOIN pieza p ON p.id = pi.pieza_id JOIN pedido ped ON ped.id = pi.pedido_id WHERE $filtro";
+
+        $s = $this->pdo->prepare("SELECT COUNT(DISTINCT ped.id) $base"); $s->execute($params);
+        $total = (int)$s->fetchColumn();
+
+        $s = $this->pdo->prepare("SELECT COUNT(DISTINCT ped.id) $base AND ped.estado = 'pagado'"); $s->execute($params);
+        $pagados = (int)$s->fetchColumn();
+
+        $s = $this->pdo->prepare("SELECT COUNT(DISTINCT ped.id) $base AND ped.estado = 'pendiente'"); $s->execute($params);
+        $pendientes = (int)$s->fetchColumn();
+
+        $s = $this->pdo->prepare("SELECT COALESCE(SUM(pi.cantidad * pi.precio_u), 0) $base AND ped.estado = 'pagado'"); $s->execute($params);
+        $facturado = (float)$s->fetchColumn();
+
+        return [
+            'total_pedidos'     => $total,
+            'pedidos_pagados'   => $pagados,
+            'pedidos_pendientes'=> $pendientes,
+            'total_facturado'   => $facturado,
+        ];
+    }
+
     public function getEstadisticasVentas(int $proveedorId): array
     {
         // Una pieza "pertenece" al proveedor si:

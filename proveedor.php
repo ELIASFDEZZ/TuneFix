@@ -38,6 +38,8 @@ if ($page === 'mis-piezas') {
     $controller->editarPieza();
 } elseif ($page === 'estadisticas') {
     $controller->estadisticas();
+} elseif ($page === 'pedidos') {
+    $controller->pedidos();
 } elseif ($page === 'perfil') {
     $controller->perfil();
 } else {

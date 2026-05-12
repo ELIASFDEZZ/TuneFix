@@ -64,32 +64,30 @@ $ok = $_GET['ok'] ?? '';
       <tbody>
         <?php if (empty($manuales)): ?>
           <tr>
-            <td colspan="6" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay manuales.</td>
+            <td colspan="6" class="text-center" style="color:#9ca3af;padding:30px;">No hay manuales.</td>
           </tr>
         <?php endif; ?>
         <?php foreach ($manuales as $m): ?>
           <tr>
-            <td style="color:#fff;font-weight:500;max-width:250px;"><?= htmlspecialchars($m['titulo'] ?? '—') ?></td>
+            <td style="color:#111827;font-weight:500;max-width:250px;"><?= htmlspecialchars($m['titulo'] ?? '—') ?></td>
             <td>
               <?php if ($m['pieza_nombre']): ?>
-                <span
-                  style="background:rgba(164,4,46,.12);color:rgb(164,4,46);padding:3px 8px;border-radius:6px;font-size:.75rem;"><?= htmlspecialchars($m['pieza_nombre']) ?></span>
-              <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+                <span style="background:rgba(164,4,46,.12);color:rgb(164,4,46);padding:3px 8px;border-radius:6px;font-size:.75rem;"><?= htmlspecialchars($m['pieza_nombre']) ?></span>
+              <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
             </td>
-            <td style="color:rgba(255,255,255,.45);font-size:.8rem;"><?= htmlspecialchars($m['vehiculo'] ?? '—') ?></td>
+            <td style="color:#6b7280;font-size:.8rem;"><?= htmlspecialchars($m['vehiculo'] ?? '—') ?></td>
             <td>
               <?php if ($m['fuente']): ?>
-                <span
-                  style="background:rgba(255,255,255,.07);padding:3px 8px;border-radius:20px;font-size:.75rem;color:rgba(255,255,255,.5);"><?= htmlspecialchars($m['fuente']) ?></span>
-              <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+                <span style="background:#f3f4f6;padding:3px 8px;border-radius:20px;font-size:.75rem;color:#374151;border:1px solid #e4e6ea;"><?= htmlspecialchars($m['fuente']) ?></span>
+              <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
             </td>
             <td>
               <?php if ($m['archivo_url']): ?>
                 <a href="../<?= htmlspecialchars($m['archivo_url']) ?>" target="_blank" rel="noopener"
-                  style="color:#ff8800;font-size:.8rem;text-decoration:none;">
+                  style="color:rgb(164,4,46);font-size:.8rem;text-decoration:none;">
                   <i class="fas fa-file-pdf me-1"></i>Ver PDF
                 </a>
-              <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+              <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
             </td>
             <td style="display:flex;gap:6px;flex-wrap:nowrap;">
               <button class="btn-ghost" style="font-size:.75rem;padding:4px 10px;" onclick='editarManual(<?= json_encode([
@@ -115,38 +113,35 @@ $ok = $_GET['ok'] ?? '';
 </div>
 
 <!-- Modal -->
-<div id="modalManual" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+<div id="modalManual" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
      align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:12px;
-              width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:28px;">
+  <div style="background:#fff;border:1px solid #e4e6ea;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.12);
+              width:100%;max-width:680px;max-height:90vh;overflow-y:auto;">
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
-      <h3 id="modalTitle" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0;background:#fafafa;border-radius:14px 14px 0 0;">
+      <h3 id="modalTitle" style="color:#111827;font-size:1rem;font-weight:700;margin:0;">
         <i class="fas fa-file-pdf me-2" style="color:rgb(164,4,46);"></i>Añadir manual
       </h3>
-      <button onclick="cerrarModal()" style="background:none;border:none;color:rgba(255,255,255,.4);
+      <button onclick="cerrarModal()" style="background:none;border:none;color:#6b7280;
               font-size:1.4rem;cursor:pointer;line-height:1;">&times;</button>
     </div>
 
-    <form method="POST" action="index.php?page=manuales" enctype="multipart/form-data">
+    <form method="POST" action="index.php?page=manuales" enctype="multipart/form-data" style="padding:20px;">
       <input type="hidden" name="action" value="save_manual">
       <input type="hidden" name="id" id="fId" value="0">
       <input type="hidden" name="archivo_url_actual" id="fArchivoActual" value="">
 
-      <div style="margin-bottom:16px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          Título <span style="color:rgb(164,4,46);">*</span>
-        </label>
+      <div style="margin-bottom:14px;">
+        <label class="form-label-admin">Título <span style="color:rgb(164,4,46);">*</span></label>
         <input type="text" name="titulo" id="fTitulo" required maxlength="200"
-          placeholder="Ej: Manual de cambio de aceite – Golf MkVII 2.0 TDI" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+          placeholder="Ej: Manual de cambio de aceite – Golf MkVII 2.0 TDI"
+          class="form-control-admin form-control">
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
         <div>
-          <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Marca</label>
-          <select id="fMarca" onchange="cargarModelos()" style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+          <label class="form-label-admin">Marca</label>
+          <select id="fMarca" onchange="cargarModelos()" class="form-select form-select-admin">
             <option value="">— Todas —</option>
             <?php foreach ($marcas as $ma): ?>
               <option value="<?= $ma['id'] ?>"><?= htmlspecialchars($ma['nombre']) ?></option>
@@ -154,28 +149,22 @@ $ok = $_GET['ok'] ?? '';
           </select>
         </div>
         <div>
-          <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Modelo</label>
-          <select id="fModelo" onchange="cargarMotorizaciones()" style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+          <label class="form-label-admin">Modelo</label>
+          <select id="fModelo" onchange="cargarMotorizaciones()" class="form-select form-select-admin">
             <option value="">— Selecciona marca —</option>
           </select>
         </div>
         <div>
-          <label
-            style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Motorización</label>
-          <select name="motorizacion_id" id="fMotorizacion" style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+          <label class="form-label-admin">Motorización</label>
+          <select name="motorizacion_id" id="fMotorizacion" class="form-select form-select-admin">
             <option value="">— Selecciona modelo —</option>
           </select>
         </div>
       </div>
 
-      <div style="margin-bottom:16px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          Pieza relacionada <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(opcional)</span>
-        </label>
-        <select name="pieza_id" id="fPieza" style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                       border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+      <div style="margin-bottom:14px;">
+        <label class="form-label-admin">Pieza relacionada <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
+        <select name="pieza_id" id="fPieza" class="form-select form-select-admin">
           <option value="">— Sin pieza asociada —</option>
           <?php foreach ($piezas as $p): ?>
             <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['nombre']) ?></option>
@@ -183,48 +172,43 @@ $ok = $_GET['ok'] ?? '';
         </select>
       </div>
 
-      <div style="margin-bottom:16px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          Fuente / Autor <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(opcional)</span>
-        </label>
+      <div style="margin-bottom:14px;">
+        <label class="form-label-admin">Fuente / Autor <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
         <input type="text" name="fuente" id="fFuente" maxlength="100" placeholder="Ej: Volkswagen AG, Haynes, etc."
-          style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+          class="form-control-admin form-control">
       </div>
 
-      <div style="margin-bottom:24px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Archivo PDF</label>
+      <div style="margin-bottom:20px;">
+        <label class="form-label-admin">Archivo PDF</label>
 
         <div id="pdfActualWrap" style="display:none;margin-bottom:10px;padding:10px 14px;
-             background:rgba(255,136,0,.08);border:1px solid rgba(255,136,0,.2);border-radius:8px;
+             background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;
              align-items:center;gap:10px;">
-          <i class="fas fa-file-pdf" style="color:#ff8800;font-size:1.2rem;"></i>
-          <span id="pdfActualNombre"
-            style="color:rgba(255,255,255,.7);font-size:.85rem;flex:1;word-break:break-all;"></span>
+          <i class="fas fa-file-pdf" style="color:#c2410c;font-size:1.2rem;"></i>
+          <span id="pdfActualNombre" style="color:#374151;font-size:.85rem;flex:1;word-break:break-all;"></span>
           <a id="pdfActualLink" href="#" target="_blank" rel="noopener"
-            style="color:#ff8800;font-size:.8rem;text-decoration:none;white-space:nowrap;">
+            style="color:#c2410c;font-size:.8rem;text-decoration:none;white-space:nowrap;">
             <i class="fas fa-external-link-alt me-1"></i>Ver
           </a>
         </div>
 
         <div id="dropzone" style="display:flex;flex-direction:column;align-items:center;justify-content:center;
-                    gap:8px;padding:28px;border:2px dashed rgba(255,255,255,.15);border-radius:10px;
-                    cursor:pointer;transition:border-color .2s;">
-          <i class="fas fa-cloud-upload-alt"
-            style="font-size:1.8rem;color:rgba(255,255,255,.25);pointer-events:none;"></i>
-          <span style="color:rgba(255,255,255,.4);font-size:.85rem;pointer-events:none;">
+                    gap:8px;padding:28px;border:2px dashed #d1d5db;border-radius:10px;
+                    cursor:pointer;transition:border-color .2s;background:#fafafa;">
+          <i class="fas fa-cloud-upload-alt" style="font-size:1.8rem;color:#9ca3af;pointer-events:none;"></i>
+          <span style="color:#6b7280;font-size:.85rem;pointer-events:none;">
             Arrastra el PDF aquí o <span style="color:rgb(164,4,46);">selecciona un archivo</span>
           </span>
-          <span id="pdfFileName" style="color:rgba(255,255,255,.7);font-size:.8rem;pointer-events:none;"></span>
+          <span id="pdfFileName" style="color:#374151;font-size:.8rem;pointer-events:none;"></span>
           <input type="file" name="pdf" id="fPdf" accept="application/pdf" style="display:none;"
             onchange="mostrarNombrePdf(this)">
         </div>
-        <p style="color:rgba(255,255,255,.25);font-size:.75rem;margin-top:6px;">
+        <p style="color:#9ca3af;font-size:.75rem;margin-top:6px;">
           Solo PDF. Máx. recomendado 20 MB. Si no seleccionas archivo nuevo, se conserva el actual.
         </p>
       </div>
 
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid #f0f0f0;">
         <button type="button" onclick="cerrarModal()" class="btn-ghost">Cancelar</button>
         <button type="submit" class="btn-red"><i class="fas fa-save me-1"></i> Guardar manual</button>
       </div>
@@ -299,10 +283,10 @@ $ok = $_GET['ok'] ?? '';
   const inputPdf = document.getElementById('fPdf');
   dropzone.addEventListener('click', () => inputPdf.click());
   dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.borderColor = 'rgb(164,4,46)'; });
-  dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = 'rgba(255,255,255,.15)'; });
+  dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = '#d1d5db'; });
   dropzone.addEventListener('drop', e => {
     e.preventDefault();
-    dropzone.style.borderColor = 'rgba(255,255,255,.15)';
+    dropzone.style.borderColor = '#d1d5db';
     const f = e.dataTransfer.files[0];
     if (f && f.type === 'application/pdf') {
       const dt = new DataTransfer(); dt.items.add(f); inputPdf.files = dt.files;

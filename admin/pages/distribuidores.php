@@ -40,9 +40,9 @@ $piezas = $pdo->query(
               text-decoration:none;font-size:.85rem;font-weight:600;transition:all .2s;
               <?= $tab === $key
                 ? 'background:rgb(164,4,46);color:#fff;'
-                : 'background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.1);' ?>">
+                : 'background:#f3f4f6;color:#6b7280;border:1px solid #e4e6ea;' ?>">
       <i class="fas <?= $icon ?>"></i> <?= $label ?>
-      <span style="background:rgba(0,0,0,.25);padding:1px 7px;border-radius:20px;font-size:.75rem;"><?= $cnt ?></span>
+      <span style="background:rgba(0,0,0,.1);padding:1px 7px;border-radius:20px;font-size:.75rem;"><?= $cnt ?></span>
     </a>
   <?php endforeach; ?>
 </div>
@@ -61,23 +61,23 @@ $piezas = $pdo->query(
       <thead><tr><th>#</th><th>Nombre</th><th>URL base</th><th>Links activos</th><th>Acciones</th></tr></thead>
       <tbody>
         <?php if (empty($distribuidores)): ?>
-          <tr><td colspan="5" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay distribuidores.</td></tr>
+          <tr><td colspan="5" class="text-center" style="color:#9ca3af;padding:30px;">No hay distribuidores.</td></tr>
         <?php endif; ?>
         <?php foreach ($distribuidores as $d): ?>
         <?php $linksCount = count(array_filter($links, fn($l) => $l['distribuidor_id'] == $d['id'])); ?>
         <tr>
-          <td style="color:rgba(255,255,255,.3);width:50px;"><?= $d['id'] ?></td>
-          <td style="color:#fff;font-weight:500;"><?= htmlspecialchars($d['nombre']) ?></td>
+          <td style="color:#9ca3af;width:50px;"><?= $d['id'] ?></td>
+          <td style="color:#111827;font-weight:500;"><?= htmlspecialchars($d['nombre']) ?></td>
           <td>
             <?php if ($d['url_base']): ?>
               <a href="<?= htmlspecialchars($d['url_base']) ?>" target="_blank" rel="noopener"
-                 style="color:rgba(255,136,0,.8);font-size:.82rem;text-decoration:none;word-break:break-all;">
+                 style="color:rgb(164,4,46);font-size:.82rem;text-decoration:none;word-break:break-all;">
                 <i class="fas fa-external-link-alt me-1"></i><?= htmlspecialchars($d['url_base']) ?>
               </a>
-            <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+            <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
           </td>
           <td>
-            <span style="background:rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;font-size:.78rem;color:rgba(255,255,255,.6);">
+            <span style="background:#f3f4f6;padding:3px 10px;border-radius:20px;font-size:.78rem;color:#374151;border:1px solid #e4e6ea;">
               <?= $linksCount ?> <?= $linksCount === 1 ? 'link' : 'links' ?>
             </span>
           </td>
@@ -105,36 +105,28 @@ $piezas = $pdo->query(
 </div>
 
 <!-- Modal tienda -->
-<div id="modalTienda" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+<div id="modalTienda" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
      align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:12px;
-              width:100%;max-width:480px;padding:28px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <h3 id="tituloTienda" style="color:#fff;font-size:1rem;font-weight:600;margin:0;">Añadir tienda</h3>
-      <button onclick="cerrarModal('tienda')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;">&times;</button>
+  <div style="background:#fff;border:1px solid #e4e6ea;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.12);
+              width:100%;max-width:480px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0;background:#fafafa;border-radius:14px 14px 0 0;">
+      <h3 id="tituloTienda" style="color:#111827;font-size:1rem;font-weight:700;margin:0;">Añadir tienda</h3>
+      <button onclick="cerrarModal('tienda')" style="background:none;border:none;color:#6b7280;font-size:1.4rem;cursor:pointer;">&times;</button>
     </div>
-    <form method="POST" action="index.php?page=distribuidores&tab=tiendas">
+    <form method="POST" action="index.php?page=distribuidores&tab=tiendas" style="padding:20px;">
       <input type="hidden" name="action" value="save_distribuidor">
       <input type="hidden" name="id" id="tId" value="0">
       <div style="margin-bottom:14px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          Nombre <span style="color:rgb(164,4,46);">*</span>
-        </label>
+        <label class="form-label-admin">Nombre <span style="color:rgb(164,4,46);">*</span></label>
         <input type="text" name="nombre" id="tNombre" required maxlength="100"
-               placeholder="Ej: Autodoc"
-               style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+               placeholder="Ej: Autodoc" class="form-control-admin form-control">
       </div>
       <div style="margin-bottom:20px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          URL base <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(opcional)</span>
-        </label>
+        <label class="form-label-admin">URL base <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
         <input type="url" name="url_base" id="tUrl" maxlength="255"
-               placeholder="https://www.autodoc.es/"
-               style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+               placeholder="https://www.autodoc.es/" class="form-control-admin form-control">
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid #f0f0f0;">
         <button type="button" onclick="cerrarModal('tienda')" class="btn-ghost">Cancelar</button>
         <button type="submit" class="btn-red"><i class="fas fa-save me-1"></i> Guardar</button>
       </div>
@@ -158,14 +150,14 @@ $piezas = $pdo->query(
       </thead>
       <tbody>
         <?php if (empty($links)): ?>
-          <tr><td colspan="5" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay links.</td></tr>
+          <tr><td colspan="5" class="text-center" style="color:#9ca3af;padding:30px;">No hay links.</td></tr>
         <?php endif; ?>
         <?php foreach ($links as $l): ?>
         <tr>
           <td>
-            <span style="background:rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;
-                         font-size:.78rem;color:rgba(255,255,255,.7);">
-              <i class="fas fa-truck me-1" style="color:rgba(164,4,46,.7);font-size:.7rem;"></i>
+            <span style="background:#f3f4f6;padding:3px 10px;border-radius:20px;
+                         font-size:.78rem;color:#374151;border:1px solid #e4e6ea;">
+              <i class="fas fa-truck me-1" style="color:rgb(164,4,46);font-size:.7rem;"></i>
               <?= htmlspecialchars($l['distribuidor_nombre']) ?>
             </span>
           </td>
@@ -175,19 +167,19 @@ $piezas = $pdo->query(
                            border-radius:5px;font-family:monospace;font-size:.75rem;">
                 <?= htmlspecialchars($l['referencia']) ?>
               </span>
-              <div style="color:rgba(255,255,255,.7);margin-top:3px;"><?= htmlspecialchars($l['pieza_nombre']) ?></div>
+              <div style="color:#374151;margin-top:3px;"><?= htmlspecialchars($l['pieza_nombre']) ?></div>
             </div>
           </td>
-          <td style="color:rgba(255,255,255,.55);font-size:.85rem;max-width:180px;">
-            <?= $l['nombre'] ? htmlspecialchars($l['nombre']) : '<span style="color:rgba(255,255,255,.2);">—</span>' ?>
+          <td style="color:#6b7280;font-size:.85rem;max-width:180px;">
+            <?= $l['nombre'] ? htmlspecialchars($l['nombre']) : '<span style="color:#9ca3af;">—</span>' ?>
           </td>
           <td>
             <?php if ($l['url_directa']): ?>
               <a href="<?= htmlspecialchars($l['url_directa']) ?>" target="_blank" rel="noopener"
-                 style="color:rgba(255,136,0,.8);font-size:.8rem;text-decoration:none;">
+                 style="color:rgb(164,4,46);font-size:.8rem;text-decoration:none;">
                 <i class="fas fa-external-link-alt me-1"></i>Ver enlace
               </a>
-            <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+            <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
           </td>
           <td style="display:flex;gap:6px;">
             <button class="btn-ghost" style="font-size:.75rem;padding:4px 10px;"
@@ -215,25 +207,21 @@ $piezas = $pdo->query(
 </div>
 
 <!-- Modal link -->
-<div id="modalLink" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+<div id="modalLink" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
      align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:12px;
-              width:100%;max-width:560px;padding:28px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <h3 id="tituloLink" style="color:#fff;font-size:1rem;font-weight:600;margin:0;">Añadir link a pieza</h3>
-      <button onclick="cerrarModal('link')" style="background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;">&times;</button>
+  <div style="background:#fff;border:1px solid #e4e6ea;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.12);
+              width:100%;max-width:560px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0;background:#fafafa;border-radius:14px 14px 0 0;">
+      <h3 id="tituloLink" style="color:#111827;font-size:1rem;font-weight:700;margin:0;">Añadir link a pieza</h3>
+      <button onclick="cerrarModal('link')" style="background:none;border:none;color:#6b7280;font-size:1.4rem;cursor:pointer;">&times;</button>
     </div>
-    <form method="POST" action="index.php?page=distribuidores&tab=links">
+    <form method="POST" action="index.php?page=distribuidores&tab=links" style="padding:20px;">
       <input type="hidden" name="action" value="save_distribuidor_pieza">
       <input type="hidden" name="id" id="lId" value="0">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
         <div>
-          <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-            Tienda <span style="color:rgb(164,4,46);">*</span>
-          </label>
-          <select name="distribuidor_id" id="lDistribuidor" required
-                  style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+          <label class="form-label-admin">Tienda <span style="color:rgb(164,4,46);">*</span></label>
+          <select name="distribuidor_id" id="lDistribuidor" required class="form-select form-select-admin">
             <option value="">— Selecciona —</option>
             <?php foreach ($distribuidores as $d): ?>
               <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['nombre']) ?></option>
@@ -241,12 +229,8 @@ $piezas = $pdo->query(
           </select>
         </div>
         <div>
-          <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-            Pieza <span style="color:rgb(164,4,46);">*</span>
-          </label>
-          <select name="pieza_id" id="lPieza" required
-                  style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+          <label class="form-label-admin">Pieza <span style="color:rgb(164,4,46);">*</span></label>
+          <select name="pieza_id" id="lPieza" required class="form-select form-select-admin">
             <option value="">— Selecciona —</option>
             <?php foreach ($piezas as $p): ?>
               <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['referencia'] . ' – ' . $p['nombre']) ?></option>
@@ -255,24 +239,16 @@ $piezas = $pdo->query(
         </div>
       </div>
       <div style="margin-bottom:14px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          Nombre en la tienda <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(opcional)</span>
-        </label>
+        <label class="form-label-admin">Nombre en la tienda <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
         <input type="text" name="nombre" id="lNombre" maxlength="150"
-               placeholder="Ej: Kit distribución INA para 1.6 TDI"
-               style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+               placeholder="Ej: Kit distribución INA para 1.6 TDI" class="form-control-admin form-control">
       </div>
-      <div style="margin-bottom:20px;">
-        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-          URL directa al producto <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(opcional)</span>
-        </label>
+      <div style="margin-bottom:4px;">
+        <label class="form-label-admin">URL directa al producto <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
         <input type="url" name="url_directa" id="lUrl" maxlength="500"
-               placeholder="https://www.autodoc.es/pieza/..."
-               style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+               placeholder="https://www.autodoc.es/pieza/..." class="form-control-admin form-control">
       </div>
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid #f0f0f0;margin-top:14px;">
         <button type="button" onclick="cerrarModal('link')" class="btn-ghost">Cancelar</button>
         <button type="submit" class="btn-red"><i class="fas fa-save me-1"></i> Guardar</button>
       </div>

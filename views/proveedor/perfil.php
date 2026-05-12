@@ -22,23 +22,23 @@ $provincias = ['Álava','Albacete','Alicante','Almería','Asturias','Ávila','Ba
       <div class="admin-card-header"><div class="admin-card-title"><i class="fas fa-id-card"></i> Datos registrales</div></div>
       <div style="padding:20px;">
         <div style="margin-bottom:14px;">
-          <div style="font-size:.72rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">CIF / NIF</div>
-          <div style="color:#ffc107; font-weight:700; font-size:.95rem;"><?= htmlspecialchars($proveedor['cif']) ?></div>
+          <div style="font-size:.72rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">CIF / NIF</div>
+          <div style="color:var(--accent); font-weight:700; font-size:.95rem;"><?= htmlspecialchars($proveedor['cif']) ?></div>
         </div>
         <div style="margin-bottom:14px;">
-          <div style="font-size:.72rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Dirección fiscal</div>
-          <div style="color:rgba(255,255,255,.7); font-size:.88rem;"><?= htmlspecialchars($proveedor['direccion']) ?></div>
+          <div style="font-size:.72rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Dirección fiscal</div>
+          <div style="color:var(--text); font-size:.88rem;"><?= htmlspecialchars($proveedor['direccion']) ?></div>
         </div>
         <div style="margin-bottom:14px;">
-          <div style="font-size:.72rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Email</div>
-          <div style="color:rgba(255,255,255,.7); font-size:.88rem;"><?= htmlspecialchars($proveedor['email']) ?></div>
+          <div style="font-size:.72rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Email</div>
+          <div style="color:var(--text); font-size:.88rem;"><?= htmlspecialchars($proveedor['email']) ?></div>
         </div>
         <div style="margin-bottom:14px;">
-          <div style="font-size:.72rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Responsable</div>
-          <div style="color:rgba(255,255,255,.7); font-size:.88rem;"><?= htmlspecialchars($proveedor['nombre_responsable']) ?></div>
+          <div style="font-size:.72rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Responsable</div>
+          <div style="color:var(--text); font-size:.88rem;"><?= htmlspecialchars($proveedor['nombre_responsable']) ?></div>
         </div>
         <div>
-          <div style="font-size:.72rem; color:rgba(255,255,255,.3); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Estado</div>
+          <div style="font-size:.72rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px;">Estado</div>
           <span style="background:rgba(25,135,84,.15); border:1px solid rgba(25,135,84,.3); color:#75b798; font-size:.75rem; font-weight:700; padding:3px 10px; border-radius:20px;">
             <i class="fas fa-check-circle me-1"></i>Verificado
           </span>

@@ -241,6 +241,12 @@
                     Subir pieza
                   </a>
                 </li>
+                <li>
+                  <a class="dropdown-item-tuning" href="mis-ventas.php">
+                    <span class="item-icon" style="background:rgba(255,60,0,0.15);color:#ff6b35;"><i class="fas fa-store"></i></span>
+                    Mis Ventas
+                  </a>
+                </li>
                 <?php endif; ?>
                 <!-- Panel Proveedor (solo proveedor) -->
                 <?php if (($_SESSION['usuario_rol'] ?? '') === 'proveedor'): ?>

@@ -60,7 +60,7 @@ $ok = $_GET['ok'] ?? '';
       </thead>
       <tbody>
         <?php if (empty($tutoriales)): ?>
-          <tr><td colspan="5" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay tutoriales.</td></tr>
+          <tr><td colspan="5" class="text-center" style="color:#9ca3af;padding:30px;">No hay tutoriales.</td></tr>
         <?php endif; ?>
         <?php foreach ($tutoriales as $t): ?>
         <?php
@@ -85,13 +85,13 @@ $ok = $_GET['ok'] ?? '';
                    onerror="this.src='../public/img/no-image.svg'">
             <?php endif; ?>
           </td>
-          <td style="color:#fff;font-weight:500;max-width:260px;"><?= htmlspecialchars($t['titulo']) ?></td>
+          <td style="color:#111827;font-weight:500;max-width:260px;"><?= htmlspecialchars($t['titulo']) ?></td>
           <td>
             <?php if ($t['pieza_nombre']): ?>
               <span style="background:rgba(164,4,46,.12);color:rgb(164,4,46);padding:3px 8px;border-radius:6px;font-size:.75rem;"><?= htmlspecialchars($t['pieza_nombre']) ?></span>
-            <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+            <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
           </td>
-          <td style="color:rgba(255,255,255,.45);font-size:.8rem;"><?= htmlspecialchars($t['vehiculo'] ?? '—') ?></td>
+          <td style="color:#6b7280;font-size:.8rem;"><?= htmlspecialchars($t['vehiculo'] ?? '—') ?></td>
           <td>
             <div class="d-flex gap-1">
               <button class="btn-edit-sm" onclick='abrirModal(<?= htmlspecialchars(json_encode([
@@ -124,7 +124,7 @@ $ok = $_GET['ok'] ?? '';
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalTitulo" style="color:#fff;font-weight:700;"></h5>
+        <h5 class="modal-title" id="modalTitulo" style="color:#111827;font-weight:700;"></h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <form method="POST" action="index.php?page=tutoriales">
@@ -142,7 +142,7 @@ $ok = $_GET['ok'] ?? '';
           <div style="grid-column:1/-1;">
             <label class="form-label-admin">
               <i class="fab fa-youtube me-1" style="color:#ff0000;"></i>
-              Código iframe de YouTube <span style="color:rgba(255,255,255,.3);font-weight:400;">(pega el &lt;iframe&gt; que te da YouTube → Compartir → Insertar)</span>
+              Código iframe de YouTube <span style="color:#9ca3af;font-weight:400;">(pega el &lt;iframe&gt; que te da YouTube → Compartir → Insertar)</span>
             </label>
             <div style="display:flex;gap:8px;align-items:flex-start;">
               <textarea id="fYtUrl" class="form-control form-control-admin" rows="3"
@@ -261,15 +261,15 @@ function mostrarPreview(id) {
   if (!id) { box.style.display = 'none'; box.innerHTML = ''; return; }
   box.style.display = 'block';
   box.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;background:rgba(255,0,0,.07);border:1px solid rgba(255,0,0,.2);border-radius:8px;padding:8px 12px;">
+    <div style="display:flex;align-items:center;gap:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:8px 12px;">
       <img src="https://img.youtube.com/vi/${id}/default.jpg"
            style="width:80px;height:45px;object-fit:cover;border-radius:4px;"
            onerror="this.style.opacity='.3'">
       <div>
-        <div style="color:rgba(255,255,255,.6);font-size:.75rem;">ID extraído:</div>
-        <code style="color:#ff6b6b;font-size:.85rem;">${id}</code>
+        <div style="color:#6b7280;font-size:.75rem;">ID extraído:</div>
+        <code style="color:rgb(164,4,46);font-size:.85rem;">${id}</code>
         <a href="https://www.youtube.com/watch?v=${id}" target="_blank"
-           style="display:block;font-size:.72rem;color:rgba(255,255,255,.35);margin-top:2px;">
+           style="display:block;font-size:.72rem;color:#6b7280;margin-top:2px;">
           <i class="fab fa-youtube me-1" style="color:#ff0000;"></i>Abrir en YouTube
         </a>
       </div>

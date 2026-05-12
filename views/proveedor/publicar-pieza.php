@@ -11,26 +11,6 @@ $categorias = ['Motor','Frenos','Suspensión','Transmisión','Carrocería','Elec
                'Climatización','Escape','Filtros','Dirección','Iluminación','Otros'];
 ?>
 
-<style>
-.vehiculo-block {
-  background: #141727;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 10px;
-  padding: 18px 18px 14px;
-  margin-bottom: 12px;
-  position: relative;
-}
-.btn-remove-veh {
-  position: absolute; top: 12px; right: 12px;
-  background: rgba(220,53,69,.15); border: 1px solid rgba(220,53,69,.2);
-  color: #ff6b6b; border-radius: 6px; width: 30px; height: 30px;
-  cursor: pointer; font-size: .8rem;
-  display: flex; align-items: center; justify-content: center;
-}
-.btn-remove-veh:hover { background: rgba(220,53,69,.35); }
-select:disabled { opacity: .4; cursor: not-allowed; }
-</style>
-
 <?php if ($msgError): ?>
   <div class="alert-err-prov"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($msgError) ?></div>
 <?php endif; ?>
@@ -43,7 +23,7 @@ select:disabled { opacity: .4; cursor: not-allowed; }
     <div class="admin-card-header">
       <div class="admin-card-title">
         <i class="fas fa-car"></i> Vehículos compatibles
-        <span style="color:rgba(255,60,0,.8); font-size:.78rem; margin-left:6px;">* obligatorio</span>
+        <span style="color:var(--accent); font-size:.78rem; margin-left:6px; opacity:.8;">* obligatorio</span>
       </div>
       <button type="button" class="btn-ghost btn btn-sm" id="btn-add-veh">
         <i class="fas fa-plus me-1"></i> Añadir vehículo
@@ -53,7 +33,7 @@ select:disabled { opacity: .4; cursor: not-allowed; }
       <div id="vehiculos-container">
         <!-- Se genera por JS al cargar -->
       </div>
-      <p style="color:rgba(255,255,255,.25); font-size:.78rem; margin:8px 0 0;">
+      <p style="color:var(--text-faint); font-size:.78rem; margin:8px 0 0;">
         <i class="fas fa-info-circle me-1"></i>
         Selecciona marca → modelo → motorización. Puedes añadir varios vehículos.
       </p>
@@ -128,14 +108,14 @@ select:disabled { opacity: .4; cursor: not-allowed; }
   <div class="admin-card mb-4">
     <div class="admin-card-header">
       <div class="admin-card-title"><i class="fas fa-image"></i> Foto de la pieza</div>
-      <span style="font-size:.78rem; color:rgba(255,255,255,.3);">URL directa de la imagen · Opcional</span>
+      <span style="font-size:.78rem; color:var(--text-muted);">URL directa de la imagen · Opcional</span>
     </div>
     <div style="padding:20px;">
       <label class="form-label-prov">URL de la imagen</label>
       <input type="url" name="imagen_url" class="form-control form-control-prov"
              placeholder="https://example.com/imagen.jpg">
-      <p style="color:rgba(255,255,255,.35); margin:0; font-size:.9rem;">
-        Introduce la URL completa de la imagen para que se muestre en la ficha.
+      <p style="color:var(--text-muted); margin:6px 0 0; font-size:.82rem;">
+        <i class="fas fa-info-circle me-1"></i>Introduce la URL completa de la imagen.
       </p>
     </div>
   </div>

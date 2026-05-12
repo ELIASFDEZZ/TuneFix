@@ -30,9 +30,9 @@ $okMsg = match ($_GET['ok'] ?? '') {
   foreach ($filtros as $val => [$label, $count, $color]):
   ?>
     <a href="index.php?page=proveedores<?= $val ? '&estado='.$val : '' ?>"
-       style="background:<?= $filtro===$val ? 'rgba(164,4,46,.2)' : 'rgba(255,255,255,.05)' ?>; border:1px solid <?= $filtro===$val ? 'rgba(164,4,46,.4)' : 'rgba(255,255,255,.08)' ?>; color:<?= $filtro===$val ? '#fff' : 'rgba(255,255,255,.45)' ?>; padding:6px 14px; border-radius:20px; text-decoration:none; font-size:.82rem; display:inline-flex; align-items:center; gap:6px;">
+       style="background:<?= $filtro===$val ? 'rgba(164,4,46,.12)' : '#f3f4f6' ?>; border:1px solid <?= $filtro===$val ? 'rgba(164,4,46,.4)' : '#e4e6ea' ?>; color:<?= $filtro===$val ? 'rgb(164,4,46)' : '#6b7280' ?>; padding:6px 14px; border-radius:20px; text-decoration:none; font-size:.82rem; display:inline-flex; align-items:center; gap:6px; font-weight:<?= $filtro===$val ? '700' : '500' ?>;">
       <?= $label ?>
-      <span style="background:rgba(255,255,255,.1); color:<?= $color ?>; padding:1px 7px; border-radius:10px; font-size:.72rem; font-weight:700;"><?= $count ?></span>
+      <span style="background:rgba(0,0,0,.06); color:<?= $color ?>; padding:1px 7px; border-radius:10px; font-size:.72rem; font-weight:700;"><?= $count ?></span>
     </a>
   <?php endforeach; ?>
 </div>
@@ -43,7 +43,7 @@ $okMsg = match ($_GET['ok'] ?? '') {
   </div>
 
   <?php if (empty($lista)): ?>
-    <div style="padding:40px; text-align:center; color:rgba(255,255,255,.3);">
+    <div style="padding:40px; text-align:center; color:#9ca3af;">
       <i class="fas fa-inbox" style="font-size:2rem; display:block; margin-bottom:12px;"></i>
       No hay solicitudes<?= $filtro ? ' en este estado' : '' ?>.
     </div>
@@ -62,11 +62,11 @@ $okMsg = match ($_GET['ok'] ?? '') {
         <tbody>
           <?php foreach ($lista as $prov): ?>
           <tr>
-            <td style="color:#fff; font-weight:600;"><?= htmlspecialchars($prov['nombre_empresa']) ?></td>
-            <td><code style="color:#ffc107; font-size:.8rem;"><?= htmlspecialchars($prov['cif']) ?></code></td>
-            <td><?= htmlspecialchars($prov['nombre_responsable']) ?></td>
-            <td><a href="mailto:<?= htmlspecialchars($prov['email']) ?>" style="color:rgba(255,255,255,.55); text-decoration:none; font-size:.85rem;"><?= htmlspecialchars($prov['email']) ?></a></td>
-            <td style="color:rgba(255,255,255,.4); font-size:.82rem;"><?= date('d/m/Y H:i', strtotime($prov['created_at'])) ?></td>
+            <td style="color:#111827; font-weight:600;"><?= htmlspecialchars($prov['nombre_empresa']) ?></td>
+            <td><code style="color:rgb(164,4,46); font-size:.8rem;background:rgba(164,4,46,.08);padding:2px 6px;border-radius:4px;"><?= htmlspecialchars($prov['cif']) ?></code></td>
+            <td style="color:#374151;"><?= htmlspecialchars($prov['nombre_responsable']) ?></td>
+            <td><a href="mailto:<?= htmlspecialchars($prov['email']) ?>" style="color:rgb(164,4,46); text-decoration:none; font-size:.85rem;"><?= htmlspecialchars($prov['email']) ?></a></td>
+            <td style="color:#6b7280; font-size:.82rem;"><?= date('d/m/Y H:i', strtotime($prov['created_at'])) ?></td>
             <td>
               <span class="estado-<?= $prov['estado'] ?>">
                 <?= ucfirst($prov['estado']) ?>

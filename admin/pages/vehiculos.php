@@ -42,9 +42,9 @@ $motorizaciones = $pdo->query(
               text-decoration:none;font-size:.85rem;font-weight:600;transition:all .2s;
               <?= $tab === $key
                   ? 'background:rgb(164,4,46);color:#fff;'
-                  : 'background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.1);' ?>">
+                  : 'background:#f3f4f6;color:#6b7280;border:1px solid #e4e6ea;' ?>">
             <i class="fas <?= $icon ?>"></i> <?= $label ?>
-            <span style="background:rgba(0,0,0,.25);padding:1px 7px;border-radius:20px;font-size:.75rem;"><?= $cnt ?></span>
+            <span style="background:rgba(0,0,0,.1);padding:1px 7px;border-radius:20px;font-size:.75rem;"><?= $cnt ?></span>
         </a>
     <?php endforeach; ?>
 </div>
@@ -70,14 +70,13 @@ $motorizaciones = $pdo->query(
                 <tbody>
                     <?php if (empty($marcas)): ?>
                         <tr>
-                            <td colspan="3" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay marcas.
-                            </td>
+                            <td colspan="3" class="text-center" style="color:#9ca3af;padding:30px;">No hay marcas.</td>
                         </tr>
                     <?php endif; ?>
                     <?php foreach ($marcas as $m): ?>
                         <tr>
-                            <td style="color:rgba(255,255,255,.3);width:50px;"><?= $m['id'] ?></td>
-                            <td style="color:#fff;font-weight:500;"><?= htmlspecialchars($m['nombre']) ?></td>
+                            <td style="color:#9ca3af;width:50px;"><?= $m['id'] ?></td>
+                            <td style="color:#111827;font-weight:500;"><?= htmlspecialchars($m['nombre']) ?></td>
                             <td style="display:flex;gap:6px;">
                                 <button class="btn-ghost" style="font-size:.75rem;padding:4px 10px;"
                                     onclick='abrirModal("marca", <?= json_encode(["id" => $m["id"], "nombre" => $m["nombre"]]) ?>)'>
@@ -98,27 +97,24 @@ $motorizaciones = $pdo->query(
     </div>
 
     <!-- Modal marca -->
-    <div id="modalMarca" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+    <div id="modalMarca" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
      align-items:center;justify-content:center;padding:20px;">
-        <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:12px;
-              width:100%;max-width:420px;padding:28px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-                <h3 id="tituloMarca" style="color:#fff;font-size:1rem;font-weight:600;margin:0;">Añadir marca</h3>
+        <div style="background:#fff;border:1px solid #e4e6ea;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.12);
+              width:100%;max-width:420px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0;background:#fafafa;border-radius:14px 14px 0 0;">
+                <h3 id="tituloMarca" style="color:#111827;font-size:1rem;font-weight:700;margin:0;">Añadir marca</h3>
                 <button onclick="cerrarModal('marca')"
-                    style="background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;">&times;</button>
+                    style="background:none;border:none;color:#6b7280;font-size:1.4rem;cursor:pointer;">&times;</button>
             </div>
-            <form method="POST" action="index.php?page=vehiculos&tab=marcas">
+            <form method="POST" action="index.php?page=vehiculos&tab=marcas" style="padding:20px;">
                 <input type="hidden" name="action" value="save_marca">
                 <input type="hidden" name="id" id="mId" value="0">
-                <div style="margin-bottom:18px;">
-                    <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                        Nombre <span style="color:rgb(164,4,46);">*</span>
-                    </label>
+                <div style="margin-bottom:16px;">
+                    <label class="form-label-admin">Nombre <span style="color:rgb(164,4,46);">*</span></label>
                     <input type="text" name="nombre" id="mNombre" required maxlength="100" placeholder="Ej: Volkswagen"
-                        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                        class="form-control-admin form-control">
                 </div>
-                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid #f0f0f0;">
                     <button type="button" onclick="cerrarModal('marca')" class="btn-ghost">Cancelar</button>
                     <button type="submit" class="btn-red"><i class="fas fa-save me-1"></i> Guardar</button>
                 </div>
@@ -148,20 +144,19 @@ $motorizaciones = $pdo->query(
                 <tbody>
                     <?php if (empty($modelos)): ?>
                         <tr>
-                            <td colspan="4" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay modelos.
-                            </td>
+                            <td colspan="4" class="text-center" style="color:#9ca3af;padding:30px;">No hay modelos.</td>
                         </tr>
                     <?php endif; ?>
                     <?php foreach ($modelos as $m): ?>
                         <tr>
                             <td>
-                                <span style="background:rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;
-                         font-size:.78rem;color:rgba(255,255,255,.6);">
+                                <span style="background:#f3f4f6;padding:3px 10px;border-radius:20px;
+                         font-size:.78rem;color:#374151;border:1px solid #e4e6ea;">
                                     <?= htmlspecialchars($m['marca_nombre']) ?>
                                 </span>
                             </td>
-                            <td style="color:#fff;font-weight:500;"><?= htmlspecialchars($m['nombre']) ?></td>
-                            <td style="color:rgba(255,255,255,.45);font-size:.85rem;">
+                            <td style="color:#111827;font-weight:500;"><?= htmlspecialchars($m['nombre']) ?></td>
+                            <td style="color:#6b7280;font-size:.85rem;">
                                 <?= $m['anio_inicio'] ?? '—' ?> – <?= $m['anio_fin'] ?? 'act.' ?>
                             </td>
                             <td style="display:flex;gap:6px;">
@@ -189,24 +184,21 @@ $motorizaciones = $pdo->query(
     </div>
 
     <!-- Modal modelo -->
-    <div id="modalModelo" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+    <div id="modalModelo" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
      align-items:center;justify-content:center;padding:20px;">
-        <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:12px;
-              width:100%;max-width:520px;padding:28px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-                <h3 id="tituloModelo" style="color:#fff;font-size:1rem;font-weight:600;margin:0;">Añadir modelo</h3>
+        <div style="background:#fff;border:1px solid #e4e6ea;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.12);
+              width:100%;max-width:520px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0;background:#fafafa;border-radius:14px 14px 0 0;">
+                <h3 id="tituloModelo" style="color:#111827;font-size:1rem;font-weight:700;margin:0;">Añadir modelo</h3>
                 <button onclick="cerrarModal('modelo')"
-                    style="background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;">&times;</button>
+                    style="background:none;border:none;color:#6b7280;font-size:1.4rem;cursor:pointer;">&times;</button>
             </div>
-            <form method="POST" action="index.php?page=vehiculos&tab=modelos">
+            <form method="POST" action="index.php?page=vehiculos&tab=modelos" style="padding:20px;">
                 <input type="hidden" name="action" value="save_modelo">
                 <input type="hidden" name="id" id="moId" value="0">
                 <div style="margin-bottom:14px;">
-                    <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                        Marca <span style="color:rgb(164,4,46);">*</span>
-                    </label>
-                    <select name="marca_id" id="moMarcaId" required style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                       border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+                    <label class="form-label-admin">Marca <span style="color:rgb(164,4,46);">*</span></label>
+                    <select name="marca_id" id="moMarcaId" required class="form-select form-select-admin">
                         <option value="">— Selecciona —</option>
                         <?php foreach ($marcas as $ma): ?>
                             <option value="<?= $ma['id'] ?>"><?= htmlspecialchars($ma['nombre']) ?></option>
@@ -214,32 +206,23 @@ $motorizaciones = $pdo->query(
                     </select>
                 </div>
                 <div style="margin-bottom:14px;">
-                    <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                        Nombre del modelo <span style="color:rgb(164,4,46);">*</span>
-                    </label>
+                    <label class="form-label-admin">Nombre del modelo <span style="color:rgb(164,4,46);">*</span></label>
                     <input type="text" name="nombre" id="moNombre" required maxlength="100" placeholder="Ej: Golf VII"
-                        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                        class="form-control-admin form-control">
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
                     <div>
-                        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                            Año inicio <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(opcional)</span>
-                        </label>
+                        <label class="form-label-admin">Año inicio <span style="color:#9ca3af;font-weight:400;">(opcional)</span></label>
                         <input type="number" name="anio_inicio" id="moAnioInicio" min="1900" max="2100"
-                            placeholder="Ej: 2012" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                        border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                            placeholder="Ej: 2012" class="form-control-admin form-control">
                     </div>
                     <div>
-                        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                            Año fin <span style="color:rgba(255,255,255,.3);font-size:.75rem;">(vacío = actual)</span>
-                        </label>
+                        <label class="form-label-admin">Año fin <span style="color:#9ca3af;font-weight:400;">(vacío = actual)</span></label>
                         <input type="number" name="anio_fin" id="moAnioFin" min="1900" max="2100" placeholder="Ej: 2019"
-                            style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                        border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                            class="form-control-admin form-control">
                     </div>
                 </div>
-                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid #f0f0f0;">
                     <button type="button" onclick="cerrarModal('modelo')" class="btn-ghost">Cancelar</button>
                     <button type="submit" class="btn-red"><i class="fas fa-save me-1"></i> Guardar</button>
                 </div>
@@ -273,37 +256,36 @@ $motorizaciones = $pdo->query(
                 <tbody>
                     <?php if (empty($motorizaciones)): ?>
                         <tr>
-                            <td colspan="6" class="text-center" style="color:rgba(255,255,255,.3);padding:30px;">No hay
-                                motorizaciones.</td>
+                            <td colspan="6" class="text-center" style="color:#9ca3af;padding:30px;">No hay motorizaciones.</td>
                         </tr>
                     <?php endif; ?>
                     <?php foreach ($motorizaciones as $mz): ?>
                         <tr>
                             <td style="font-size:.8rem;">
-                                <span style="color:rgba(255,255,255,.4);"><?= htmlspecialchars($mz['marca_nombre']) ?></span>
-                                <span style="color:rgba(255,255,255,.2);margin:0 4px;">›</span>
-                                <span style="color:rgba(255,255,255,.7);"><?= htmlspecialchars($mz['modelo_nombre']) ?></span>
+                                <span style="color:#9ca3af;"><?= htmlspecialchars($mz['marca_nombre']) ?></span>
+                                <span style="color:#d1d5db;margin:0 4px;">›</span>
+                                <span style="color:#374151;"><?= htmlspecialchars($mz['modelo_nombre']) ?></span>
                             </td>
-                            <td style="color:#fff;font-weight:500;"><?= htmlspecialchars($mz['nombre']) ?></td>
-                            <td style="color:rgba(255,255,255,.55);font-size:.85rem;">
+                            <td style="color:#111827;font-weight:500;"><?= htmlspecialchars($mz['nombre']) ?></td>
+                            <td style="color:#6b7280;font-size:.85rem;">
                                 <?= htmlspecialchars($mz['potencia'] ?? '—') ?></td>
                             <td>
                                 <?php if ($mz['tipo_combustible']): ?>
                                     <?php
                                     $cbColor = match (strtolower($mz['tipo_combustible'])) {
-                                        'diésel', 'diesel' => 'rgba(255,136,0,.15);color:#ffaa44;border:1px solid rgba(255,136,0,.3)',
-                                        'gasolina' => 'rgba(13,110,253,.12);color:#6ea8fe;border:1px solid rgba(13,110,253,.3)',
-                                        'híbrido', 'hibrido' => 'rgba(25,135,84,.12);color:#75b798;border:1px solid rgba(25,135,84,.3)',
-                                        'eléctrico', 'electrico' => 'rgba(13,202,240,.12);color:#6edff6;border:1px solid rgba(13,202,240,.3)',
-                                        default => 'rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1)',
+                                        'diésel', 'diesel' => '#fff7ed;color:#c2410c;border:1px solid #fed7aa',
+                                        'gasolina' => '#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe',
+                                        'híbrido', 'hibrido' => '#f0fdf4;color:#166534;border:1px solid #bbf7d0',
+                                        'eléctrico', 'electrico' => '#ecfeff;color:#0e7490;border:1px solid #a5f3fc',
+                                        default => '#f3f4f6;color:#6b7280;border:1px solid #e4e6ea',
                                     };
                                     ?>
                                     <span style="background:<?= $cbColor ?>;padding:2px 8px;border-radius:20px;font-size:.75rem;">
                                         <?= htmlspecialchars($mz['tipo_combustible']) ?>
                                     </span>
-                                <?php else: ?><span style="color:rgba(255,255,255,.2);">—</span><?php endif; ?>
+                                <?php else: ?><span style="color:#9ca3af;">—</span><?php endif; ?>
                             </td>
-                            <td style="color:rgba(255,255,255,.4);font-size:.82rem;font-family:monospace;">
+                            <td style="color:#6b7280;font-size:.82rem;font-family:monospace;">
                                 <?= htmlspecialchars($mz['codigo_motor'] ?? '—') ?>
                             </td>
                             <td style="display:flex;gap:6px;">
@@ -333,25 +315,22 @@ $motorizaciones = $pdo->query(
     </div>
 
     <!-- Modal motorización -->
-    <div id="modalMotorizacion" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;
+    <div id="modalMotorizacion" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
      align-items:center;justify-content:center;padding:20px;">
-        <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.1);border-radius:12px;
-              width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:28px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-                <h3 id="tituloMotorizacion" style="color:#fff;font-size:1rem;font-weight:600;margin:0;">Añadir motorización
-                </h3>
+        <div style="background:#fff;border:1px solid #e4e6ea;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.12);
+              width:100%;max-width:600px;max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f0f0;background:#fafafa;border-radius:14px 14px 0 0;">
+                <h3 id="tituloMotorizacion" style="color:#111827;font-size:1rem;font-weight:700;margin:0;">Añadir motorización</h3>
                 <button onclick="cerrarModal('motorizacion')"
-                    style="background:none;border:none;color:rgba(255,255,255,.4);font-size:1.4rem;cursor:pointer;">&times;</button>
+                    style="background:none;border:none;color:#6b7280;font-size:1.4rem;cursor:pointer;">&times;</button>
             </div>
-            <form method="POST" action="index.php?page=vehiculos&tab=motorizaciones">
+            <form method="POST" action="index.php?page=vehiculos&tab=motorizaciones" style="padding:20px;">
                 <input type="hidden" name="action" value="save_motorizacion">
                 <input type="hidden" name="id" id="mzId" value="0">
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
                     <div>
-                        <label
-                            style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Marca</label>
-                        <select id="mzMarca" onchange="mzCargarModelos()" style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+                        <label class="form-label-admin">Marca</label>
+                        <select id="mzMarca" onchange="mzCargarModelos()" class="form-select form-select-admin">
                             <option value="">— Selecciona —</option>
                             <?php foreach ($marcas as $ma): ?>
                                 <option value="<?= $ma['id'] ?>"><?= htmlspecialchars($ma['nombre']) ?></option>
@@ -359,35 +338,26 @@ $motorizaciones = $pdo->query(
                         </select>
                     </div>
                     <div>
-                        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                            Modelo <span style="color:rgb(164,4,46);">*</span>
-                        </label>
-                        <select name="modelo_id" id="mzModeloId" required style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+                        <label class="form-label-admin">Modelo <span style="color:rgb(164,4,46);">*</span></label>
+                        <select name="modelo_id" id="mzModeloId" required class="form-select form-select-admin">
                             <option value="">— Selecciona marca —</option>
                         </select>
                     </div>
                 </div>
                 <div style="margin-bottom:14px;">
-                    <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">
-                        Nombre de la motorización <span style="color:rgb(164,4,46);">*</span>
-                    </label>
+                    <label class="form-label-admin">Nombre de la motorización <span style="color:rgb(164,4,46);">*</span></label>
                     <input type="text" name="nombre" id="mzNombre" required maxlength="100" placeholder="Ej: 2.0 TDI 150 CV"
-                        style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                      border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                        class="form-control-admin form-control">
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
                     <div>
-                        <label
-                            style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Potencia</label>
-                        <input type="text" name="potencia" id="mzPotencia" maxlength="50" placeholder="Ej: 150 CV" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                        border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                        <label class="form-label-admin">Potencia</label>
+                        <input type="text" name="potencia" id="mzPotencia" maxlength="50" placeholder="Ej: 150 CV"
+                            class="form-control-admin form-control">
                     </div>
                     <div>
-                        <label
-                            style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Combustible</label>
-                        <select name="tipo_combustible" id="mzCombustible" style="width:100%;background:#111;border:1px solid rgba(255,255,255,.12);
-                         border-radius:8px;padding:10px 12px;color:#fff;font-size:.85rem;">
+                        <label class="form-label-admin">Combustible</label>
+                        <select name="tipo_combustible" id="mzCombustible" class="form-select form-select-admin">
                             <option value="">— Selecciona —</option>
                             <option value="Gasolina">Gasolina</option>
                             <option value="Diésel">Diésel</option>
@@ -398,23 +368,19 @@ $motorizaciones = $pdo->query(
                         </select>
                     </div>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
                     <div>
-                        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Tipo de
-                            motor</label>
+                        <label class="form-label-admin">Tipo de motor</label>
                         <input type="text" name="tipo_motor" id="mzTipoMotor" maxlength="50"
-                            placeholder="Ej: 4 cilindros turbo" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                        border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;box-sizing:border-box;">
+                            placeholder="Ej: 4 cilindros turbo" class="form-control-admin form-control">
                     </div>
                     <div>
-                        <label style="color:rgba(255,255,255,.6);font-size:.8rem;display:block;margin-bottom:6px;">Código
-                            motor</label>
-                        <input type="text" name="codigo_motor" id="mzCodigo" maxlength="50" placeholder="Ej: DFGA" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-                        border-radius:8px;padding:10px 14px;color:#fff;font-size:.9rem;
-                        box-sizing:border-box;font-family:monospace;">
+                        <label class="form-label-admin">Código motor</label>
+                        <input type="text" name="codigo_motor" id="mzCodigo" maxlength="50" placeholder="Ej: DFGA"
+                            class="form-control-admin form-control" style="font-family:monospace;">
                     </div>
                 </div>
-                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:14px;border-top:1px solid #f0f0f0;">
                     <button type="button" onclick="cerrarModal('motorizacion')" class="btn-ghost">Cancelar</button>
                     <button type="submit" class="btn-red"><i class="fas fa-save me-1"></i> Guardar</button>
                 </div>
