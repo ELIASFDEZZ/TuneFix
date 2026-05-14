@@ -13,7 +13,9 @@ define('MAIL_PASSWORD', 'zqgo esde zuvq jghu');  // contraseña de aplicación G
 // ─────────────────────────────────────────────────────────────────────────────
 
 // URL base de la app (sin barra final)
-define('APP_URL', 'http://localhost/DWES/Repositorio/TuneFix');
+define('APP_URL', isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost'
+    ? 'https://' . $_SERVER['HTTP_HOST']
+    : 'http://localhost/DWES/Repositorio/TuneFix');
 
 /**
  * Envía el email de verificación al usuario recién registrado.
