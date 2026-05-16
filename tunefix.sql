@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-05-2026 a las 09:58:16
+-- Tiempo de generación: 16-05-2026 a las 12:45:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,7 +43,8 @@ CREATE TABLE `carrito` (
 --
 
 INSERT INTO `carrito` (`id`, `usuario_id`, `pieza_id`, `cantidad`, `precio_u`, `created_at`) VALUES
-(2, 15, 3, 1, 439.15, '2026-05-11 09:54:35');
+(2, 15, 3, 1, 439.15, '2026-05-11 09:54:35'),
+(7, 22, 1, 1, 82.68, '2026-05-15 12:09:46');
 
 -- --------------------------------------------------------
 
@@ -146,6 +147,16 @@ CREATE TABLE `manual` (
   `pieza_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `manual`
+--
+
+INSERT INTO `manual` (`id`, `titulo`, `fuente`, `archivo_url`, `motorizacion_id`, `pieza_id`) VALUES
+(1, 'Manuela volkswagen', NULL, 'uploads/manuales/manual_1778572848_f4534259.pdf', 1, 56),
+(2, 'Jetta', NULL, 'uploads/manuales/manual_1778573631_ca50572d.pdf', 1, NULL),
+(3, 'R32', NULL, 'uploads/manuales/manual_1778573655_1828bb96.pdf', 1, NULL),
+(5, 'Golf', NULL, 'uploads/manuales/manual_1778573683_f475e948.pdf', 1, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -177,7 +188,7 @@ INSERT INTO `marca` (`id`, `nombre`) VALUES
 (13, 'Hyundai'),
 (14, 'Kia'),
 (15, 'Mazda'),
-(19, 'Seat');
+(24, 'EBRO');
 
 -- --------------------------------------------------------
 
@@ -191,6 +202,13 @@ CREATE TABLE `megusta_pieza` (
   `pieza_id` int(11) NOT NULL,
   `fecha` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `megusta_pieza`
+--
+
+INSERT INTO `megusta_pieza` (`id`, `usuario_id`, `pieza_id`, `fecha`) VALUES
+(4, 22, 1, '2026-05-15 14:09:44');
 
 -- --------------------------------------------------------
 
@@ -314,7 +332,11 @@ INSERT INTO `pedido` (`id`, `usuario_id`, `stripe_session_id`, `total`, `estado`
 (1, 15, 'cs_test_a1IpQBx7T6FaAgjXH8nRUlcZ4e7gPNTNcX2Yb0NewVal85tXt2KShSJw6q', 82.68, 'pagado', '2026-05-07 09:52:12'),
 (2, 18, 'cs_test_a1EAZ66SIRkNUyqRYPVfLql4PZjh6D8QiiVGmkDRBzBn8sEgaVTEsSKu4v', 350.00, 'pagado', '2026-05-11 10:36:01'),
 (3, 18, 'cs_test_a1QzuS34dVxIOYnm9Y5vDwF6wMwZvUN8AuZ4w03zKlfKrC98mfeKTqBjc3', 22.22, 'pagado', '2026-05-11 10:48:45'),
-(4, 18, 'cs_test_a1d2FA1XMlSvTPhQWA9DYpkrMLk6Ln15W4sLyPnWuvDwyjt3FWiIe4skio', 350.00, 'pagado', '2026-05-11 10:50:58');
+(4, 18, 'cs_test_a1d2FA1XMlSvTPhQWA9DYpkrMLk6Ln15W4sLyPnWuvDwyjt3FWiIe4skio', 350.00, 'pagado', '2026-05-11 10:50:58'),
+(5, 15, 'cs_test_a1hl8d04UPpnsrrbWeEiTwcbU9dKHsDYqUtnY5a92yaU1iGYMDg41VxOq2', 439.15, 'pendiente', '2026-05-14 10:36:01'),
+(6, 15, 'cs_test_a1ccZhJhESnfxNWZ59X2cNDm9MwEz14NCTlsjwVvt0lPz2y7sBVJt2ttcb', 439.15, 'pendiente', '2026-05-14 11:08:41'),
+(7, 15, 'cs_test_a1L8A2ZQPww1lw5IgkIqJjFpErLGDXI6E3hEZr0ijSPPdhjUVnYX4d8fNp', 439.15, 'pendiente', '2026-05-14 17:37:55'),
+(8, 22, 'cs_test_a1K7VeTzLaqwYhNU6wtwO7EaDdm8FSTXHmuXncqsJ4wFGMhD3tSxn6xzrO', 82.68, 'pendiente', '2026-05-15 12:09:59');
 
 -- --------------------------------------------------------
 
@@ -338,7 +360,11 @@ INSERT INTO `pedido_item` (`id`, `pedido_id`, `pieza_id`, `cantidad`, `precio_u`
 (1, 1, 1, 1, 82.68),
 (2, 2, 57, 1, 350.00),
 (3, 3, 54, 1, 22.22),
-(4, 4, 57, 1, 350.00);
+(4, 4, 57, 1, 350.00),
+(5, 5, 3, 1, 439.15),
+(6, 6, 3, 1, 439.15),
+(7, 7, 3, 1, 439.15),
+(8, 8, 1, 1, 82.68);
 
 -- --------------------------------------------------------
 
@@ -449,7 +475,7 @@ CREATE TABLE `proveedores` (
 --
 
 INSERT INTO `proveedores` (`id`, `nombre_empresa`, `cif`, `direccion`, `provincia`, `telefono`, `sitio_web`, `nombre_responsable`, `email`, `password`, `descripcion`, `doc_cif`, `doc_iae`, `estado`, `motivo_rechazo`, `created_at`, `updated_at`) VALUES
-(1, 'prueba', 'A12548965', 'cadiz 30', 'Sevilla', '653214985', 'https://www.autodoc.es/?utm_medium=cpc&utm_source=google&tb_prm=20005931481&brnd=1&gad_source=1&gad_campaignid=20005931481&gbraid=0AAAAAoWFwrctmx_Gg6Epx0DkdPxoEpTCv&gclid=CjwKCAjwqubPBhBOEiwAzgZX2karvf8ztbQ8BSkrTtd67Coe4bEO1PupNAFdTPG6evjgUzm3CTqsuBoCSpwQ', 'alenadro', 'alejandrotaguaaguilar2006@gmail.com', '$2y$10$kMaWuqg0pPXRNgLUSxbO3ONfVOPqPxjfWHOzlDHi6ptcf7TbYZrb6', 'asdfasdfsadfsadfsafasdf asdfasdfsadfsadfsafasdf asdfasdfsadfsadfsafasdf asdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdf', 'cif_A12548965_69f9bc8d3327b.pdf', 'iae_A12548965_69f9bc8d33d53.pdf', 'aceptado', NULL, '2026-05-05 09:46:53', '2026-05-05 09:48:09');
+(1, 'Elias S.L', 'A12548965', 'cadiz 30', 'Sevilla', '653214985', 'https://www.autodoc.es/?utm_medium=cpc&utm_source=google&tb_prm=20005931481&brnd=1&gad_source=1&gad_campaignid=20005931481&gbraid=0AAAAAoWFwrctmx_Gg6Epx0DkdPxoEpTCv&gclid=CjwKCAjwqubPBhBOEiwAzgZX2karvf8ztbQ8BSkrTtd67Coe4bEO1PupNAFdTPG6evjgUzm3CTqsuBoCSpwQ', 'alenadro', 'alejandrotaguaaguilar2006@gmail.com', '$2y$10$kMaWuqg0pPXRNgLUSxbO3ONfVOPqPxjfWHOzlDHi6ptcf7TbYZrb6', 'asdfasdfsadfsadfsafasdf asdfasdfsadfsadfsafasdf asdfasdfsadfsadfsafasdf asdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdfasdfsadfsadfsafasdfasdf', 'cif_A12548965_69f9bc8d3327b.pdf', 'iae_A12548965_69f9bc8d33d53.pdf', 'aceptado', NULL, '2026-05-05 09:46:53', '2026-05-14 11:06:24');
 
 -- --------------------------------------------------------
 
@@ -470,7 +496,8 @@ CREATE TABLE `seguimiento` (
 
 INSERT INTO `seguimiento` (`id`, `seguidor_id`, `profesional_id`, `fecha_seguimiento`) VALUES
 (6, 15, 14, '2026-04-30 23:48:27'),
-(8, 18, 15, '2026-05-11 09:55:49');
+(8, 18, 15, '2026-05-11 09:55:49'),
+(9, 22, 14, '2026-05-15 14:08:42');
 
 -- --------------------------------------------------------
 
@@ -528,7 +555,8 @@ INSERT INTO `usuario` (`id`, `nombre`, `email`, `contrasenia`, `rol`, `token_ver
 (14, 'Alejandro', 'alejandrotaguaaguilar2006@gmail.com', '$2y$10$IUkph/fmTQnwI74XQfnEe.rHy1cB3dvBK.DUijEAxZIwMuE6tw.im', 'profesional', NULL, 1),
 (15, 'Alejandro', 'alejandrotaguaaguilar@gmail.com', '$2y$10$7wMfZIku49O1lKRwMxHqg.hQt/0IsW4FKLYrcEBKJFrsjEIE87DAS', 'profesional', NULL, 1),
 (17, 'entusiasta', 'entusiasta@gmail.com', '$2y$10$G5qsWpHPWR5jdafOlzGsG.PhjuhV5A/v8NqndPkVE71mYhb5gi.t6', 'entusiasta', NULL, 1),
-(18, 'principiante', 'principiante@gmail.com', '$2y$10$0ebdQhKwqVn7PNgIAm0nVO35jqjRz5Yj1CwnsI7A4O.Mdym4sIuei', 'principiante', NULL, 1);
+(18, 'principiante', 'principiante@gmail.com', '$2y$10$0ebdQhKwqVn7PNgIAm0nVO35jqjRz5Yj1CwnsI7A4O.Mdym4sIuei', 'principiante', NULL, 1),
+(22, 'Alejandro', 'alejandropracticascreartia@gmail.com', '$2y$10$PwULAB.byO49XBQlkojzcewJ9pZC7yP4MQnp2HHpKGV.j11m0y7XG', 'profesional', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -551,7 +579,8 @@ INSERT INTO `usuario_motorizacion` (`id`, `usuario_id`, `motorizacion_id`) VALUE
 (3, 6, 5),
 (5, 15, 1),
 (6, 17, 1),
-(7, 18, 1);
+(7, 18, 1),
+(8, 22, 1);
 
 --
 -- Índices para tablas volcadas
@@ -695,7 +724,7 @@ ALTER TABLE `usuario_motorizacion`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `compatibilidad_pieza`
@@ -719,19 +748,19 @@ ALTER TABLE `distribuidor_pieza`
 -- AUTO_INCREMENT de la tabla `manual`
 --
 ALTER TABLE `manual`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `marca`
 --
 ALTER TABLE `marca`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `megusta_pieza`
 --
 ALTER TABLE `megusta_pieza`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `modelo`
@@ -749,13 +778,13 @@ ALTER TABLE `motorizacion`
 -- AUTO_INCREMENT de la tabla `pedido`
 --
 ALTER TABLE `pedido`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido_item`
 --
 ALTER TABLE `pedido_item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pieza`
@@ -773,7 +802,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `seguimiento`
 --
 ALTER TABLE `seguimiento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `tutorial`
@@ -785,13 +814,13 @@ ALTER TABLE `tutorial`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_motorizacion`
 --
 ALTER TABLE `usuario_motorizacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Restricciones para tablas volcadas
