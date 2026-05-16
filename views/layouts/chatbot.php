@@ -305,7 +305,7 @@ async function enviarMensaje() {
   agregarMensaje('typing', '<i class="fas fa-circle-notch fa-spin me-1"></i> TuneBot está escribiendo…', typingId);
 
   try {
-    const res = await fetch('/TunefixMVC/public/ajax/chatbot.php', {
+    const res = await fetch('/DWES/Repositorio/TuneFix/public/ajax/chatbot.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mensaje: texto, historial: cbHistorial.slice(-10) }),

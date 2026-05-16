@@ -484,10 +484,6 @@ $activeKey = ($page === 'editar-pieza') ? 'mis-piezas' : $page;
 
   <!-- Footer -->
   <div class="sb-footer">
-    <a href="index.php" class="sb-footer-link site">
-      <i class="fas fa-external-link-alt" style="font-size:.72rem;width:16px;text-align:center;"></i>
-      Ver el sitio
-    </a>
     <a href="logout.php" class="sb-footer-link out">
       <i class="fas fa-sign-out-alt" style="font-size:.72rem;width:16px;text-align:center;"></i>
       Cerrar sesión
